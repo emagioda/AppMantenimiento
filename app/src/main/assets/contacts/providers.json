@@ -1,0 +1,36 @@
+{
+  "contacts": [
+    {
+      "id": "PROV_TRIMECSRL_001",
+      "type": "provider",
+      "name": "TRIMEC SRL",
+      "company": "TRIMEC SRL",
+      "roles": ["Proveedor"],
+      "specialties": ["Fabricazione"],
+      "phones": ["+3902123456"],
+      "whatsapp": "+393343167937",
+      "emails": ["ventas@repuestosglobal.com"],
+      "location": "Italia",
+      "coverage": ["Italia", "Europa"],
+      "isEmergency": false,
+      "isFavorite": false,
+      "notes": ""
+    },
+    {
+      "id": "PROV_MOT_003",
+      "type": "provider",
+      "name": "Motores Industriales",
+      "company": "Motores Industriales",
+      "roles": ["Proveedor"],
+      "specialties": ["Motores"],
+      "phones": ["+3902234567"],
+      "whatsapp": "+393456789012",
+      "emails": ["pedidos@motoresind.com"],
+      "location": "Italia Norte",
+      "coverage": ["Italia Norte"],
+      "isEmergency": false,
+      "isFavorite": false,
+      "notes": ""
+    }
+  ]
+}

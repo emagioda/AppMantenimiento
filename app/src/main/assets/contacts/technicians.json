@@ -1,0 +1,20 @@
+{
+  "contacts": [
+    {
+      "id": "TEC_ELE_002",
+      "type": "technician",
+      "name": "TL elettrica SRL",
+      "company": "TL elettrica SRL",
+      "roles": ["Técnico"],
+      "specialties": ["Eléctrico", "Electrónica"],
+      "phones": ["+3902987654"],
+      "whatsapp": "+393339876543",
+      "emails": ["info@tlelettrica.it"],
+      "location": "Gran torto, Padova",
+      "coverage": ["Gran torto", "Padova"],
+      "isEmergency": false,
+      "isFavorite": false,
+      "notes": ""
+    }
+  ]
+}

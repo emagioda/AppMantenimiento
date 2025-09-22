@@ -1,0 +1,89 @@
+{
+  "templateId": "trimec_tb_v1",
+  "version": 1,
+  "locale": "it-IT",
+  "root": "q1",
+  "nodes": [
+    {
+      "id": "q1",
+      "type": "QUESTION",
+      "title": "Il quadro non risponde o gli indicatori non si accendono?",
+      "yes": "q2",
+      "no": "end_ok"
+    },
+    {
+      "id": "q2",
+      "type": "QUESTION",
+      "title": "C'è alimentazione elettrica al quadro? (spie pilota accese)",
+      "yes": "a_restart",
+      "no": "a_power"
+    },
+    {
+      "id": "a_restart",
+      "type": "ACTION",
+      "title": "Riavvio del quadro",
+      "description": "Spegnere e riaccendere l'interruttore principale del quadro.",
+      "action": {
+        "steps": [
+          "Portare su OFF l'interruttore principale.",
+          "Attendere 10–15 secondi.",
+          "Portare su ON l'interruttore principale.",
+          "Verificare risposta del quadro e indicatori."
+        ],
+        "safetyNotes": "Seguire le procedure aziendali e i DPI previsti."
+      },
+      "next": "q3"
+    },
+    {
+      "id": "a_power",
+      "type": "ACTION",
+      "title": "Verifica dell'alimentazione",
+      "description": "Assicurarsi che l'alimentazione elettrica principale del quadro sia connessa e attiva.",
+      "action": {
+        "steps": [
+          "Controllare l'interruttore di alimentazione a monte.",
+          "Verificare presenza di tensione secondo manuale.",
+          "Ripristinare/attivare la fornitura se assente.",
+          "Rieseguire la prova del quadro."
+        ]
+      },
+      "next": "END"
+    },
+    {
+      "id": "q3",
+      "type": "QUESTION",
+      "title": "Qualche fusibile interno del quadro è bruciato?",
+      "yes": "a_fuse",
+      "no": "a_internal"
+    },
+    {
+      "id": "a_fuse",
+      "type": "ACTION",
+      "title": "Sostituzione fusibile",
+      "description": "Identificare e sostituire il fusibile danneggiato all'interno del quadro.",
+      "action": {
+        "steps": [
+          "Isolare l'energia (LOTO).",
+          "Aprire il quadro e individuare il fusibile guasto.",
+          "Sostituire con fusibile dello stesso tipo e calibro.",
+          "Richiudere e collaudare il quadro."
+        ]
+      },
+      "next": "END"
+    },
+    {
+      "id": "a_internal",
+      "type": "ACTION",
+      "title": "Possibile guasto interno",
+      "description": "Se tutte le verifiche sono risultate negative, potrebbe esserci un componente interno danneggiato. Contattare il supporto tecnico.",
+      "action": {},
+      "next": "END"
+    },
+    {
+      "id": "end_ok",
+      "type": "END",
+      "title": "Nessuna anomalia rilevata",
+      "description": "Il quadro risponde e gli indicatori si accendono."
+    }
+  ]
+}

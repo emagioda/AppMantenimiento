@@ -1,0 +1,5 @@
+{
+  "machines": [
+    { "id": "TRIMEC_TB_005", "templateId": "trimec_tb_v1_es", "name": "Quadro TRIMEC TB 005" }
+  ]
+}
