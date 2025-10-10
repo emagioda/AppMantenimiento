@@ -42,7 +42,7 @@
     <!-- Impostazioni -->
     <string name="settings_title">Impostazioni</string>
     <string name="settings_description_title">Aspetto</string>
-    <string name="settings_description_body">L'app utilizza una palette dai toni scuri ottimizzata per ambienti poco illuminati.</string>
+    <string name="settings_description_body">L\'app utilizza una palette dai toni scuri ottimizzata per ambienti poco illuminati.</string>
 
     <!-- Diagnostica -->
     <string name="diagnostic_title">Diagnostica</string>
