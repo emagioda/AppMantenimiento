@@ -15,19 +15,16 @@ class DiagnosticRepositoryImpl(
 
         val raw = ds.readTemplateRaw(mapping.templateId)
 
-        // Validaciones básicas
         require(raw.nodes.any { it.id == raw.root }) { "Template ${raw.templateId}: root '${raw.root}' no existe" }
         raw.nodes.filter { it.type == "QUESTION" }.forEach { n ->
             require(!n.yes.isNullOrBlank() && !n.no.isNullOrBlank()) { "Nodo ${n.id}: QUESTION sin yes/no" }
         }
 
-        // Mapear al dominio
         val nodes = raw.nodes.map { rn ->
             DiagnosticNode(
                 id = rn.id,
                 type = when (rn.type) {
                     "QUESTION" -> NodeType.QUESTION
-                    "ACTION" -> NodeType.ACTION
                     "END" -> NodeType.END
                     else -> error("Tipo de nodo desconocido: ${rn.type}")
                 },
@@ -35,14 +32,7 @@ class DiagnosticRepositoryImpl(
                 description = rn.description,
                 yes = rn.yes,
                 no = rn.no,
-                action = rn.action?.let { ra ->
-                    ActionDetail(
-                        steps = ra.steps,
-                        tools = ra.tools,
-                        safetyNotes = ra.safetyNotes
-                    )
-                },
-                next = rn.next
+                providersShortcut = rn.providersShortcut // 👈 NUEVO
             )
         }
 

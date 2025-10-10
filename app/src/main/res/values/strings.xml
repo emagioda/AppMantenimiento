@@ -1,3 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">My App</string>
+    <!-- App -->
+    <string name="app_name">App Manutenzione</string>  <!-- Nome dell'app -->
+
+    <!-- Home -->
+    <string name="home_title">Home</string>
+    <string name="home_header">Scansiona il codice QR&#10;e ti guideremo passo dopo passo&#10;per risolvere il problema.</string>
+    <string name="home_scan_button">Scansiona QR</string>
+    <string name="home_help_title">Hai bisogno di aiuto?</string>
+    <string name="home_help_contacts">Contatti</string>
+    <string name="home_settings_cd">Impostazioni</string>
+
+    <!-- Scanner -->
+    <string name="scanner_permission_rationale">Abbiamo bisogno della fotocamera per scansionare il QR.</string>
+    <string name="scanner_permission_button">Concedi permesso</string>
+    <string name="scanner_hint">Allinea il QR all\'interno del riquadro</string>
+    <string name="scanner_torch_on_cd">Spegni torcia</string>
+    <string name="scanner_torch_off_cd">Accendi torcia</string>
+    <string name="scanner_processing_error">Errore durante l\'elaborazione dell\'immagine</string>
+    <string name="scanner_bind_error">Errore nell\'inizializzare la fotocamera</string>
+
+    <!-- Contatti -->
+    <string name="contacts_title">Contatti</string>
+    <string name="contacts_tab_technicians">Tecnici</string>
+    <string name="contacts_tab_providers">Fornitori</string>
+    <string name="contacts_empty_title">Nessun contatto in questa categoria</string>
+    <string name="contacts_empty_subtitle">Aggiungi contatti per visualizzarli qui.</string>
+    <string name="contacts_action_call">Chiama</string>
+    <string name="contacts_action_whatsapp">WhatsApp</string>
+    <string name="contacts_action_email">Email</string>
+    <string name="contacts_emergency">• 24/7</string>
+    <string name="contacts_favorite">★</string>
+
+    <!-- Scorciatoie da END -->
+    <string name="contacts_tech_shortcut">Tecnici specializzati</string>
+    <string name="contacts_providers_shortcut">Fornitori di fiducia</string>
+
+    <!-- Comuni -->
+    <string name="cd_back">Indietro</string>
+
+    <!-- Impostazioni -->
+    <string name="settings_title">Impostazioni</string>
+    <string name="settings_theme">Tema scuro</string>
+    <string name="settings_theme_subtitle">Attiva la modalità scura.</string>
+
+    <!-- Diagnostica -->
+    <string name="diagnostic_title">Diagnostica</string>
+    <string name="diagnostic_home">Home</string>
+    <string name="diagnostic_yes">Sì</string>
+    <string name="diagnostic_no">No</string>
+    <string name="diagnostic_error_loading">Errore durante il caricamento del flusso.</string>
+    <string name="diagnostic_help">Hai bisogno di aiuto?</string>
 </resources>

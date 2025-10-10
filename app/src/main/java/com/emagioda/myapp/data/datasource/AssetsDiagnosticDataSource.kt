@@ -6,15 +6,10 @@ import com.google.gson.annotations.SerializedName
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
-/**
- * Lee JSON desde /assets.
- */
 class AssetsDiagnosticDataSource(
     private val context: Context,
     private val gson: Gson = Gson()
 ) {
-
-    // --------- modelos "data" para parseo del JSON de assets ----------
     data class MachinesIndex(
         @SerializedName("machines") val machines: List<MachineMap>
     )
@@ -24,7 +19,6 @@ class AssetsDiagnosticDataSource(
         @SerializedName("name") val name: String?
     )
 
-    // Los modelos del template los parseamos "tal cual" y luego los mapeamos al dominio
     data class RawTree(
         val templateId: String,
         val version: Int,
@@ -32,6 +26,7 @@ class AssetsDiagnosticDataSource(
         val root: String,
         val nodes: List<RawNode>
     )
+
     data class RawNode(
         val id: String,
         val type: String,
@@ -39,15 +34,8 @@ class AssetsDiagnosticDataSource(
         val description: String? = null,
         val yes: String? = null,
         val no: String? = null,
-        val action: RawAction? = null,
-        val next: String? = null
+        val providersShortcut: Boolean? = null
     )
-    data class RawAction(
-        val steps: List<String>? = null,
-        val tools: List<String>? = null,
-        val safetyNotes: String? = null
-    )
-    // -------------------------------------------------------------------
 
     fun readMachinesIndex(): MachinesIndex {
         val json = readAsset("machines.json")

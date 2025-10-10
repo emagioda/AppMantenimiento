@@ -1,59 +1,81 @@
 package com.emagioda.myapp.presentation.screen.diagnostic
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.emagioda.myapp.R
 import com.emagioda.myapp.di.ServiceLocator
 import com.emagioda.myapp.domain.model.NodeType
 import com.emagioda.myapp.presentation.viewmodel.DiagnosticViewModel
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.platform.LocalContext
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DiagnosticScreen(
     machineId: String,
     onRestartToHome: () -> Unit,
-    onOpenContacts: () -> Unit
+    onOpenContacts: () -> Unit,
+    onOpenTechnicians: () -> Unit = onOpenContacts,
+    onOpenProviders: () -> Unit = onOpenContacts
 ) {
-    val context = LocalContext.current
     val vm: DiagnosticViewModel = viewModel(
         factory = DiagnosticViewModel.Factory(
-            getTree = ServiceLocator.provideGetTreeUseCase(context),
+            getTree = ServiceLocator.provideGetTreeUseCase(LocalContext.current),
             machineId = machineId
         )
     )
-    val state = vm.uiState
-    val node = state.current
+    val node = vm.uiState.current
+
+    val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
+
+    BackHandler(enabled = vm.canGoBack()) { vm.goBack() }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Diagnóstico") }) }
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text(stringResource(R.string.diagnostic_title)) },
+                navigationIcon = {
+                    if (vm.canGoBack()) {
+                        IconButton(onClick = { vm.goBack() }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = stringResource(R.string.cd_back)
+                            )
+                        }
+                    }
+                }
+            )
+        }
     ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(20.dp),
+                .padding(horizontal = 20.dp),
             contentAlignment = Alignment.Center
         ) {
             if (node == null) {
-                Text("Error al cargar el flujo.")
+                Text(stringResource(R.string.diagnostic_error_loading))
                 return@Box
             }
 
-            // Centramos todo el contenido
             Column(
                 modifier = Modifier.fillMaxWidth(0.92f),
-                verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
                 when (node.type) {
-                    // -------------------- QUESTION --------------------
                     NodeType.QUESTION -> {
                         Text(
                             text = node.title,
@@ -69,48 +91,22 @@ fun DiagnosticScreen(
                         }
                         Spacer(Modifier.height(12.dp))
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Button(onClick = { vm.answerYes() }) { Text("Sì") }
-                            OutlinedButton(onClick = { vm.answerNo() }) { Text("No") }
-                        }
-                    }
-
-                    // -------------------- ACTION ----------------------
-                    NodeType.ACTION -> {
-                        Text(
-                            text = node.title,
-                            style = MaterialTheme.typography.headlineSmall,
-                            textAlign = TextAlign.Center
-                        )
-                        node.description?.let {
-                            Text(
-                                text = it,
-                                style = MaterialTheme.typography.bodyMedium,
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                        node.action?.steps?.takeIf { it.isNotEmpty() }?.let { steps ->
-                            Spacer(Modifier.height(8.dp))
-                            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                                steps.forEach { step ->
-                                    Text("• $step", style = MaterialTheme.typography.bodyMedium)
-                                }
+                            Button(onClick = vm::answerYes) {
+                                Text(stringResource(R.string.diagnostic_yes))
+                            }
+                            OutlinedButton(
+                                onClick = vm::answerNo,
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    contentColor = if (isDark) androidx.compose.ui.graphics.Color.White
+                                    else MaterialTheme.colorScheme.onSurface
+                                )
+                            ) {
+                                Text(stringResource(R.string.diagnostic_no))
                             }
                         }
-                        node.action?.safetyNotes?.let {
-                            Spacer(Modifier.height(8.dp))
-                            Text(
-                                text = "Seguridad: $it",
-                                style = MaterialTheme.typography.labelMedium,
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                        Spacer(Modifier.height(12.dp))
-                        Button(onClick = { vm.continueAction() }) { Text("Continua") }
                     }
 
-                    // ---------------------- END -----------------------
                     NodeType.END -> {
-                        // 👇 Solo mostramos una vez: título (grande) y, si existe, descripción (chica)
                         Text(
                             text = node.title,
                             style = MaterialTheme.typography.headlineSmall,
@@ -125,21 +121,44 @@ fun DiagnosticScreen(
                             )
                         }
 
-                        Spacer(Modifier.height(12.dp))
-                        Column(
-                            verticalArrangement = Arrangement.spacedBy(12.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Button(
-                                onClick = {
-                                    vm.restart()
-                                    onRestartToHome()
-                                }
-                            ) { Text("Riavvia") }
+                        Spacer(Modifier.height(16.dp))
 
-                            OutlinedButton(onClick = onOpenContacts) {
-                                Text("¿Necesitás ayuda? Ver contactos")
+                        if (node.providersShortcut == true) {
+                            OutlinedButton(
+                                onClick = onOpenProviders,
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    contentColor = if (isDark) androidx.compose.ui.graphics.Color.White
+                                    else MaterialTheme.colorScheme.onSurface
+                                )
+                            ) {
+                                Text(stringResource(R.string.contacts_providers_shortcut))
                             }
+                            Spacer(Modifier.height(12.dp))
+                        }
+
+                        Text(
+                            text = stringResource(R.string.diagnostic_help),
+                            style = MaterialTheme.typography.titleMedium,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(Modifier.height(4.dp))
+
+                        OutlinedButton(
+                            onClick = onOpenTechnicians,
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = if (isDark) androidx.compose.ui.graphics.Color.White
+                                else MaterialTheme.colorScheme.onSurface
+                            )
+                        ) {
+                            Text(stringResource(R.string.contacts_tech_shortcut))
+                        }
+
+                        Spacer(Modifier.height(16.dp))
+                        Button(onClick = {
+                            vm.restart()
+                            onRestartToHome()
+                        }) {
+                            Text(stringResource(R.string.diagnostic_home))
                         }
                     }
                 }

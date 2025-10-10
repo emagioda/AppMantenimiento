@@ -4,5 +4,5 @@ import com.emagioda.myapp.domain.model.Contact
 import com.emagioda.myapp.domain.model.ContactType
 
 interface ContactsRepository {
-    fun getContacts(type: ContactType): List<Contact> // ordenados por emergencia/favorito/nombre
+    fun getContacts(type: ContactType): List<Contact>
 }

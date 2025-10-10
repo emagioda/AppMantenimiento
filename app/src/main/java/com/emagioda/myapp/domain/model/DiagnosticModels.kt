@@ -7,22 +7,13 @@ data class DiagnosticTree(
     val root: String,
     val nodes: List<DiagnosticNode>
 )
-
 data class DiagnosticNode(
     val id: String,
     val type: NodeType,
     val title: String,
     val description: String? = null,
-    val yes: String? = null,     // sólo para QUESTION
-    val no: String? = null,      // sólo para QUESTION
-    val action: ActionDetail? = null, // sólo para ACTION
-    val next: String? = null     // ACTION -> siguiente o "END"
+    val yes: String? = null,
+    val no: String? = null,
+    val providersShortcut: Boolean? = null
 )
-
-enum class NodeType { QUESTION, ACTION, END }
-
-data class ActionDetail(
-    val steps: List<String>? = null,
-    val tools: List<String>? = null,
-    val safetyNotes: String? = null
-)
+enum class NodeType { QUESTION, END }

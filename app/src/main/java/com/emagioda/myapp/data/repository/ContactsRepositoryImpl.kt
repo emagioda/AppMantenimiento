@@ -17,7 +17,7 @@ class ContactsRepositoryImpl(
         val mapped = raws.map {
             Contact(
                 id = it.id,
-                type = if (it.type.equals("technician", true)) ContactType.TECHNICIAN else ContactType.PROVIDER,
+                type = type,
                 name = it.name,
                 company = it.company,
                 roles = it.roles,
@@ -32,7 +32,6 @@ class ContactsRepositoryImpl(
                 notes = it.notes
             )
         }
-        // Orden: emergencias y favoritos primero; luego por nombre
         return mapped.sortedWith(
             compareByDescending<Contact> { it.isEmergency }
                 .thenByDescending { it.isFavorite }

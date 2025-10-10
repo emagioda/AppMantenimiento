@@ -1,0 +1,28 @@
+{
+  "templateId": "trimec_corr_es",
+  "version": 1,
+  "locale": "es",
+  "root": "q_start",
+  "nodes": [
+    {
+      "id": "q_start",
+      "type": "QUESTION",
+      "title": "¿La correa del motor del mezclador se resbala o hace ruido?",
+      "yes": "end_adjust_tension",
+      "no": "end_replace_belt"
+    },
+    {
+      "id": "end_adjust_tension",
+      "type": "END",
+      "title": "Ajustar Tensión",
+      "description": "Revise la tensión de la correa.\nAjuste según las especificaciones del manual."
+    },
+    {
+      "id": "end_replace_belt",
+      "type": "END",
+      "title": "Reemplazar Correa",
+      "description": "La correa está desgastada o dañada.\nProceda con el reemplazo.\nPor favor, comuníquese con nuestros proveedores para solicitar el repuesto.",
+      "providersShortcut": true
+    }
+  ]
+}

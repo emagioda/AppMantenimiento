@@ -10,10 +10,8 @@ class AssetsContactsDataSource(
     private val context: Context,
     private val gson: Gson = Gson()
 ) {
-    // Envelope para parsear el JSON { "contacts": [...] }
     data class Envelope(@SerializedName("contacts") val contacts: List<ContactRaw>)
 
-    // Forma "raw" tal como viene del JSON
     data class ContactRaw(
         val id: String,
         val type: String,
@@ -38,11 +36,10 @@ class AssetsContactsDataSource(
         val json = readAsset(path)
         return gson.fromJson(json, Envelope::class.java).contacts
     }
-
     private fun readAsset(path: String): String {
         context.assets.open(path).use { input ->
             BufferedReader(InputStreamReader(input)).use { br ->
-                return br.readText()   // 👈 devolvemos el contenido
+                return br.readText()
             }
         }
     }

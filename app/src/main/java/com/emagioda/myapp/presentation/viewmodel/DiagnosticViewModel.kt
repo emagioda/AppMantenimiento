@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.emagioda.myapp.domain.model.ActionDetail
 import com.emagioda.myapp.domain.model.DiagnosticNode
 import com.emagioda.myapp.domain.model.DiagnosticTree
 import com.emagioda.myapp.domain.model.NodeType
@@ -14,23 +13,22 @@ import com.emagioda.myapp.domain.usecase.GetDiagnosticTreeForMachine
 data class DiagnosticUiState(
     val machineId: String,
     val tree: DiagnosticTree,
-    val current: DiagnosticNode?,     // nodo actual (incluye END sintético si corresponde)
-    val path: List<String> = emptyList(), // historial de nodeIds
+    val current: DiagnosticNode?,
+    val path: List<String> = emptyList(),
     val error: String? = null
 )
 
 class DiagnosticViewModel(
-    private val getTree: GetDiagnosticTreeForMachine,
+    getTree: GetDiagnosticTreeForMachine,
     private val machineId: String
 ) : ViewModel() {
 
+
     private val tree: DiagnosticTree = getTree(machineId)
     private val nodesById = tree.nodes.associateBy { it.id }
-
     private var currentNodeId: String = tree.root
     private val path = mutableListOf<String>().apply { add(currentNodeId) }
 
-    // 🔹 Estado observable por Compose
     var uiState by mutableStateOf(
         DiagnosticUiState(
             machineId = machineId,
@@ -53,12 +51,6 @@ class DiagnosticViewModel(
         goTo(n.no)
     }
 
-    fun continueAction() {
-        val n = nodesById[currentNodeId] ?: return
-        if (n.type != NodeType.ACTION) return
-        goTo(n.next)
-    }
-
     fun restart() {
         path.clear()
         currentNodeId = tree.root
@@ -66,23 +58,41 @@ class DiagnosticViewModel(
         publish(nodesById[currentNodeId])
     }
 
+    fun goBack() {
+        if (path.size <= 1) return
+
+        if (path.lastOrNull() == "END") {
+            path.removeAt(path.lastIndex)
+        }
+
+        if (path.size <= 1) {
+            currentNodeId = tree.root
+            publish(nodesById[currentNodeId])
+            return
+        }
+
+        path.removeAt(path.lastIndex)
+        val previousId = path.lastOrNull() ?: tree.root
+        currentNodeId = previousId
+        publish(nodesById[previousId])
+    }
+
+    fun canGoBack(): Boolean = path.size > 1
+
     private fun goTo(nextIdOrEnd: String?) {
         if (nextIdOrEnd.isNullOrBlank()) return
 
         val nextNode: DiagnosticNode? = when (nextIdOrEnd) {
-            "END" -> synthEndNode() // END sintético
+            "END" -> synthEndNode()
             else -> nodesById[nextIdOrEnd]
         }
 
-        // Si es un END sintético, no hay id real que agregar; igual guardamos “END”
         if (nextIdOrEnd == "END") {
             path.add("END")
         } else {
             nextNode?.id?.let { path.add(it) }
+            currentNodeId = nextIdOrEnd
         }
-
-        // Actualizamos currentNodeId solo si no es END sintético
-        if (nextIdOrEnd != "END") currentNodeId = nextIdOrEnd
 
         publish(nextNode)
     }
@@ -91,7 +101,9 @@ class DiagnosticViewModel(
         uiState = uiState.copy(
             current = current,
             path = path.toList(),
-            error = if (current == null) "Nodo non trovato" else null
+            error = if (current == null)
+                "diagnostic_error_node_not_found"
+            else null
         )
     }
 
@@ -99,12 +111,10 @@ class DiagnosticViewModel(
         DiagnosticNode(
             id = "__END__",
             type = NodeType.END,
-            title = "Fine",
-            description = "Procedura completata.",
-            action = ActionDetail(),
+            title = "diagnostic_end_title",
+            description = "diagnostic_end_description",
             yes = null,
             no = null,
-            next = null
         )
 
     class Factory(

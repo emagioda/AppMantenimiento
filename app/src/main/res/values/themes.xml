@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.MyApp" parent="android:Theme.Material.Light.NoActionBar" />
+    <!-- Tema real de la app; Compose maneja colores/typography -->
+    <style name="Theme.MyApp" parent="Theme.Material3.DayNight.NoActionBar">
+    </style>
+
+    <style name="Theme.MyApp.Splash" parent="Theme.SplashScreen">
+        <!-- Fondo gris fijo -->
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
+
+        <!-- Ícono centrado del splash: solo el foreground-->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+
+        <!-- Fondo del ícono transparente -->
+        <item name="windowSplashScreenIconBackgroundColor">@android:color/transparent</item>
+
+        <!-- Al terminar el splash, el sistema aplica este tema automáticamente -->
+        <item name="postSplashScreenTheme">@style/Theme.MyApp</item>
+    </style>
+
 </resources>

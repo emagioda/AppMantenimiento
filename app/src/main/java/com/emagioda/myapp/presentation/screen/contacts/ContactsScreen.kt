@@ -5,45 +5,64 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.emagioda.myapp.R
 import com.emagioda.myapp.di.ServiceLocator
 import com.emagioda.myapp.domain.model.Contact
 import com.emagioda.myapp.presentation.viewmodel.ContactsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ContactsScreen() {
+fun ContactsScreen(
+    onBack: (() -> Unit)? = null,
+    initialTab: Int = 0 // 0 = Técnicos, 1 = Proveedores
+) {
     val context = LocalContext.current
     val vm: ContactsViewModel = viewModel(
         factory = ContactsViewModel.Factory(ServiceLocator.provideGetContacts(context))
     )
 
-    var tab by remember { mutableIntStateOf(0) }
-    val tabs = listOf("Técnicos", "Proveedores")
+    var tab by rememberSaveable { mutableIntStateOf(initialTab.coerceIn(0, 1)) }
+    val tabs = listOf(
+        stringResource(R.string.contacts_tab_technicians),
+        stringResource(R.string.contacts_tab_providers)
+    )
     val items: List<Contact> = if (tab == 0) vm.technicians() else vm.providers()
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    // ¿Tema actual oscuro? (por luminancia del fondo)
     val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            // Título centrado
             CenterAlignedTopAppBar(
-                title = { Text("Contactos") },
+                title = { Text(stringResource(R.string.contacts_title)) },
+                navigationIcon = {
+                    if (onBack != null) {
+                        IconButton(onClick = onBack) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = stringResource(R.string.cd_back)
+                            )
+                        }
+                    }
+                },
                 scrollBehavior = scrollBehavior
             )
         }
@@ -58,11 +77,8 @@ fun ContactsScreen() {
                     Tab(
                         selected = tab == i,
                         onClick = { tab = i },
-                        // Texto blanco SOLO en oscuro; en claro, colores por defecto de Material3
-                        selectedContentColor = if (isDark) Color.White
-                        else TabRowDefaults.primaryContentColor,
-                        unselectedContentColor = if (isDark) Color.White.copy(alpha = 0.7f)
-                        else TabRowDefaults.secondaryContentColor,
+                        selectedContentColor = if (isDark) Color.White else TabRowDefaults.primaryContentColor,
+                        unselectedContentColor = if (isDark) Color.White.copy(alpha = 0.7f) else TabRowDefaults.secondaryContentColor,
                         text = { Text(title) }
                     )
                 }
@@ -76,27 +92,18 @@ fun ContactsScreen() {
                 if (items.isEmpty()) {
                     item { EmptyState() }
                 } else {
-                    items(
-                        items = items,
-                        key = { c -> "${c.name}-${c.company ?: ""}" }
-                    ) { c ->
+                    items(items = items, key = { c -> c.id }) { c ->
                         ContactCard(
                             contact = c,
                             onCall = { phone ->
-                                context.startActivity(
-                                    Intent(Intent.ACTION_DIAL, "tel:$phone".toUri())
-                                )
+                                context.startActivity(Intent(Intent.ACTION_DIAL, "tel:$phone".toUri()))
                             },
                             onWhatsApp = { number ->
                                 val clean = number.filter { it.isDigit() || it == '+' }
-                                context.startActivity(
-                                    Intent(Intent.ACTION_VIEW, "https://wa.me/$clean".toUri())
-                                )
+                                context.startActivity(Intent(Intent.ACTION_VIEW, "https://wa.me/$clean".toUri()))
                             },
                             onEmail = { email ->
-                                context.startActivity(
-                                    Intent(Intent.ACTION_SENDTO, "mailto:$email".toUri())
-                                )
+                                context.startActivity(Intent(Intent.ACTION_SENDTO, "mailto:$email".toUri()))
                             }
                         )
                     }
@@ -115,13 +122,13 @@ private fun EmptyState() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Sin contactos en esta categoría",
+            text = stringResource(R.string.contacts_empty_title),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurface
         )
         Spacer(Modifier.height(6.dp))
         Text(
-            text = "Agregá contactos para verlos aquí.",
+            text = stringResource(R.string.contacts_empty_subtitle),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
@@ -142,7 +149,6 @@ private fun ContactCard(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
 
-            // Encabezado
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = contact.name,
@@ -152,27 +158,22 @@ private fun ContactCard(
                 )
                 if (contact.isEmergency) {
                     Text(
-                        text = "  •  24/7",
+                        text = stringResource(R.string.contacts_emergency),
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
                 if (contact.isFavorite) {
                     Text(
-                        text = "  ★",
+                        text = stringResource(R.string.contacts_favorite),
                         color = MaterialTheme.colorScheme.primary,
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
             }
 
-            // Detalles
             contact.company?.let {
-                Text(
-                    it,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+                Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
             }
             contact.specialties?.takeIf { it.isNotEmpty() }?.let {
                 Text(
@@ -182,31 +183,26 @@ private fun ContactCard(
                 )
             }
             contact.location?.let {
-                Text(
-                    it,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+                Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
             }
 
             Spacer(Modifier.height(12.dp))
             HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.7f))
             Spacer(Modifier.height(12.dp))
 
-            // Acciones
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 val phone = contact.phones?.firstOrNull()
                 val wa = contact.whatsapp
                 val email = contact.emails?.firstOrNull()
 
                 if (!phone.isNullOrBlank()) {
-                    AssistChip(onClick = { onCall(phone) }, label = { Text("Llamar") })
+                    AssistChip(onClick = { onCall(phone) }, label = { Text(stringResource(R.string.contacts_action_call)) })
                 }
                 if (!wa.isNullOrBlank()) {
-                    AssistChip(onClick = { onWhatsApp(wa) }, label = { Text("WhatsApp") })
+                    AssistChip(onClick = { onWhatsApp(wa) }, label = { Text(stringResource(R.string.contacts_action_whatsapp)) })
                 }
                 if (!email.isNullOrBlank()) {
-                    AssistChip(onClick = { onEmail(email) }, label = { Text("Email") })
+                    AssistChip(onClick = { onEmail(email) }, label = { Text(stringResource(R.string.contacts_action_email)) })
                 }
             }
         }

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App -->
+    <string name="app_name">App Mantenimiento</string>  <!-- Nombre de la App -->
+
+    <!-- Home -->
+    <string name="home_title">Inicio</string>
+    <string name="home_header">Escaneá el código QR&#10;y te guiaremos paso a paso&#10;para resolver tu problema.</string>
+    <string name="home_scan_button">Escanear QR</string>
+    <string name="home_help_title">¿Necesitás ayuda?</string>
+    <string name="home_help_contacts">Contactos</string>
+    <string name="home_settings_cd">Ajustes</string>
+
+    <!-- Scanner -->
+    <string name="scanner_permission_rationale">Necesitamos la cámara para escanear el QR.</string>
+    <string name="scanner_permission_button">Conceder permiso</string>
+    <string name="scanner_hint">Alineá el QR dentro del cuadro</string>
+    <string name="scanner_torch_on_cd">Apagar linterna</string>
+    <string name="scanner_torch_off_cd">Encender linterna</string>
+    <string name="scanner_processing_error">Error procesando imagen</string>
+    <string name="scanner_bind_error">Fallo al inicializar la cámara</string>
+
+    <!-- Contactos -->
+    <string name="contacts_title">Contactos</string>
+    <string name="contacts_tab_technicians">Técnicos</string>
+    <string name="contacts_tab_providers">Proveedores</string>
+    <string name="contacts_empty_title">Sin contactos en esta categoría</string>
+    <string name="contacts_empty_subtitle">Agregá contactos para verlos aquí.</string>
+    <string name="contacts_action_call">Llamar</string>
+    <string name="contacts_action_whatsapp">WhatsApp</string>
+    <string name="contacts_action_email">Email</string>
+    <string name="contacts_emergency">• 24/7</string>
+    <string name="contacts_favorite">★</string>
+
+    <!-- Accesos directos desde END -->
+    <string name="contacts_tech_shortcut">Técnicos especializados</string>
+    <string name="contacts_providers_shortcut">Proveedores</string>
+
+    <!-- Comunes -->
+    <string name="cd_back">Volver</string>
+
+    <!-- Ajustes -->
+    <string name="settings_title">Configuración</string>
+    <string name="settings_theme">Tema oscuro</string>
+    <string name="settings_theme_subtitle">Activá el modo oscuro.</string>
+
+    <!-- Diagnóstico -->
+    <string name="diagnostic_title">Diagnóstico</string>
+    <string name="diagnostic_home">Inicio</string>
+    <string name="diagnostic_yes">Sí</string>
+    <string name="diagnostic_no">No</string>
+    <string name="diagnostic_error_loading">Error al cargar el flujo.</string>
+    <string name="diagnostic_help">¿Necesitás ayuda?</string>
+</resources>

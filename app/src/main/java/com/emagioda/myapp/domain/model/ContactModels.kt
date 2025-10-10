@@ -2,7 +2,7 @@ package com.emagioda.myapp.domain.model
 
 data class Contact(
     val id: String,
-    val type: ContactType,          // TECHNICIAN | PROVIDER
+    val type: ContactType,
     val name: String,
     val company: String?,
     val roles: List<String>?,

@@ -1,10 +1,13 @@
-package com.emagioda.myapp.ui.scanner
+@file:Suppress("DEPRECATION")
+
+package com.emagioda.myapp.presentation.screen.scanner
 
 import android.Manifest
 import android.content.pm.PackageManager
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.OptIn
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
@@ -13,13 +16,19 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.emagioda.myapp.R
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
@@ -29,6 +38,8 @@ import java.util.regex.Pattern
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.systemBarsPadding
 
 @OptIn(ExperimentalGetImage::class)
 @Composable
@@ -53,22 +64,48 @@ fun ScannerScreen(
     }
 
     when (hasPermission) {
-        null -> {} // estado inicial
-        false -> PermissionRationale { requestPermission.launch(Manifest.permission.CAMERA) }
+        null -> {}
+        false -> PermissionRationale(
+            onRequest = { requestPermission.launch(Manifest.permission.CAMERA) }
+        )
         true -> CameraPreview(onScanned = onScanned, modifier = modifier.fillMaxSize())
     }
 }
 
 @Composable
-private fun PermissionRationale(onRequest: () -> Unit) {
-    Column(Modifier.fillMaxSize().padding(24.dp)) {
-        Text("Necesitamos la cámara para escanear el QR.")
-        Spacer(Modifier.height(12.dp))
-        Button(onClick = onRequest) { Text("Conceder permiso") }
+private fun PermissionRationale(
+    onRequest: () -> Unit,
+    liftABit: Boolean = true
+) {
+    val safeInsets = WindowInsets.safeDrawing.asPaddingValues()
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(safeInsets)
+    ) {
+        Column(
+            modifier = Modifier
+                .align(Alignment.Center)
+                // Lo levantamos un poco para que no lo tape el diálogo del permiso
+                .offset(y = if (liftABit) (-32).dp else 0.dp)
+                .padding(horizontal = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = stringResource(R.string.scanner_permission_rationale),
+                textAlign = TextAlign.Center
+            )
+            Spacer(Modifier.height(12.dp))
+            Button(onClick = onRequest) {
+                Text(stringResource(R.string.scanner_permission_button))
+            }
+        }
     }
 }
 
-@OptIn(ExperimentalGetImage::class)
+@ExperimentalGetImage
 @Composable
 private fun CameraPreview(
     onScanned: (String) -> Unit,
@@ -76,15 +113,17 @@ private fun CameraPreview(
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val analysisExecutor = remember { Executors.newSingleThreadExecutor() }
+    val context = LocalContext.current
 
-    var handled by remember { mutableStateOf(false) }
-    val idRegex = remember { Pattern.compile("^[A-Z0-9_]{3,}$") }
+    var handled by rememberSaveable { mutableStateOf(false) }
+    val idRegex = remember { Pattern.compile("^[A-Za-z0-9._-]{3,}$") }
 
     // Torch state + control
-    var torchEnabled by remember { mutableStateOf(false) }
+    var torchEnabled by rememberSaveable { mutableStateOf(false) }
     var cameraControl: CameraControl? by remember { mutableStateOf(null) }
+    var cameraProvider: ProcessCameraProvider? by remember { mutableStateOf(null) }
 
-    Box(modifier = modifier) {
+    Box(modifier = modifier.fillMaxSize().systemBarsPadding()) {
         AndroidView(
             modifier = Modifier.matchParentSize(),
             factory = { ctx ->
@@ -92,12 +131,13 @@ private fun CameraPreview(
 
                 val cameraProviderFuture = ProcessCameraProvider.getInstance(ctx)
                 cameraProviderFuture.addListener({
-                    val cameraProvider = cameraProviderFuture.get()
+                    val provider = cameraProviderFuture.get()
+                    cameraProvider = provider
 
                     val preview = Preview.Builder()
                         .setTargetAspectRatio(AspectRatio.RATIO_16_9)
                         .build().apply {
-                            setSurfaceProvider(previewView.surfaceProvider)
+                            surfaceProvider = previewView.surfaceProvider
                         }
 
                     val selector = CameraSelector.DEFAULT_BACK_CAMERA
@@ -129,7 +169,11 @@ private fun CameraPreview(
                                             }
                                         }
                                         .addOnFailureListener { e ->
-                                            Log.e("Scanner", "Error procesando imagen", e)
+                                            Log.e(
+                                                "Scanner",
+                                                context.getString(R.string.scanner_processing_error),
+                                                e
+                                            )
                                         }
                                         .addOnCompleteListener { imageProxy.close() }
                                 } else {
@@ -139,15 +183,18 @@ private fun CameraPreview(
                         }
 
                     try {
-                        cameraProvider.unbindAll()
-                        val camera = cameraProvider.bindToLifecycle(
+                        provider.unbindAll()
+                        val camera = provider.bindToLifecycle(
                             lifecycleOwner, selector, preview, analysis
                         )
                         cameraControl = camera.cameraControl
-                        // si la linterna estaba activa y volvemos a esta pantalla
                         cameraControl?.enableTorch(torchEnabled)
                     } catch (e: Exception) {
-                        Log.e("Scanner", "Fallo al bindear use cases", e)
+                        Log.e(
+                            "Scanner",
+                            context.getString(R.string.scanner_bind_error),
+                            e
+                        )
                     }
                 }, ContextCompat.getMainExecutor(ctx))
 
@@ -156,10 +203,13 @@ private fun CameraPreview(
             onRelease = { analysisExecutor.shutdown() }
         )
 
-        // Overlay del marco
         QRScannerOverlay()
 
-        // Botón de linterna (FAB con emoji simple)
+        val torchCd = if (torchEnabled)
+            stringResource(R.string.scanner_torch_on_cd)
+        else
+            stringResource(R.string.scanner_torch_off_cd)
+
         FloatingActionButton(
             onClick = {
                 torchEnabled = !torchEnabled
@@ -167,13 +217,19 @@ private fun CameraPreview(
             },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(
-                    WindowInsets.navigationBars.asPaddingValues() // 👈 evita que se solape
-                )
+                .padding(WindowInsets.navigationBars.asPaddingValues())
                 .padding(16.dp)
+                .semantics { contentDescription = torchCd }
         ) {
             val icon = if (torchEnabled) "💡" else "🔦"
             Text(icon)
+        }
+
+        DisposableEffect(Unit) {
+            onDispose {
+                try { cameraProvider?.unbindAll() } catch (_: Exception) {}
+                try { analysisExecutor.shutdown() } catch (_: Exception) {}
+            }
         }
     }
 }

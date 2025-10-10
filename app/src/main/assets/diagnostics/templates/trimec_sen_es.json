@@ -1,0 +1,41 @@
+{
+  "templateId": "trimec_sen_es",
+  "version": 1,
+  "locale": "es",
+  "root": "q_start",
+  "nodes": [
+    {
+      "id": "q_start",
+      "type": "QUESTION",
+      "title": "¿El sensor de nivel no marca correctamente o el silo se sobrecarga?",
+      "yes": "q_dust",
+      "no": "end_check_contacts"
+    },
+    {
+      "id": "q_dust",
+      "type": "QUESTION",
+      "title": "¿Hay acumulación de material o polvo en el sensor?",
+      "yes": "end_clean_sensor",
+      "no": "end_faulty_sensor"
+    },
+    {
+      "id": "end_check_contacts",
+      "type": "END",
+      "title": "Compruebe el cierre de contactos en el sensor",
+      "description": "Verifique el estado y el funcionamiento del contacto de cierre del sensor."
+    },
+    {
+      "id": "end_clean_sensor",
+      "type": "END",
+      "title": "Limpieza del Sensor",
+      "description": "Limpie cuidadosamente la superficie del sensor de nivel para eliminar cualquier obstrucción o acumulación de material."
+    },
+    {
+      "id": "end_faulty_sensor",
+      "type": "END",
+      "title": "Sensor defectuoso",
+      "description": "Si ya limpió el sensor y el contacto de cierre funciona correctamente, reemplace el sensor.\nPor favor, comuníquese con nuestros proveedores para solicitar el repuesto.",
+      "providersShortcut": true
+    }
+  ]
+}

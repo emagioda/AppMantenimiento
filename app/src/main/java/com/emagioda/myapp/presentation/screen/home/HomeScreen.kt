@@ -10,9 +10,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.emagioda.myapp.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -24,10 +26,10 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Inicio") },
+                title = { Text(stringResource(R.string.home_title)) },
                 actions = {
                     IconButton(onClick = onNavigateToSettings) {
-                        Icon(Icons.Filled.Settings, contentDescription = "Ajustes")
+                        Icon(Icons.Filled.Settings, contentDescription = stringResource(R.string.home_settings_cd))
                     }
                 }
             )
@@ -63,7 +65,7 @@ fun HomeScreen(
 @Composable
 private fun HomeHeader() {
     Text(
-        text = "Escaneá el código QR\ny te guiaremos paso a paso\npara resolver tu problema.",
+        text = stringResource(R.string.home_header),
         color = MaterialTheme.colorScheme.onSurface,
         fontSize = 24.sp,
         lineHeight = 32.sp,
@@ -80,17 +82,16 @@ private fun PrimaryScanButton(onClick: () -> Unit) {
             .height(56.dp),
         shape = MaterialTheme.shapes.extraLarge
     ) {
-        Text("Escanear QR", fontSize = 18.sp)
+        Text(stringResource(R.string.home_scan_button), fontSize = 18.sp)
     }
 }
 
 @Composable
 private fun HelpSection(onContactsClick: () -> Unit) {
-    // Detecta si el fondo actual es oscuro midiendo luminancia
     val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
 
     Text(
-        text = "¿Necesitás ayuda?",
+        text = stringResource(R.string.home_help_title),
         color = MaterialTheme.colorScheme.onSurface,
         fontSize = 20.sp
     )
@@ -110,6 +111,6 @@ private fun HelpSection(onContactsClick: () -> Unit) {
             if (isDark) Color.White.copy(alpha = 0.35f) else MaterialTheme.colorScheme.outline
         )
     ) {
-        Text("Contactos", fontSize = 17.sp)
+        Text(stringResource(R.string.home_help_contacts), fontSize = 17.sp)
     }
 }
