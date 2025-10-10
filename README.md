@@ -17,8 +17,7 @@ técnicos y proveedores**.
          ├── data/                  # Capa de datos (assets, repositorios, prefs)
          │   ├── datasource/        # Lectura de JSON desde assets
          │   ├── repository/        # Implementaciones de repositorios
-         │   └── ThemePreferences.kt # Persistencia de tema claro/oscuro
-         ├── di/                    # Inyección de dependencias simple (ServiceLocator)
+        ├── di/                    # Inyección de dependencias simple (ServiceLocator)
          ├── domain/                # Capa de dominio (reglas de negocio)
          │   ├── model/             # Modelos puros del dominio
          │   ├── repository/        # Interfaces de repositorios
@@ -29,7 +28,7 @@ técnicos y proveedores**.
          │   │   ├── contacts/      # Listado de contactos
          │   │   ├── diagnostic/    # Flujo de diagnóstico paso a paso
          │   │   ├── home/          # Pantalla inicial
-         │   │   └── settings/      # Configuración (tema claro/oscuro)
+         │   │   └── settings/      # Configuración general
          │   ├── viewmodel/         # ViewModels para UI
          │   └── ui/                # Componentes reutilizables
          │       ├── scanner/       # Escáner QR con overlay
@@ -53,7 +52,7 @@ técnicos y proveedores**.
     dominio → UI).
 -   **Agenda de contactos** técnicos y proveedores, con acciones rápidas
     (llamar, WhatsApp, email).
--   **Modo claro / oscuro** configurable y persistido con DataStore.
+-   **Paleta oscura** consistente para toda la experiencia.
 
 ------------------------------------------------------------------------
 
@@ -63,7 +62,6 @@ técnicos y proveedores**.
 -   **Jetpack Compose (Material3)**
 -   **CameraX + ML Kit (Barcode Scanner)**
 -   **AndroidX Navigation**
--   **DataStore Preferences**
 -   **Clean Architecture** (Data / Domain / Presentation)
 
 ------------------------------------------------------------------------

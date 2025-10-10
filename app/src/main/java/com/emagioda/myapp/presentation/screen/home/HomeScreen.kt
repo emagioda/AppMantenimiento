@@ -8,8 +8,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -88,8 +86,6 @@ private fun PrimaryScanButton(onClick: () -> Unit) {
 
 @Composable
 private fun HelpSection(onContactsClick: () -> Unit) {
-    val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
-
     Text(
         text = stringResource(R.string.home_help_title),
         color = MaterialTheme.colorScheme.onSurface,
@@ -104,11 +100,11 @@ private fun HelpSection(onContactsClick: () -> Unit) {
             .height(52.dp),
         shape = MaterialTheme.shapes.extraLarge,
         colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = if (isDark) Color.White else MaterialTheme.colorScheme.onSurface
+            contentColor = MaterialTheme.colorScheme.onSurface
         ),
         border = BorderStroke(
             1.dp,
-            if (isDark) Color.White.copy(alpha = 0.35f) else MaterialTheme.colorScheme.outline
+            MaterialTheme.colorScheme.outline
         )
     ) {
         Text(stringResource(R.string.home_help_contacts), fontSize = 17.sp)
