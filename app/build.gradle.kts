@@ -89,9 +89,6 @@ dependencies {
     // Gson (lectura de JSON de assets)
     implementation(libs.google.gson)
 
-    // DataStore (tema claro/oscuro)
-    implementation(libs.androidx.datastore.preferences)
-
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

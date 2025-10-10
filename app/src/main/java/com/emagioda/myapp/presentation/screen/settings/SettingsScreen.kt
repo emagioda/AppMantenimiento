@@ -13,8 +13,6 @@ import com.emagioda.myapp.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    isDark: Boolean,
-    onDarkChanged: (Boolean) -> Unit,
     onBack: () -> Unit
 ) {
     Scaffold(
@@ -42,21 +40,21 @@ fun SettingsScreen(
             Text(stringResource(R.string.settings_title), style = MaterialTheme.typography.titleMedium)
 
             Card {
-                Row(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Column(Modifier.weight(1f)) {
-                        Text(stringResource(R.string.settings_theme))
-                        Text(
-                            stringResource(R.string.settings_theme_subtitle),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    Switch(checked = isDark, onCheckedChange = onDarkChanged)
+                    Text(
+                        text = stringResource(R.string.settings_description_title),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Text(
+                        text = stringResource(R.string.settings_description_body),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
         }

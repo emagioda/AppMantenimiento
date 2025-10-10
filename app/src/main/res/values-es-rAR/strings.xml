@@ -41,8 +41,8 @@
 
     <!-- Ajustes -->
     <string name="settings_title">Configuración</string>
-    <string name="settings_theme">Tema oscuro</string>
-    <string name="settings_theme_subtitle">Activá el modo oscuro.</string>
+    <string name="settings_description_title">Apariencia</string>
+    <string name="settings_description_body">La app utiliza una paleta de tonos oscuros optimizada para entornos de baja iluminación.</string>
 
     <!-- Diagnóstico -->
     <string name="diagnostic_title">Diagnóstico</string>

@@ -16,7 +16,6 @@ import com.emagioda.myapp.R
 import com.emagioda.myapp.di.ServiceLocator
 import com.emagioda.myapp.domain.model.NodeType
 import com.emagioda.myapp.presentation.viewmodel.DiagnosticViewModel
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalContext
 
 
@@ -36,8 +35,6 @@ fun DiagnosticScreen(
         )
     )
     val node = vm.uiState.current
-
-    val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
 
     BackHandler(enabled = vm.canGoBack()) { vm.goBack() }
 
@@ -97,8 +94,7 @@ fun DiagnosticScreen(
                             OutlinedButton(
                                 onClick = vm::answerNo,
                                 colors = ButtonDefaults.outlinedButtonColors(
-                                    contentColor = if (isDark) androidx.compose.ui.graphics.Color.White
-                                    else MaterialTheme.colorScheme.onSurface
+                                    contentColor = MaterialTheme.colorScheme.onSurface
                                 )
                             ) {
                                 Text(stringResource(R.string.diagnostic_no))
@@ -127,8 +123,7 @@ fun DiagnosticScreen(
                             OutlinedButton(
                                 onClick = onOpenProviders,
                                 colors = ButtonDefaults.outlinedButtonColors(
-                                    contentColor = if (isDark) androidx.compose.ui.graphics.Color.White
-                                    else MaterialTheme.colorScheme.onSurface
+                                    contentColor = MaterialTheme.colorScheme.onSurface
                                 )
                             ) {
                                 Text(stringResource(R.string.contacts_providers_shortcut))
@@ -146,8 +141,7 @@ fun DiagnosticScreen(
                         OutlinedButton(
                             onClick = onOpenTechnicians,
                             colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = if (isDark) androidx.compose.ui.graphics.Color.White
-                                else MaterialTheme.colorScheme.onSurface
+                                contentColor = MaterialTheme.colorScheme.onSurface
                             )
                         ) {
                             Text(stringResource(R.string.contacts_tech_shortcut))

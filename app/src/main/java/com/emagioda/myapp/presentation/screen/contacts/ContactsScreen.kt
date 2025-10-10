@@ -12,8 +12,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -46,8 +44,6 @@ fun ContactsScreen(
     val items: List<Contact> = if (tab == 0) vm.technicians() else vm.providers()
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
-
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -77,8 +73,8 @@ fun ContactsScreen(
                     Tab(
                         selected = tab == i,
                         onClick = { tab = i },
-                        selectedContentColor = if (isDark) Color.White else TabRowDefaults.primaryContentColor,
-                        unselectedContentColor = if (isDark) Color.White.copy(alpha = 0.7f) else TabRowDefaults.secondaryContentColor,
+                        selectedContentColor = MaterialTheme.colorScheme.onSurface,
+                        unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                         text = { Text(title) }
                     )
                 }

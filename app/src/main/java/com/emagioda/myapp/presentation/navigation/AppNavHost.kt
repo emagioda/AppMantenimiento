@@ -9,10 +9,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
 import androidx.navigation.NavBackStackEntry
@@ -24,7 +21,6 @@ import com.emagioda.myapp.presentation.screen.contacts.ContactsScreen
 import com.emagioda.myapp.presentation.screen.diagnostic.DiagnosticScreen
 import com.emagioda.myapp.presentation.screen.home.HomeScreen
 import com.emagioda.myapp.presentation.screen.settings.SettingsScreen
-import com.emagioda.myapp.presentation.viewmodel.ThemeViewModel
 import com.emagioda.myapp.presentation.screen.scanner.ScannerScreen
 
 sealed class Route(val route: String) {
@@ -42,8 +38,7 @@ sealed class Route(val route: String) {
 @Composable
 fun AppNavHost(
     navController: NavHostController = rememberNavController(),
-    startDestination: String = Route.Home.route,
-    themeVm: ThemeViewModel? = null
+    startDestination: String = Route.Home.route
 ) {
     val slideSpec: TweenSpec<IntOffset> = tween(durationMillis = 240)
 
@@ -155,18 +150,9 @@ fun AppNavHost(
             popEnterTransition = slideInRight,
             popExitTransition = slideOutRight
         ) {
-            val vm = themeVm
-            if (vm != null) {
-                val isDarkNullable by vm.isDark.collectAsState()
-                val isDark = isDarkNullable ?: false
-                SettingsScreen(
-                    isDark = isDark,
-                    onDarkChanged = { vm.setDark(it) },
-                    onBack = { navController.popBackStack() }
-                )
-            } else {
-                Text("Configuración no disponible")
-            }
+            SettingsScreen(
+                onBack = { navController.popBackStack() }
+            )
         }
     }
 }

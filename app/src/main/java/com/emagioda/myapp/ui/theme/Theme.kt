@@ -4,7 +4,6 @@ package com.emagioda.myapp.ui.theme
 
 import android.app.Activity
 import android.os.Build
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
@@ -14,10 +13,9 @@ import androidx.core.view.WindowCompat
 
 @Composable
 fun MyAppTheme(
-    useDarkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val colors = if (useDarkTheme) DarkColors else LightColors
+    val colors = DarkColors
 
     val view = LocalView.current
     if (!view.isInEditMode) {
@@ -30,9 +28,9 @@ fun MyAppTheme(
             window.navigationBarColor = bg
 
             val controller = WindowCompat.getInsetsController(window, view)
-            controller.isAppearanceLightStatusBars = !useDarkTheme
+            controller.isAppearanceLightStatusBars = false
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-                controller.isAppearanceLightNavigationBars = !useDarkTheme
+                controller.isAppearanceLightNavigationBars = false
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 window.isNavigationBarContrastEnforced = false
