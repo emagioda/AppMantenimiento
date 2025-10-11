@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Fondo base del splash -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#2B2D32" />
+        </shape>
+    </item>
+
+    <!-- Logo centrado -->
+    <item>
+        <bitmap
+            android:layout_width="wrap_content"
+            android:width="260dp"
+            android:height="260dp"
+            android:alpha="255"
+            android:antialias="true"
+            android:dither="true"
+            android:filter="true"
+            android:gravity="center"
+            android:src="@drawable/splash_logo"
+            android:tileMode="disabled" />
+    </item>
+
+</layer-list>
