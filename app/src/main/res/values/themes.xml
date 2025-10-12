@@ -11,10 +11,10 @@
     <!-- Tema del Splash -->
     <style name="Theme.MyApp.Splash" parent="Theme.SplashScreen">
         <!-- Fondo del splash -->
-        <item name="windowSplashScreenBackground">#171D24</item>
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
 
         <!-- Ícono o logo que se mostrará -->
-        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_logo</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_logo_inset</item>
 
         <!-- Sin animación (para mantener el 3D estático) -->
         <item name="windowSplashScreenAnimationDuration">0</item>

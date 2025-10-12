@@ -10,5 +10,5 @@
     <color name="white">#FFFFFFFF</color>
 
     <!-- Fondo del Splash: -->
-    <color name="splash_background">#424242</color>
+    <color name="splash_background">#2B2D32</color>
 </resources>
