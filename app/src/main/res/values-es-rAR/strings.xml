@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- App -->
-    <string name="app_name">App Mantenimiento</string>  <!-- Nombre de la App -->
+    <string name="app_name">FixQR</string>
 
     <!-- Home -->
     <string name="home_title">Inicio</string>

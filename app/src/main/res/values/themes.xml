@@ -1,22 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Tema real de la app; Compose maneja colores/typography -->
+    <!-- Tema normal de tu app -->
     <style name="Theme.MyApp" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Personalización general -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/black</item>
     </style>
 
+    <!-- Tema del Splash -->
     <style name="Theme.MyApp.Splash" parent="Theme.SplashScreen">
-        <!-- Fondo gris fijo -->
+        <!-- Fondo del splash -->
         <item name="windowSplashScreenBackground">@color/splash_background</item>
 
-        <!-- Ícono centrado del splash: solo el foreground-->
-        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <!-- Ícono o logo que se mostrará -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_logo_inset</item>
 
-        <!-- Fondo del ícono transparente -->
+        <!-- Sin animación (para mantener el 3D estático) -->
+        <item name="windowSplashScreenAnimationDuration">0</item>
+
+        <!-- Fondo del ícono (lo dejamos transparente) -->
         <item name="windowSplashScreenIconBackgroundColor">@android:color/transparent</item>
 
-        <!-- Al terminar el splash, el sistema aplica este tema automáticamente -->
+        <!-- Tema que se aplicará luego del splash -->
         <item name="postSplashScreenTheme">@style/Theme.MyApp</item>
+
+        <!-- Fallback para Android < 12 -->
+        <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="android:windowFullscreen">true</item>
     </style>
 
 </resources>

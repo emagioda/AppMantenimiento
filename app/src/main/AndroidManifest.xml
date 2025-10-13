@@ -24,9 +24,8 @@
 
     </application>
 
-    <uses-permission android:name="android.permission.CAMERA"
-        tools:ignore="ManifestOrder" />
-    <!-- Recomendado para enfoque automático y dejar claro que requiere cámara -->
+    <!-- Tus permisos / features existentes -->
+    <uses-permission android:name="android.permission.CAMERA" tools:ignore="ManifestOrder" />
     <uses-feature android:name="android.hardware.camera.any" android:required="true" />
     <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
 
