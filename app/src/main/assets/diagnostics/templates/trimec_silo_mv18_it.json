@@ -2,12 +2,8 @@
   "templateId": "trimec_silo_mv18_it",
   "version": 1,
   "locale": "it",
-  "root": "root",
+  "root": "pwr_led_q",
   "nodes": [
-    { "id":"root","type":"QUESTION","title":"Che succede?","description":null,
-      "yes": null, "no": null
-    },
-
     { "id":"pwr_led_q","type":"QUESTION",
       "title":"La spia \"Presenza di Tensione\" è accesa?",
       "yes":"pwr_main_sw_q","no":"pwr_end_fault"
