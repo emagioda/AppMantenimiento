@@ -70,10 +70,10 @@ fun AppNavHost(
         ) {
             HomeScreen(
                 onNavigateToScanner = { navController.navigate(Route.Scanner.route) },
-                onNavigateToContacts = { navController.navigate(Route.Contacts.route) },
                 onNavigateToSettings = { navController.navigate(Route.Settings.route) }
             )
         }
+
 
         // SCANNER
         composable(

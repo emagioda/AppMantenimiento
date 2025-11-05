@@ -117,27 +117,38 @@ fun DiagnosticScreen(
                             )
                         }
 
-                        Spacer(Modifier.height(16.dp))
-
-                        if (node.providersShortcut == true) {
-                            OutlinedButton(
-                                onClick = onOpenProviders,
-                                colors = ButtonDefaults.outlinedButtonColors(
-                                    contentColor = MaterialTheme.colorScheme.onSurface
-                                )
-                            ) {
-                                Text(stringResource(R.string.contacts_providers_shortcut))
+                        // Si hay repuestos sugeridos
+                        node.parts?.takeIf { it.isNotEmpty() }?.let { parts ->
+                            Spacer(Modifier.height(16.dp))
+                            Text(
+                                text = stringResource(R.string.diagnostic_parts_needed),
+                                style = MaterialTheme.typography.titleMedium,
+                                textAlign = TextAlign.Center
+                            )
+                            Spacer(Modifier.height(8.dp))
+                            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                parts.forEach { p ->
+                                    // Render mínimo: nombre por ID y cantidad; la UI puede resolverse contra catálogo luego
+                                    OutlinedCard {
+                                        Column(Modifier.padding(12.dp)) {
+                                            Text("ID: ${p.id}", style = MaterialTheme.typography.bodyLarge)
+                                            p.qty?.let { q ->
+                                                Spacer(Modifier.height(4.dp))
+                                                Text(stringResource(R.string.diagnostic_part_qty, q))
+                                            }
+                                            p.note?.let { n ->
+                                                Spacer(Modifier.height(4.dp))
+                                                Text(n, style = MaterialTheme.typography.bodySmall)
+                                            }
+                                        }
+                                    }
+                                }
                             }
-                            Spacer(Modifier.height(12.dp))
                         }
 
-                        Text(
-                            text = stringResource(R.string.diagnostic_help),
-                            style = MaterialTheme.typography.titleMedium,
-                            textAlign = TextAlign.Center
-                        )
-                        Spacer(Modifier.height(4.dp))
+                        Spacer(Modifier.height(16.dp))
 
+                        // Atajo a contactos: siempre disponible al finalizar
                         OutlinedButton(
                             onClick = onOpenTechnicians,
                             colors = ButtonDefaults.outlinedButtonColors(
@@ -155,6 +166,7 @@ fun DiagnosticScreen(
                             Text(stringResource(R.string.diagnostic_home))
                         }
                     }
+
                 }
             }
         }

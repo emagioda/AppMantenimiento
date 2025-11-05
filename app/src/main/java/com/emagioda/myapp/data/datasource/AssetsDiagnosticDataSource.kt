@@ -27,6 +27,12 @@ class AssetsDiagnosticDataSource(
         val nodes: List<RawNode>
     )
 
+    data class PartRefRaw(
+        val id: String,
+        val qty: Int? = null,
+        val note: String? = null
+    )
+
     data class RawNode(
         val id: String,
         val type: String,
@@ -34,8 +40,11 @@ class AssetsDiagnosticDataSource(
         val description: String? = null,
         val yes: String? = null,
         val no: String? = null,
-        val providersShortcut: Boolean? = null
+        val providersShortcut: Boolean? = null,
+        val result: String? = null,              // NUEVO
+        val parts: List<PartRefRaw>? = null      // NUEVO
     )
+
 
     fun readMachinesIndex(): MachinesIndex {
         val json = readAsset("machines.json")
