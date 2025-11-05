@@ -1,6 +1,5 @@
 package com.emagioda.myapp.presentation.screen.home
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -18,7 +17,6 @@ import com.emagioda.myapp.R
 @Composable
 fun HomeScreen(
     onNavigateToScanner: () -> Unit = {},
-    onNavigateToContacts: () -> Unit = {},
     onNavigateToSettings: () -> Unit = {}
 ) {
     Scaffold(
@@ -43,33 +41,25 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.Center
             ) {
                 HomeHeader()
-
                 Spacer(Modifier.height(32.dp))
-
                 PrimaryScanButton(onClick = onNavigateToScanner)
-
-                Spacer(Modifier.height(36.dp))
-
-                HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.7f))
-
-                Spacer(Modifier.height(28.dp))
-
-                HelpSection(onContactsClick = onNavigateToContacts)
             }
         }
     }
 }
 
+
 @Composable
 private fun HomeHeader() {
     Text(
-        text = stringResource(R.string.home_header),
+        text = "Scansiona il codice QR e ti guideremo passo dopo passo per risolvere il problema!",
         color = MaterialTheme.colorScheme.onSurface,
         fontSize = 24.sp,
         lineHeight = 32.sp,
         textAlign = TextAlign.Center
     )
 }
+
 
 @Composable
 private fun PrimaryScanButton(onClick: () -> Unit) {
@@ -84,29 +74,4 @@ private fun PrimaryScanButton(onClick: () -> Unit) {
     }
 }
 
-@Composable
-private fun HelpSection(onContactsClick: () -> Unit) {
-    Text(
-        text = stringResource(R.string.home_help_title),
-        color = MaterialTheme.colorScheme.onSurface,
-        fontSize = 20.sp
-    )
-    Spacer(Modifier.height(12.dp))
 
-    OutlinedButton(
-        onClick = onContactsClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(52.dp),
-        shape = MaterialTheme.shapes.extraLarge,
-        colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = MaterialTheme.colorScheme.onSurface
-        ),
-        border = BorderStroke(
-            1.dp,
-            MaterialTheme.colorScheme.outline
-        )
-    ) {
-        Text(stringResource(R.string.home_help_contacts), fontSize = 17.sp)
-    }
-}

@@ -51,4 +51,8 @@
     <string name="diagnostic_no">No</string>
     <string name="diagnostic_error_loading">Error al cargar el flujo.</string>
     <string name="diagnostic_help">¿Necesitás ayuda?</string>
+
+    <string name="diagnostic_parts_needed">Componenti da sostituire suggeriti</string>
+    <string name="diagnostic_part_qty">Quantità: %1$d</string>
+
 </resources>

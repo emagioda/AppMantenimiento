@@ -162,11 +162,12 @@ private fun CameraPreview(
                                         .addOnSuccessListener { barcodes ->
                                             val value = barcodes.firstOrNull()?.rawValue?.trim()
                                             if (!value.isNullOrEmpty()
-                                                && idRegex.matcher(value).matches()
+                                                && value == "TRIMEC_SILO_001" // único QR permitido
                                             ) {
                                                 handled = true
                                                 onScanned(value)
                                             }
+
                                         }
                                         .addOnFailureListener { e ->
                                             Log.e(

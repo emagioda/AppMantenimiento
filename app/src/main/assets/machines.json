@@ -1,24 +1,9 @@
 {
   "machines": [
     {
-      "id": "TRIMEC_TB_005",
-      "templateId": "trimec_tb_es",
-      "name": "Quadro TRIMEC TB 005"
-    },
-    {
-      "id": "TRIMEC_SEN_005",
-      "templateId": "trimec_sen_es",
-      "name": "Sensor de Nivel TRIMEC SEN 005"
-    },
-    {
-      "id": "TRIMEC_ROD_003",
-      "templateId": "trimec_rod_es",
-      "name": "Rodamiento TRIMEC ROD 003"
-    },
-    {
-      "id": "TRIMEC_CORR_007",
-      "templateId": "trimec_corr_es",
-      "name": ""
+      "id": "TRIMEC_SILO_001",
+      "templateId": "trimec_silo_mv18_it",
+      "name": "Silos Miscelatore verticale modello MV18"
     }
   ]
 }

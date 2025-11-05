@@ -1,0 +1,77 @@
+{
+  "templateId": "trimec_silo_mv18_it",
+  "version": 1,
+  "locale": "it",
+  "root": "root",
+  "nodes": [
+    { "id":"root","type":"QUESTION","title":"Che succede?","description":null,
+      "yes": null, "no": null
+    },
+
+    { "id":"pwr_led_q","type":"QUESTION",
+      "title":"La spia \"Presenza di Tensione\" è accesa?",
+      "yes":"pwr_main_sw_q","no":"pwr_end_fault"
+    },
+    { "id":"pwr_main_sw_q","type":"QUESTION",
+      "title":"Sezionatore principale azionato?",
+      "description":"Se non lo è, azionare il sezionatore e verificare.",
+      "yes":"safety_reset_q","no":"pwr_end_act_sw"
+    },
+    { "id":"pwr_end_fault","type":"END",
+      "title":"Diagnosi: Guasto nell'alimentazione principale",
+      "description":"Controllare protezioni a monte. Se persiste, contattare tecnici.",
+      "providersShortcut": true,
+      "result":"COMPONENT_FAULT",
+      "parts":[ { "id":"interruttore_sezionatore_32a", "qty":1 } ]
+    },
+    { "id":"pwr_end_act_sw","type":"END",
+      "title":"Azionare il sezionatore.",
+      "description":"Verificare il funzionamento del sistema.",
+      "result":"RESOLVED"
+    },
+
+    { "id":"safety_reset_q","type":"QUESTION",
+      "title":"Ha premuto il pulsante \"reset ausiliari\"?",
+      "yes":"safety_reset_led_q","no":"safety_end_press_reset"
+    },
+    { "id":"safety_end_press_reset","type":"END",
+      "title":"Premere il pulsante e verificare.",
+      "result":"RESOLVED"
+    },
+    { "id":"safety_reset_led_q","type":"QUESTION",
+      "title":"La spia \"reset Ausiliari\" è accesa?",
+      "yes":"safety_emergency_q","no":"safety_end_fault"
+    },
+    { "id":"safety_end_fault","type":"END",
+      "title":"Diagnosi: ausiliari non presenti",
+      "description":"Verificare alimentazione ausiliari e PLC.",
+      "providersShortcut": true,
+      "result":"COMPONENT_FAULT"
+    },
+    { "id":"safety_emergency_q","type":"QUESTION",
+      "title":"Pulsante Emergenza o Sportelli di Ispezione aperti/premuti?",
+      "yes":"safety_end_close","no":"flow_coclea_q"
+    },
+    { "id":"safety_end_close","type":"END",
+      "title":"Disattivare Emergenza e/o chiudere gli sportelli. Verificare.",
+      "result":"RESOLVED"
+    },
+
+    { "id":"flow_coclea_q","type":"QUESTION",
+      "title":"La coclea dove viene caricato il materiale funziona?",
+      "yes":"flow_scarico_q","no":"coclea_tree_start"
+    },
+    { "id":"flow_scarico_q","type":"QUESTION",
+      "title":"Lo scarico del silo funziona?",
+      "yes":"flow_mix_q","no":"scarico_tree_start"
+    },
+    { "id":"flow_mix_q","type":"QUESTION",
+      "title":"Il miscelatore del silo principale funziona?",
+      "yes":"end_ok","no":"mix_tree_start"
+    },
+    { "id":"end_ok","type":"END",
+      "title":"Sistema senza errori",
+      "result":"NO_ISSUE"
+    }
+  ]
+}

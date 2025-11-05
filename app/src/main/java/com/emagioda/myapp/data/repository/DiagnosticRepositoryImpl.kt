@@ -32,9 +32,18 @@ class DiagnosticRepositoryImpl(
                 description = rn.description,
                 yes = rn.yes,
                 no = rn.no,
-                providersShortcut = rn.providersShortcut // 👈 NUEVO
+                providersShortcut = rn.providersShortcut,
+                result = when (rn.result?.uppercase()) {
+                    "RESOLVED" -> EndResult.RESOLVED
+                    "NO_ISSUE" -> EndResult.NO_ISSUE
+                    "COMPONENT_FAULT" -> EndResult.COMPONENT_FAULT
+                    null -> null
+                    else -> error("EndResult desconocido: ${rn.result}")
+                },
+                parts = rn.parts?.map { pr -> PartRef(pr.id, pr.qty, pr.note) }
             )
         }
+
 
         return DiagnosticTree(
             templateId = raw.templateId,
