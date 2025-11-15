@@ -15,15 +15,20 @@ data class DiagnosticNode(
     val description: String? = null,
     val yes: String? = null,
     val no: String? = null,
+
     // Mostrar botón “Tecnici di fiducia” al finalizar
     val providersShortcut: Boolean? = null,
-    // NUEVO: solo para END
+
+    // Solo para END
     val result: EndResult? = null,
-    val parts: List<PartRef>? = null
+    val parts: List<PartRef>? = null,
+
+    // NUEVO: modo de pregunta (YES_NO o CONTINUE_ONLY)
+    val mode: QuestionMode = QuestionMode.YES_NO
 )
 
 data class PartRef(
-    val id: String,         // ej: "coclea_motore_1ph_0_75kw"
+    val id: String,
     val qty: Int? = null,
     val note: String? = null
 )
@@ -31,3 +36,6 @@ data class PartRef(
 enum class EndResult { RESOLVED, NO_ISSUE, COMPONENT_FAULT }
 
 enum class NodeType { QUESTION, END }
+
+// NUEVO
+enum class QuestionMode { YES_NO, CONTINUE_ONLY }

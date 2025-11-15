@@ -41,10 +41,12 @@ class AssetsDiagnosticDataSource(
         val yes: String? = null,
         val no: String? = null,
         val providersShortcut: Boolean? = null,
-        val result: String? = null,              // NUEVO
-        val parts: List<PartRefRaw>? = null      // NUEVO
-    )
+        val result: String? = null,
+        val parts: List<PartRefRaw>? = null,
 
+        // NUEVO
+        val mode: String? = null
+    )
 
     fun readMachinesIndex(): MachinesIndex {
         val json = readAsset("machines.json")

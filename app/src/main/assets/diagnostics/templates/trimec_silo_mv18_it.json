@@ -36,7 +36,7 @@
     { "id":"Q_AE_00", "type":"END", "title":"Diagnosi: Problemi nel circuito controllo. Suggerimento: Controllare dispositivi di accensione e interblocco." },
     { "id":"Q_AE_01", "type":"QUESTION", "title":"L'interruttore Salvamotore della Tramoggia è scattato (pulsante premuto)?", "yes":"Q_AE_011", "no":"Q_AE_010" },
     { "id":"Q_AE_010", "type":"END", "title":"Diagnosi: Guasto complesso relè termico/cablaggio. Suggerimenti: Verificare contatti ausiliari d'interblocco e dispositivi di avviamento/protezione. Contattare tecnici specializzati." },
-    { "id":"Q_AE_011", "type":"QUESTION", "title":"SOLUZIONE SEMPLICE: \nProvare a riarmare il Salvamotore.", "yes":"Q_AE_0111", "no":"***" },
+    { "id": "Q_AE_011", "type": "QUESTION", "title": "SOLUZIONE SEMPLICE: \nProvare a riarmare il Salvamotore.", "yes": "Q_AE_0111", "no": "***", "mode": "CONTINUE_ONLY"},
     { "id":"Q_AE_0111", "type":"QUESTION", "title":"Una volta reinserito, l'interruttore di protezione del motore è scattato di nuovo?", "yes":"Q_AE_01111", "no":"Q_AE_01110" },
     { "id":"Q_AE_01110", "type":"QUESTION", "title":"Il motore gira?", "yes":"Q_AE_011101", "no":"Q_AE_011100" },
     { "id":"Q_AE_011100", "type":"QUESTION", "title":"La corrente arriva ai terminali del motore?", "yes":"Q_AE_0111001", "no":"Q_AE_0111000" },
@@ -45,7 +45,7 @@
     { "id":"Q_AE_011101", "type":"QUESTION", "title":"Il riduttore gira?", "yes":"Q_AE_0111011", "no":"Q_AE_0111010" },
     { "id":"Q_AE_0111010", "type":"END", "title":"Diagnosi: Problema nel riduttore o nel giunto tra motore e riduttore. Suggerimento: Controllare/sostituire riduttore e giunto. Ricambio: Riduttore W75 i=7 PAM 90." },
     { "id":"Q_AE_0111011", "type":"END", "title":"Diagnosi: Verificare albero di trasmissione tra riduttore e coclea." },
-    { "id":"Q_AE_01111", "type":"QUESTION", "title":"Il guardamotore scatta all'istante?", "yes":"Q_AE_011110", "no":"Q_AE_011111" },
+    { "id":"Q_AE_01111", "type":"QUESTION", "title":"Il guardamotore scatta all'istante?", "yes":"Q_AE_011111", "no":"Q_AE_011110" },
     { "id":"Q_AE_011110", "type":"END", "title":"Diagnosi: Motore bloccato. Suggerimenti: Verificare rotazione manuale, presenza delle tre fasi, riduttore, vite senza fine, boccola." },
     { "id":"Q_AE_011111", "type":"END", "title":"Diagnosi: Possibile cortocircuito nel motore/cablaggio/accensione. Suggerimenti: Prova d'isolamento, controllare cablaggio, verificare dispositivo di accensione. Ricambio: Motore 1,5kW 400V B5 3000rpm 50Hz." },
 
@@ -64,10 +64,11 @@
     { "id":"Q_BC_1", "type":"END", "title":"Diagnosi: Possibile ostruzione nel tubo, coclea usurata o silo vuoto. Azioni: Ispezione visiva, controllare usura coclea, verificare materiale." },
 
 
+
     { "id":"Q_C", "type":"QUESTION", "title":"Il miscelatore del silo principale funziona?", "yes":"Q_D", "no":"Q_CA" },
 
     { "id":"Q_CA", "type":"QUESTION", "title":"La spia \"Presenza di Tensione\" è accesa? (Quadro Elettrico)", "yes":"Q_CB", "no":"Q_CA_0" },
-    { "id":"Q_CA_0", "type":"QUESTION", "title":"Sezionatore principale azionato?", "yes":"Q_CB", "no":"Q_CA_00" },
+    { "id":"Q_CA_0", "type":"QUESTION", "title":"Sezionatore principale azionato?", "yes":"Q_CA_01", "no":"Q_CA_00" },
     { "id":"Q_CA_00", "type":"END", "title":"Azionare il sezionatore. Verificare il funzionamento." },
     { "id":"Q_CA_01", "type":"END", "title":"Diagnosi: Guasto nell'alimentazione principale. Suggerimenti: Controllare alimentazione. Contattare tecnici." },
 
@@ -83,13 +84,13 @@
     { "id":"Q_CC_0001", "type":"END", "title":"Diagnosi: Problemi al dispositivo elettronico o al relè di sicurezza. Sostituzione consigliata. Ricambio Pizzato CS AR-05V024." },
     { "id":"Q_CC_0000", "type":"END", "title":"Diagnosi: Problemi nel pulsante d'emergenza o sensori. Verificare continuità. Chiamare tecnico." },
 
-    { "id":"Q_CD", "type":"QUESTION", "title":"La spia \"BloccoTermico\" nel Quadro Elettrico è accesa?", "yes":"Q_CD_0", "no":"Q_CE" },
+    { "id":"Q_CD", "type":"QUESTION", "title":"La spia \"BloccoTermico\" nel Quadro Elettrico è accesa?", "yes":"Q_CE", "no":"Q_CD_0" },
     { "id":"Q_CD_0", "type":"END", "title":"Diagnosi: Problemi nel circuito controllo. Controllare dispositivi accensione e interblocco." },
 
     { "id":"Q_CE", "type":"QUESTION", "title":"L'interruttore Salvamotore del miscelatore è scattato (pulsante premuto)?", "yes":"Q_CF", "no":"Q_CE_0" },
     { "id":"Q_CE_0", "type":"END", "title":"Diagnosi: Guasto complesso relè termico/cablaggio. Verificare interblocchi e avviamento/protezione. Contattare tecnici." },
 
-    { "id":"Q_CF", "type":"QUESTION", "title":"SOLUZIONE SEMPLICE: Provare a riarmare il Salvamotore. L'interruttore scatta di nuovo dopo il riarmo?", "yes":"Q_CF_1", "no":"***" },
+    { "id": "Q_CF",  "type": "QUESTION", "title": "SOLUZIONE SEMPLICE: Provare a riarmare il Salvamotore. L'interruttore scatta di nuovo dopo il riarmo?", "yes": "Q_CF_1", "no": "***", "mode": "CONTINUE_ONLY"},
     { "id":"Q_CF_1", "type":"QUESTION", "title":"Una volta reinserito, l'interruttore di protezione del motore è scattato di nuovo?", "yes":"Q_CF_11", "no":"Q_CF_10" },
     { "id":"Q_CF_10", "type":"QUESTION", "title":"Il motore gira?", "yes":"Q_CF_101", "no":"Q_CF_100" },
     { "id":"Q_CF_100", "type":"QUESTION", "title":"La corrente arriva ai terminali del motore?", "yes":"Q_CF_1001", "no":"Q_CF_1000" },
@@ -100,7 +101,7 @@
     { "id":"Q_CF_10100", "type":"END", "title":"Diagnosi: Tensione cinghia/puleggia. Azioni: Regolare cinghie, verificare fissaggio e integrità pulegge." },
     { "id":"Q_CF_10101", "type":"END", "title":"Diagnosi: Problemi nella trasmissione. Sostituire cinghie. Ricambio: 5× Cinghia SPB 5600." },
     { "id":"Q_CF_1011", "type":"END", "title":"Diagnosi: Anello coclea gravemente usurato. Contattare il produttore per sostituzione." },
-    { "id":"Q_CF_11", "type":"QUESTION", "title":"Il guardamotore scatta all'istante?", "yes":"Q_CF_110", "no":"Q_CF_111" },
+    { "id":"Q_CF_11", "type":"QUESTION", "title":"Il guardamotore scatta all'istante?", "yes":"Q_CF_111", "no":"Q_CF_110" },
     { "id":"Q_CF_110", "type":"END", "title":"Diagnosi: Motore bloccato / cuscinetti usurati. Verificare rotazione manuale, tre fasi, rumore cuscinetti, vite senza fine. Ricambio: Motore 30kW 400V B3 3000rpm 50Hz." },
     { "id":"Q_CF_111", "type":"END", "title":"Diagnosi: Possibile cortocircuito nel motore, cablaggio o dispositivo di accensione. Test d’isolamento, controlli cablaggio e avviamento." },
 

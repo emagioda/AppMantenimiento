@@ -15,9 +15,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.emagioda.myapp.R
 import com.emagioda.myapp.di.ServiceLocator
 import com.emagioda.myapp.domain.model.NodeType
+import com.emagioda.myapp.domain.model.QuestionMode
 import com.emagioda.myapp.presentation.viewmodel.DiagnosticViewModel
 import androidx.compose.ui.platform.LocalContext
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,6 +73,10 @@ fun DiagnosticScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 when (node.type) {
+
+                    //----------------------------------------------------------------------
+                    //   PREGUNTAS
+                    //----------------------------------------------------------------------
                     NodeType.QUESTION -> {
                         Text(
                             text = node.title,
@@ -86,22 +90,38 @@ fun DiagnosticScreen(
                                 textAlign = TextAlign.Center
                             )
                         }
+
                         Spacer(Modifier.height(12.dp))
-                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Button(onClick = vm::answerYes) {
-                                Text(stringResource(R.string.diagnostic_yes))
+
+                        when (node.mode) {
+
+                            QuestionMode.CONTINUE_ONLY -> {
+                                Button(onClick = vm::answerYes) {
+                                    Text("Continua")
+                                }
                             }
-                            OutlinedButton(
-                                onClick = vm::answerNo,
-                                colors = ButtonDefaults.outlinedButtonColors(
-                                    contentColor = MaterialTheme.colorScheme.onSurface
-                                )
-                            ) {
-                                Text(stringResource(R.string.diagnostic_no))
+
+                            QuestionMode.YES_NO -> {
+                                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                    Button(onClick = vm::answerYes) {
+                                        Text(stringResource(R.string.diagnostic_yes))
+                                    }
+                                    OutlinedButton(
+                                        onClick = vm::answerNo,
+                                        colors = ButtonDefaults.outlinedButtonColors(
+                                            contentColor = MaterialTheme.colorScheme.onSurface
+                                        )
+                                    ) {
+                                        Text(stringResource(R.string.diagnostic_no))
+                                    }
+                                }
                             }
                         }
                     }
 
+                    //----------------------------------------------------------------------
+                    //   END
+                    //----------------------------------------------------------------------
                     NodeType.END -> {
                         Text(
                             text = node.title,
@@ -117,7 +137,7 @@ fun DiagnosticScreen(
                             )
                         }
 
-                        // Si hay repuestos sugeridos
+                        // Repuestos sugeridos
                         node.parts?.takeIf { it.isNotEmpty() }?.let { parts ->
                             Spacer(Modifier.height(16.dp))
                             Text(
@@ -128,7 +148,6 @@ fun DiagnosticScreen(
                             Spacer(Modifier.height(8.dp))
                             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                 parts.forEach { p ->
-                                    // Render mínimo: nombre por ID y cantidad; la UI puede resolverse contra catálogo luego
                                     OutlinedCard {
                                         Column(Modifier.padding(12.dp)) {
                                             Text("ID: ${p.id}", style = MaterialTheme.typography.bodyLarge)
@@ -148,7 +167,6 @@ fun DiagnosticScreen(
 
                         Spacer(Modifier.height(16.dp))
 
-                        // Atajo a contactos: siempre disponible al finalizar
                         OutlinedButton(
                             onClick = onOpenTechnicians,
                             colors = ButtonDefaults.outlinedButtonColors(
@@ -166,7 +184,6 @@ fun DiagnosticScreen(
                             Text(stringResource(R.string.diagnostic_home))
                         }
                     }
-
                 }
             }
         }

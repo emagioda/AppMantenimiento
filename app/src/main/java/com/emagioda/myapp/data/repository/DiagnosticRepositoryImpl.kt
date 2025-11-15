@@ -15,19 +15,33 @@ class DiagnosticRepositoryImpl(
 
         val raw = ds.readTemplateRaw(mapping.templateId)
 
-        require(raw.nodes.any { it.id == raw.root }) { "Template ${raw.templateId}: root '${raw.root}' no existe" }
+        require(raw.nodes.any { it.id == raw.root }) {
+            "Template ${raw.templateId}: root '${raw.root}' no existe"
+        }
+
         raw.nodes.filter { it.type == "QUESTION" }.forEach { n ->
-            require(!n.yes.isNullOrBlank() && !n.no.isNullOrBlank()) { "Nodo ${n.id}: QUESTION sin yes/no" }
+            require(!n.yes.isNullOrBlank()) { "Nodo ${n.id}: QUESTION sin yes" }
+            // IMPORTANTE: ahora permitimos no tener "no" para CONTINUE_ONLY
+            // allow missing "no" when mode == CONTINUE_ONLY
         }
 
         val nodes = raw.nodes.map { rn ->
+
+            val nodeType = when (rn.type) {
+                "QUESTION" -> NodeType.QUESTION
+                "END" -> NodeType.END
+                else -> error("Tipo de nodo desconocido: ${rn.type}")
+            }
+
+            val questionMode = when (rn.mode?.uppercase()) {
+                "CONTINUE_ONLY" -> QuestionMode.CONTINUE_ONLY
+                "YES_NO", null -> QuestionMode.YES_NO
+                else -> error("QuestionMode desconocido: ${rn.mode}")
+            }
+
             DiagnosticNode(
                 id = rn.id,
-                type = when (rn.type) {
-                    "QUESTION" -> NodeType.QUESTION
-                    "END" -> NodeType.END
-                    else -> error("Tipo de nodo desconocido: ${rn.type}")
-                },
+                type = nodeType,
                 title = rn.title,
                 description = rn.description,
                 yes = rn.yes,
@@ -40,10 +54,12 @@ class DiagnosticRepositoryImpl(
                     null -> null
                     else -> error("EndResult desconocido: ${rn.result}")
                 },
-                parts = rn.parts?.map { pr -> PartRef(pr.id, pr.qty, pr.note) }
+                parts = rn.parts?.map { pr -> PartRef(pr.id, pr.qty, pr.note) },
+
+                // NUEVO: modo de la pregunta
+                mode = questionMode
             )
         }
-
 
         return DiagnosticTree(
             templateId = raw.templateId,
