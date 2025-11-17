@@ -1,8 +1,6 @@
 package com.emagioda.myapp.presentation.screen.home
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -16,18 +14,12 @@ import com.emagioda.myapp.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    onNavigateToScanner: () -> Unit = {},
-    onNavigateToSettings: () -> Unit = {}
+    onNavigateToScanner: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.home_title)) },
-                actions = {
-                    IconButton(onClick = onNavigateToSettings) {
-                        Icon(Icons.Filled.Settings, contentDescription = stringResource(R.string.home_settings_cd))
-                    }
-                }
+                title = { Text(stringResource(R.string.home_title)) }
             )
         }
     ) { inner ->
@@ -52,7 +44,7 @@ fun HomeScreen(
 @Composable
 private fun HomeHeader() {
     Text(
-        text = "Scansiona il codice QR e ti guideremo passo dopo passo per risolvere il problema!",
+        text = stringResource(R.string.home_header),
         color = MaterialTheme.colorScheme.onSurface,
         fontSize = 24.sp,
         lineHeight = 32.sp,

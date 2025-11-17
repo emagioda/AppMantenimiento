@@ -120,7 +120,7 @@ private fun QuestionContent(
         when (node.mode) {
             QuestionMode.CONTINUE_ONLY -> {
                 Button(onClick = vm::answerYes) {
-                    Text("Continua")
+                    Text(stringResource(R.string.diagnostic_yes))
                 }
             }
 
@@ -240,7 +240,7 @@ private fun SuggestCard(text: String) {
     ) {
         Column(Modifier.padding(16.dp)) {
             Text(
-                text = "Suggerimenti",
+                text = stringResource(R.string.diagnostic_suggestions_title),
                 style = MaterialTheme.typography.titleMedium
             )
             Spacer(Modifier.height(12.dp))
@@ -268,7 +268,7 @@ private fun PartCardExpandable(parts: List<PartRefResolved>) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Piezas de recambio",
+                    text = stringResource(R.string.diagnostic_parts_title),
                     style = MaterialTheme.typography.titleMedium
                 )
                 Icon(
@@ -285,11 +285,13 @@ private fun PartCardExpandable(parts: List<PartRefResolved>) {
                         text = ref.detail.product,
                         style = MaterialTheme.typography.titleSmall
                     )
-                    ref.qty?.let { Text("Cantidad: $it") }
-                    ref.detail.code?.let { Text("Código: $it") }
-                    ref.detail.features?.let { Text("Características: $it") }
-                    ref.detail.supplier?.let { Text("Proveedor: $it") }
-                    ref.detail.technicalContacts?.let { Text("Contacto técnico: $it") }
+                    ref.qty?.let { Text(stringResource(R.string.diagnostic_part_qty_value, it)) }
+                    ref.detail.code?.let { Text(stringResource(R.string.diagnostic_part_code_value, it)) }
+                    ref.detail.features?.let { Text(stringResource(R.string.diagnostic_part_features_value, it)) }
+                    ref.detail.supplier?.let { Text(stringResource(R.string.diagnostic_part_supplier_value, it)) }
+                    ref.detail.technicalContacts?.let {
+                        Text(stringResource(R.string.diagnostic_part_technical_contact_value, it))
+                    }
 
                     Spacer(Modifier.height(12.dp))
 
