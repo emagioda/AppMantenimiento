@@ -9,77 +9,109 @@ class DiagnosticRepositoryImpl(
 ) : DiagnosticRepository {
 
     override fun getTreeForMachine(machineId: String): DiagnosticTree {
+        // 1) Buscar máquina -> template
+        val machinesIndex = ds.readMachinesIndex()
+        val machine = machinesIndex.machines.firstOrNull { it.id == machineId }
+            ?: error("Machine not found for id=$machineId")
 
-        // Índice de máquinas
-        val index = ds.readMachinesIndex()
-        val mapping = index.machines.firstOrNull { it.id == machineId }
-            ?: error("MachineId no mapeado: $machineId")
+        // 2) Cargar árbol crudo + catálogo de piezas
+        val rawTree = ds.readTemplateRaw(machine.templateId)
+        val partsCatalog = ds.readPartsCatalog()
 
-        // Árbol crudo
-        val raw = ds.readTemplateRaw(mapping.templateId)
+        // 3) Precalcular piezas por nodo, usando nodeRefs del catálogo
+        val partsByNodeId = buildPartsByNodeId(partsCatalog)
 
-        // Catálogo de repuestos
-        val catalog = ds.readPartsCatalog().parts.associateBy { it.id }
-
-        // Mapear nodos
-        val nodes = raw.nodes.map { rn ->
-
-            val nodeType = when (rn.type) {
+        // 4) Mapear nodos crudos -> nodos de dominio
+        val nodes = rawTree.nodes.map { raw ->
+            val type = when (raw.type.uppercase()) {
                 "QUESTION" -> NodeType.QUESTION
                 "END" -> NodeType.END
-                else -> error("Tipo de nodo desconocido: ${rn.type}")
+                else -> NodeType.QUESTION
             }
 
-            val questionMode = when (rn.mode?.uppercase()) {
+            val result = raw.result?.let { mapResult(it) }
+
+            val mode = when (raw.mode?.uppercase()) {
                 "CONTINUE_ONLY" -> QuestionMode.CONTINUE_ONLY
                 "YES_NO", null -> QuestionMode.YES_NO
-                else -> error("QuestionMode desconocido: ${rn.mode}")
+                else -> QuestionMode.YES_NO
             }
 
-            val resolvedParts: List<PartRefResolved>? = rn.parts?.map { rawPart ->
-                val detailRaw = catalog[rawPart.id]
-                    ?: error("Repuesto no encontrado en catálogo: ${rawPart.id}")
+            // Piezas desde catálogo (nodeRefs)
+            val catalogParts = partsByNodeId[raw.id].orEmpty()
+
+            // Piezas definidas inline en el propio nodo (si algún día las usas)
+            val inlineParts = raw.parts.orEmpty().mapNotNull { ref ->
+                val detailRaw = partsCatalog.parts.firstOrNull { it.id == ref.id }
+                    ?: return@mapNotNull null
 
                 PartRefResolved(
-                    detail = PartDetail(
-                        id = detailRaw.id,
-                        product = detailRaw.product,
-                        code = detailRaw.code,
-                        features = detailRaw.features,
-                        supplier = detailRaw.supplier,
-                        technicalContacts = detailRaw.technicalContacts,
-                        imageResName = detailRaw.imageResName
-                    ),
-                    qty = rawPart.qty
+                    detail = detailRaw.toDomain(),
+                    qty = ref.qty
                 )
             }
 
+            val combinedParts = (catalogParts + inlineParts).takeIf { it.isNotEmpty() }
+
             DiagnosticNode(
-                id = rn.id,
-                type = nodeType,
-                title = rn.title,
-                description = rn.description,
-                yes = rn.yes,
-                no = rn.no,
-                providersShortcut = rn.providersShortcut,
-                result = when (rn.result?.uppercase()) {
-                    "RESOLVED" -> EndResult.RESOLVED
-                    "NO_ISSUE" -> EndResult.NO_ISSUE
-                    "COMPONENT_FAULT" -> EndResult.COMPONENT_FAULT
-                    null -> null
-                    else -> error("EndResult desconocido: ${rn.result}")
-                },
-                parts = resolvedParts,
-                mode = questionMode
+                id = raw.id,
+                type = type,
+                title = raw.title,
+                description = raw.description,
+                yes = raw.yes,
+                no = raw.no,
+                providersShortcut = raw.providersShortcut,
+                result = result,
+                parts = combinedParts,
+                mode = mode
             )
         }
 
         return DiagnosticTree(
-            templateId = raw.templateId,
-            version = raw.version,
-            locale = raw.locale,
-            root = raw.root,
+            templateId = rawTree.templateId,
+            version = rawTree.version,
+            locale = rawTree.locale,
+            root = rawTree.root,
             nodes = nodes
         )
     }
+
+    // ---------- Helpers ----------
+
+    private fun AssetsDiagnosticDataSource.PartDetailRaw.toDomain(): PartDetail =
+        PartDetail(
+            id = id,
+            product = product,
+            code = code,
+            features = features,
+            supplier = supplier,
+            technicalContacts = technicalContacts,
+            imageResName = imageResName
+        )
+
+    private fun buildPartsByNodeId(
+        catalog: AssetsDiagnosticDataSource.PartsCatalog
+    ): Map<String, List<PartRefResolved>> {
+        val map = mutableMapOf<String, MutableList<PartRefResolved>>()
+
+        catalog.parts.forEach { raw ->
+            val detail = raw.toDomain()
+            // nodeRefs no tiene cantidad, así que la dejamos null (no se muestra "Cantidad")
+            val ref = PartRefResolved(detail = detail, qty = null)
+
+            raw.nodeRefs.forEach { nodeId ->
+                map.getOrPut(nodeId) { mutableListOf() }.add(ref)
+            }
+        }
+
+        return map
+    }
+
+    private fun mapResult(raw: String): EndResult? =
+        when (raw.uppercase()) {
+            "RESOLVED" -> EndResult.RESOLVED
+            "NO_ISSUE" -> EndResult.NO_ISSUE
+            "COMPONENT_FAULT" -> EndResult.COMPONENT_FAULT
+            else -> null
+        }
 }
