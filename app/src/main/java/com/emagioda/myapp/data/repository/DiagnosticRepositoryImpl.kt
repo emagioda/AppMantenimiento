@@ -9,22 +9,19 @@ class DiagnosticRepositoryImpl(
 ) : DiagnosticRepository {
 
     override fun getTreeForMachine(machineId: String): DiagnosticTree {
+
+        // Índice de máquinas
         val index = ds.readMachinesIndex()
         val mapping = index.machines.firstOrNull { it.id == machineId }
-            ?: error("MachineId no mapeado en machines.json: $machineId")
+            ?: error("MachineId no mapeado: $machineId")
 
+        // Árbol crudo
         val raw = ds.readTemplateRaw(mapping.templateId)
 
-        require(raw.nodes.any { it.id == raw.root }) {
-            "Template ${raw.templateId}: root '${raw.root}' no existe"
-        }
+        // Catálogo de repuestos
+        val catalog = ds.readPartsCatalog().parts.associateBy { it.id }
 
-        raw.nodes.filter { it.type == "QUESTION" }.forEach { n ->
-            require(!n.yes.isNullOrBlank()) { "Nodo ${n.id}: QUESTION sin yes" }
-            // IMPORTANTE: ahora permitimos no tener "no" para CONTINUE_ONLY
-            // allow missing "no" when mode == CONTINUE_ONLY
-        }
-
+        // Mapear nodos
         val nodes = raw.nodes.map { rn ->
 
             val nodeType = when (rn.type) {
@@ -37,6 +34,24 @@ class DiagnosticRepositoryImpl(
                 "CONTINUE_ONLY" -> QuestionMode.CONTINUE_ONLY
                 "YES_NO", null -> QuestionMode.YES_NO
                 else -> error("QuestionMode desconocido: ${rn.mode}")
+            }
+
+            val resolvedParts: List<PartRefResolved>? = rn.parts?.map { rawPart ->
+                val detailRaw = catalog[rawPart.id]
+                    ?: error("Repuesto no encontrado en catálogo: ${rawPart.id}")
+
+                PartRefResolved(
+                    detail = PartDetail(
+                        id = detailRaw.id,
+                        product = detailRaw.product,
+                        code = detailRaw.code,
+                        features = detailRaw.features,
+                        supplier = detailRaw.supplier,
+                        technicalContacts = detailRaw.technicalContacts,
+                        imageResName = detailRaw.imageResName
+                    ),
+                    qty = rawPart.qty
+                )
             }
 
             DiagnosticNode(
@@ -54,9 +69,7 @@ class DiagnosticRepositoryImpl(
                     null -> null
                     else -> error("EndResult desconocido: ${rn.result}")
                 },
-                parts = rn.parts?.map { pr -> PartRef(pr.id, pr.qty, pr.note) },
-
-                // NUEVO: modo de la pregunta
+                parts = resolvedParts,
                 mode = questionMode
             )
         }
