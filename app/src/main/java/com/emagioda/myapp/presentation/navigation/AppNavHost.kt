@@ -20,15 +20,23 @@ import androidx.navigation.compose.rememberNavController
 import com.emagioda.myapp.presentation.screen.contacts.ContactsScreen
 import com.emagioda.myapp.presentation.screen.diagnostic.DiagnosticScreen
 import com.emagioda.myapp.presentation.screen.home.HomeScreen
-import com.emagioda.myapp.presentation.screen.settings.SettingsScreen
+import com.emagioda.myapp.presentation.screen.machine.MachineDetailScreen
 import com.emagioda.myapp.presentation.screen.scanner.ScannerScreen
+import com.emagioda.myapp.presentation.screen.settings.SettingsScreen
 
 sealed class Route(val route: String) {
     data object Home : Route("home")
     data object Scanner : Route("scanner")
+
+    // NUEVA RUTA: Detalle de máquina
+    data object MachineDetail : Route("machineDetail/{machineId}") {
+        fun createRoute(machineId: String) = "machineDetail/$machineId"
+    }
+
     data object Diagnostic : Route("diagnostic/{machineId}") {
         fun createRoute(machineId: String) = "diagnostic/$machineId"
     }
+
     data object Contacts : Route("contacts")
     data object ContactsTechnicians : Route("contacts/technicians")
     data object ContactsProviders : Route("contacts/providers")
@@ -58,7 +66,9 @@ fun AppNavHost(
     NavHost(
         navController = navController,
         startDestination = startDestination,
-        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
     ) {
         // HOME
         composable(
@@ -74,8 +84,7 @@ fun AppNavHost(
             )
         }
 
-
-        // SCANNER
+        // SCANNER → ahora navega a MachineDetail
         composable(
             route = Route.Scanner.route,
             enterTransition = slideInLeft,
@@ -86,12 +95,31 @@ fun AppNavHost(
             ScannerScreen(
                 onScanned = { machineId ->
                     val safe = Uri.encode(machineId)
+                    navController.navigate(Route.MachineDetail.createRoute(safe))
+                }
+            )
+        }
+
+        // NUEVO: DETALLE DE MÁQUINA
+        composable(
+            route = Route.MachineDetail.route,
+            enterTransition = slideInLeft,
+            exitTransition = slideOutLeft,
+            popEnterTransition = slideInRight,
+            popExitTransition = slideOutRight
+        ) { backStackEntry ->
+            val machineId = Uri.decode(backStackEntry.arguments?.getString("machineId") ?: "N/A")
+            MachineDetailScreen(
+                machineId = machineId,
+                onBack = { navController.popBackStack() },
+                onStartDiagnostic = { id ->
+                    val safe = Uri.encode(id)
                     navController.navigate(Route.Diagnostic.createRoute(safe))
                 }
             )
         }
 
-        // DIAGNÓSTICO
+        // DIAGNÓSTICO (igual que antes)
         composable(
             route = Route.Diagnostic.route,
             enterTransition = slideInLeft,

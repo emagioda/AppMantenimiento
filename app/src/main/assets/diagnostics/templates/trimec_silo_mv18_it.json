@@ -8,102 +8,307 @@
 
     { "id":"Q_AA", "type":"QUESTION", "title":"La spia \"Presenza di Tensione\" è accesa? (Quadro Elettrico)", "yes":"Q_AB", "no":"Q_AA_0" },
     { "id":"Q_AA_0", "type":"QUESTION", "title":"Sezionatore principale azionato?", "yes":"Q_AA_01", "no":"Q_AA_00" },
-    { "id":"Q_AA_00", "type":"END", "title":"Azionare il sezionatore. Verificare il funzionamento" },
-    { "id":"Q_AA_01", "type":"END", "title":"Diagnosi: Guasto nell'alimentazione principale. Suggerimenti: Controllare che l'alimentazione principale non sia scattata. Contattare tecnici specializzati." },
+
+    { "id":"Q_AA_00", "type":"END", "title":"Azionare il sezionatore.\n Verificare il funzionamento", "result":"NO_ISSUE" },
+
+    { "id":"Q_AA_01", "type":"END",
+      "title":"Guasto nell'alimentazione principale.",
+      "desciption": "Controllare che l'alimentazione principale non sia scattata. \nContattare tecnici specializzati.",
+      "result":"NO_ISSUE"
+    },
 
     { "id":"Q_AB", "type":"QUESTION", "title":"Ha premuto il pulsante \"reset ausiliari\"?", "yes":"Q_AC", "no":"Q_AB_0" },
-    { "id":"Q_AB_0", "type":"END", "title":"Premere il pulsante e verificare il funzionamento del sistema" },
+
+    { "id":"Q_AB_0", "type":"END", "title":"Premere il pulsante e verificare il funzionamento del sistema", "result":"NO_ISSUE" },
 
     { "id":"Q_AC", "type":"QUESTION", "title":"La spia \"reset Ausiliari\" è accesa?", "yes":"Q_AD", "no":"Q_AC_0" },
+
     { "id":"Q_AC_0", "type":"QUESTION", "title":"La spia \"porta aperta\" è accesa?", "yes":"Q_AC_01", "no":"Q_AC_00" },
+
     { "id":"Q_AC_00", "type":"QUESTION", "title":"Pulsante Emergenza o Sportelli di Ispezione aperti/premuti?", "yes":"Q_AC_001", "no":"Q_AC_000" },
-    { "id":"Q_AC_01", "type":"END", "title":"Diagnosi:\nLa coclea é bloccato perché una o piú sportelli sono aperto.\nSensore finedicorsa danneggiato\nSuggerimenti:\n- Controllare che tutte gli sportelli siano chiusi.\n- Controllare che i sensori siano funzionanti" },
-    { "id":"Q_AC_001", "type":"END", "title":"Disattivare il pulsante di Emergenza e/o chiudere gli sportelli. Verificare il funzionamento." },
+
+    { "id":"Q_AC_01", "type":"END", "title":"La coclea é bloccato perché una o piú sportelli sono aperto.\nSensore finedicorsa danneggiato.",
+      "description": "- Controllare che tutte gli sportelli siano chiusi.\n- Controllare che i sensori siano funzionanti",
+      "result":"NO_ISSUE"
+    },
+
+    { "id":"Q_AC_001", "type":"END", "title":"Disattivare il pulsante di Emergenza e/o chiudere gli sportelli.\nVerificare il funzionamento.",
+      "result":"NO_ISSUE"
+    },
+
     { "id":"Q_AC_000", "type":"QUESTION", "title":"Ha controllato che sia il pulsante di arresto di emergenza che i sensori di apertura degli sportelli funzionino correttamente?", "yes":"Q_AC_0001", "no":"Q_AC_0000" },
-    { "id":"Q_AC_0001", "type":"END", "title":"Diagnosi: Problemi al dispositivo elettronico o al relè di sicurezza. Suggerimenti: Sostituire il modulo e chiamare un tecnico specializzato. Ricambio: Pizzato CS AR-05V024." },
-    { "id":"Q_AC_0000", "type":"END", "title":"Diagnosi: Problemi nel pulsante d'emergenza o nei sensori degli sportelli. Suggerimenti: Verificare continuità del pulsante e dei sensori. Chiamare tecnici specializzati." },
+
+    { "id":"Q_AC_0001", "type":"END", "title":"Problemi al dispositivo elettronico o al relè di sicurezza.",
+      "description":"- Procedere alla sostituzione.\n - Chiamare un tecnico specializzato",
+      "result":"COMPONENT_FAULT"
+    },
+
+    { "id":"Q_AC_0000", "type":"END", "title":"Problemi nel pulsante d'emergenzia oppure nei sensori degli sportelli d'ispezione.",
+      "description": "-Verificare il corretto funzionamento sia del pulsante di arresto di emergenza, verificando la continuità del contatto, sia dei sensori dello sportello di ispezione, misurando la continuità dall'inizio alla fine del circuito.\n-Chiamare tecnici specializzati",
+      "result":"NO_ISSUE"
+    },
 
     { "id":"Q_AD", "type":"QUESTION", "title":"Ha acceso il mixer?", "yes":"Q_AE", "no":"Q_AD_0" },
-    { "id":"Q_AD_0", "type":"END", "title":"Diagnosi: La coclea di ingresso del materiale è bloccata all'avvio del miscelatore. Suggerimento: Avviare il miscelatore e poi riavviare la coclea." },
+    { "id":"Q_AD_0", "type":"END", "title":"Diagnosi: La coclea di ingresso del materiale è bloccata all'avvio del miscelatore.",
+      "description": "Avviare il miscelatore e poi riavviare la coclea.",
+      "result":"NO_ISSUE"
+    },
 
     { "id":"Q_AE", "type":"QUESTION", "title":"La spia del \"livello massimo\" del mixer è accesa?", "yes":"Q_AF", "no":"Q_AE_0" },
 
     { "id":"Q_AF", "type":"QUESTION", "title":"I chili indicati sulla bilancia corrispondono al carico massimo del silo?", "yes":"Q_AF_1", "no":"Q_AF_0" },
-    { "id":"Q_AF_1", "type":"END", "title":"Diagnosi: Sistema di sicurezza carico silo attivato. Suggerimento: Svuotare il silo per poter accendere la coclea." },
-    { "id":"Q_AF_0", "type":"END", "title":"Diagnosi: Guasto al sensore di livello massimo. Suggerimenti: Verificare che il sensore non sia ostruito e funzioni correttamente. Ricambio: Indicatore rotativo PFG05 (IP65, -20…+70°C)." },
+
+    { "id":"Q_AF_1", "type":"END", "title":"Sistema di sicurezza per il carico del silo attivato, il silo è al livello massimo e la coclea di carico rimarrà bloccata finché il livello del silo non scende.",
+      "description":"Svuotare il silos per potere accendere la coclea",
+      "result":"NO_ISSUE"
+    },
+
+    { "id":"Q_AF_0", "type":"END", "title":"Guasto al sensore di livello massimo!",
+      "description":"Verificare che il sensore di livello non sia ostruito e funzioni correttamente.",
+      "result":"COMPONENT_FAULT"
+    },
 
     { "id":"Q_AE_0", "type":"QUESTION", "title":"La spia \"BloccoTermico\" nel Quadro Elettrico è accesa?", "yes":"Q_AE_01", "no":"Q_AE_00" },
-    { "id":"Q_AE_00", "type":"END", "title":"Diagnosi: Problemi nel circuito controllo. Suggerimento: Controllare dispositivi di accensione e interblocco." },
+
+    { "id":"Q_AE_00", "type":"END",
+      "title":"Problemi nel circuito controllo",
+      "description":"- Controllare dispositivi accensione e interblocco.",
+      "result":"NO_ISSUE"
+    },
+
     { "id":"Q_AE_01", "type":"QUESTION", "title":"L'interruttore Salvamotore della Tramoggia è scattato (pulsante premuto)?", "yes":"Q_AE_011", "no":"Q_AE_010" },
-    { "id":"Q_AE_010", "type":"END", "title":"Diagnosi: Guasto complesso relè termico/cablaggio. Suggerimenti: Verificare contatti ausiliari d'interblocco e dispositivi di avviamento/protezione. Contattare tecnici specializzati." },
-    { "id":"Q_AE_011", "type":"QUESTION", "title":"SOLUZIONE SEMPLICE: \nProvare a riarmare il Salvamotore.", "yes":"Q_AE_0111", "no":"***" },
+
+    { "id":"Q_AE_010", "type":"END",
+      "title":"Guasto complesso relè termico/cablaggio.",
+      "description":"- Controllare che i contatti ausiliari d'interblocco funzionano correttamente.\n- Controllare che i dispositivi di avviamento e protezione funzionano correttamente. \nContattare \"Tecnici Specializzati\"",
+      "result":"NO_ISSUE"
+    },
+
+    { "id":"Q_AE_011", "type":"QUESTION",
+      "title":"SOLUZIONE SEMPLICE: \nProvare a riarmare il Salvamotore.",
+      "yes":"Q_AE_0111", "no":"***", "mode":"CONTINUE_ONLY"
+    },
+
     { "id":"Q_AE_0111", "type":"QUESTION", "title":"Una volta reinserito, l'interruttore di protezione del motore è scattato di nuovo?", "yes":"Q_AE_01111", "no":"Q_AE_01110" },
+
     { "id":"Q_AE_01110", "type":"QUESTION", "title":"Il motore gira?", "yes":"Q_AE_011101", "no":"Q_AE_011100" },
+
     { "id":"Q_AE_011100", "type":"QUESTION", "title":"La corrente arriva ai terminali del motore?", "yes":"Q_AE_0111001", "no":"Q_AE_0111000" },
-    { "id":"Q_AE_0111000", "type":"END", "title":"Diagnosi: Problemi con l'accensione del motore o con il cablaggio. Suggerimenti: Controllare tensione in uscita, terminali sul quadro, cablaggio fino al motore." },
-    { "id":"Q_AE_0111001", "type":"END", "title":"Diagnosi: Motore bloccato. Suggerimento: Controllare che la coclea non sia intasata." },
+
+    { "id":"Q_AE_0111000", "type":"END",
+      "title":"Problemi con l'accensione del motore o con il cablaggio.",
+      "description":"- Controllare la tensione in uscita dall'accensione.\n- Controllare i terminali di uscita sul quadro elettrico.\n- Verificare che il cablaggio dal quadro elettrico al motore non sia interrotto.",
+      "result":"NO_ISSUE"
+    },
+
+    { "id":"Q_AE_0111001", "type":"END",
+      "title":"Motore bloccato",
+      "description":"Sugerrimenti:\nControllare che la coclea non sia intasata",
+      "result":"NO_ISSUE"
+    },
+
     { "id":"Q_AE_011101", "type":"QUESTION", "title":"Il riduttore gira?", "yes":"Q_AE_0111011", "no":"Q_AE_0111010" },
-    { "id":"Q_AE_0111010", "type":"END", "title":"Diagnosi: Problema nel riduttore o nel giunto tra motore e riduttore. Suggerimento: Controllare/sostituire riduttore e giunto. Ricambio: Riduttore W75 i=7 PAM 90." },
-    { "id":"Q_AE_0111011", "type":"END", "title":"Diagnosi: Verificare albero di trasmissione tra riduttore e coclea." },
-    { "id":"Q_AE_01111", "type":"QUESTION", "title":"Il guardamotore scatta all'istante?", "yes":"Q_AE_011110", "no":"Q_AE_011111" },
-    { "id":"Q_AE_011110", "type":"END", "title":"Diagnosi: Motore bloccato. Suggerimenti: Verificare rotazione manuale, presenza delle tre fasi, riduttore, vite senza fine, boccola." },
-    { "id":"Q_AE_011111", "type":"END", "title":"Diagnosi: Possibile cortocircuito nel motore/cablaggio/accensione. Suggerimenti: Prova d'isolamento, controllare cablaggio, verificare dispositivo di accensione. Ricambio: Motore 1,5kW 400V B5 3000rpm 50Hz." },
+
+    { "id":"Q_AE_0111010", "type":"END",
+      "title":"Problmea nel riduttore oppure tra il giunto del motore e il riduttore",
+      "description":"Controllare/sostituire riduttore\nControllare/sostituire giunto tra motore e riduttore",
+      "result":"COMPONENT_FAULT"
+    },
+
+    { "id":"Q_AE_0111011", "type":"END",
+      "title":"Verificare albero di trasmissione tra il riduttore e la coclea.",
+      "result":"NO_ISSUE"
+    },
+
+    { "id":"Q_AE_01111", "type":"QUESTION", "title":"Il guardamotore scatta all'istante?", "yes":"Q_AE_011111", "no":"Q_AE_011110" },
+
+    { "id":"Q_AE_011110", "type":"END",
+      "title":"Motore bloccato.",
+      "description":"- Verificare che il motore giri manualmente.\n- Verificare che tutte e tre le fasi raggiungano il motore.\n- Verificare che il riduttore non sia danneggiato.\n- Verificare che la vite senza fine non sia bloccata.\n- Verificare che la boccola della vite senza fine non sia usurata.",
+      "result":"NO_ISSUE"
+    },
+
+    { "id":"Q_AE_011111", "type":"END",
+      "title":"Possibile cortocircuito nel motore, nel cablaggio o nel dispositivo di accensione.",
+      "description":"- Eseguire test di resistenza di isolamento sul motore.\n- Controllare il cablaggio del motore.\n- Verificare che il dispositivo di accensione non sia difettoso.",
+      "result":"COMPONENT_FAULT"
+    },
 
 
     { "id":"Q_B", "type":"QUESTION", "title":"Lo scarico del silo funziona?", "yes":"Q_C", "no":"Q_BA" },
+
     { "id":"Q_BA", "type":"QUESTION", "title":"La bilancia indica che il silo contiene granuli?", "yes":"Q_BB", "no":"Q_BA_0" },
+
     { "id":"Q_BA_0", "type":"QUESTION", "title":"Avete controllato fisicamente la presenza di materiale tramite i portelli di ispezione?", "yes":"Q_BA_01", "no":"Q_BA_00" },
-    { "id":"Q_BA_00", "type":"END", "title":"Suggerimento: Verificare la presenza di materiale aprendo il portello sul fondo del silo." },
-    { "id":"Q_BA_01", "type":"END", "title":"Problemi: Il controller della bilancia non funziona correttamente. Azioni: Reimpostare, ritarare, verificare con peso standard, sostituire controller." },
+
+    { "id":"Q_BA_00", "type":"END",
+      "title":"Verificare la presenza di materiale aprendo il portello sul fondo del silo",
+      "result":"NO_ISSUE"
+    },
+
+    { "id":"Q_BA_01", "type":"END",
+      "title":"Il controller della bilancia non funziona correttamente.",
+      "description":"Suggerimenti:\n- Reimpostare il controller.\n- Tarare nuovamente il controller.\n- Verificare che la bilancia pesi correttamente utilizzando un peso standard.\n- Sostituire il controller della bilancia.",
+      "result":"NO_ISSUE"
+    },
 
     { "id":"Q_BB", "type":"QUESTION", "title":"Ha attivato la modalità di scarico del silo?", "yes":"Q_BC", "no":"Q_BB_0" },
-    { "id":"Q_BB_0", "type":"END", "title":"Attivare la modalità di scarico del silo e verificare il corretto funzionamento del sistema di scarico." },
+
+    { "id":"Q_BB_0", "type":"END",
+      "title":"Attivare la modalità di scarico del silo e verificare il corretto funzionamento del sistema di scarico.",
+      "result":"NO_ISSUE"
+    },
 
     { "id":"Q_BC", "type":"QUESTION", "title":"La valvola di scarico è aperta?", "yes":"Q_BC_1", "no":"Q_BC_0" },
-    { "id":"Q_BC_0", "type":"END", "title":"Diagnosi: Problemi software o hardware con il sistema di scarico. Verificare selettore, segnale della bilancia all’elettrovalvola, bobina, aria compressa, pistone." },
-    { "id":"Q_BC_1", "type":"END", "title":"Diagnosi: Possibile ostruzione nel tubo, coclea usurata o silo vuoto. Azioni: Ispezione visiva, controllare usura coclea, verificare materiale." },
+
+    { "id":"Q_BC_0", "type":"END",
+      "title":"Problemi software o hardware con il sistema di scarico.\n\n",
+      "description":"Suggerimenti:\n- Verificare il corretto funzionamento del selettore di scarico.\n- Verificare che la bilancia invii il segnale di apertura all'elettrovalvola.\n- Verificare che la bobina dell'elettrovalvola non sia danneggiata.\n- Verificare che l'aria compressa raggiunga sia l'elettrovalvola che il pistone di apertura.\n- Verificare che il pistone non sia danneggiato (controllare le guarnizioni e le condizioni dell'albero).",
+      "result":"NO_ISSUE"
+    },
+
+    { "id":"Q_BC_1", "type":"END",
+      "title":"Possibile ostruzione nel tubo di scarico.\nCoclea del miscelatore molto usurata.\nSilo vuoto.",
+      "description":"Suggerimenti:\n- Ispezionare visivamente lo scarico del silo per assicurarsi che non sia ostruito.\n- Controllare l'usura della coclea.\n- Verificare che il silo contenga materiale.",
+      "result":"NO_ISSUE"
+    },
 
 
     { "id":"Q_C", "type":"QUESTION", "title":"Il miscelatore del silo principale funziona?", "yes":"Q_D", "no":"Q_CA" },
 
     { "id":"Q_CA", "type":"QUESTION", "title":"La spia \"Presenza di Tensione\" è accesa? (Quadro Elettrico)", "yes":"Q_CB", "no":"Q_CA_0" },
-    { "id":"Q_CA_0", "type":"QUESTION", "title":"Sezionatore principale azionato?", "yes":"Q_CB", "no":"Q_CA_00" },
-    { "id":"Q_CA_00", "type":"END", "title":"Azionare il sezionatore. Verificare il funzionamento." },
-    { "id":"Q_CA_01", "type":"END", "title":"Diagnosi: Guasto nell'alimentazione principale. Suggerimenti: Controllare alimentazione. Contattare tecnici." },
+
+    { "id":"Q_CA_0", "type":"QUESTION", "title":"Sezionatore principale azionato?", "yes":"Q_CA_01", "no":"Q_CA_00" },
+
+    { "id":"Q_CA_00", "type":"END",
+      "title":"Azionare il sezionatore.\nVerificare il funzioname",
+      "result":"NO_ISSUE"
+    },
+
+    { "id":"Q_CA_01", "type":"END",
+      "title":"Guasto nell'alimentazione principale.",
+      "description":"Suggerimenti:\n-Controllare che l'alimentazione principale non sia scattata\n- Contattare tecnici specializzati",
+      "result":"NO_ISSUE"
+    },
 
     { "id":"Q_CB", "type":"QUESTION", "title":"Ha premuto il pulsante \"reset ausiliari\"?", "yes":"Q_CC", "no":"Q_CB_0" },
-    { "id":"Q_CB_0", "type":"END", "title":"Premere il pulsante e verificare il funzionamento del sistema." },
+
+    { "id":"Q_CB_0", "type":"END",
+      "title":"Premere il pulsante e verificare il funzionamento del sistema.",
+      "result":"NO_ISSUE"
+    },
 
     { "id":"Q_CC", "type":"QUESTION", "title":"La spia \"reset Ausiliari\" è accesa?", "yes":"Q_CD", "no":"Q_CC_0" },
-    { "id":"Q_CC_0", "type":"QUESTION", "title":"La spia \"porta aperta\" è accesa?", "yes":"Q_CC_01", "no":"Q_CC_00" },
-    { "id":"Q_CC_01", "type":"END", "title":"Diagnosi:\nIl miscelatore é bloccato perché una o piú sportelli sono aperto.\nSensore finedicorsa danneggiato\nSuggerimenti:\n- Controllare che tutte gli sportelli siano chiusi.\n- Controllare che i sensori siano funzionanti" },
-    { "id":"Q_CC_00", "type":"QUESTION", "title":"Pulsante Emergenza o Sportelli di Ispezione aperti/premuti?", "yes":"Q_CC_001", "no":"Q_CC_000" },
-    { "id":"Q_CC_001", "type":"END", "title":"Disattivare il pulsante di Emergenza e/o chiudere gli sportelli. Verificare il funzionamento." },
-    { "id":"Q_CC_000", "type":"QUESTION", "title":"Ha controllato che pulsante d'emergenza e sensori degli sportelli funzionino correttamente?", "yes":"Q_CC_0001", "no":"Q_CC_0000" },
-    { "id":"Q_CC_0001", "type":"END", "title":"Diagnosi: Problemi al dispositivo elettronico o al relè di sicurezza. Sostituzione consigliata. Ricambio Pizzato CS AR-05V024." },
-    { "id":"Q_CC_0000", "type":"END", "title":"Diagnosi: Problemi nel pulsante d'emergenza o sensori. Verificare continuità. Chiamare tecnico." },
 
-    { "id":"Q_CD", "type":"QUESTION", "title":"La spia \"BloccoTermico\" nel Quadro Elettrico è accesa?", "yes":"Q_CD_0", "no":"Q_CE" },
-    { "id":"Q_CD_0", "type":"END", "title":"Diagnosi: Problemi nel circuito controllo. Controllare dispositivi accensione e interblocco." },
+    { "id":"Q_CC_0", "type":"QUESTION", "title":"La spia \"porta aperta\" è accesa?", "yes":"Q_CC_01", "no":"Q_CC_00" },
+
+    { "id":"Q_CC_01", "type":"END",
+      "title":"Il miscelatore é bloccato perché una o piú sportelli sono aperto.\nSensore finedicorsa danneggiato",
+      "description":"Suggerimenti:\n- Controllare che tutte gli sportelli siano chiusi.\n- Controllare che i sensori siano funzionanti",
+      "result":"NO_ISSUE"
+    },
+
+    { "id":"Q_CC_00", "type":"QUESTION", "title":"Pulsante Emergenza o Sportelli di Ispezione aperti/premuti?", "yes":"Q_CC_001", "no":"Q_CC_000" },
+
+    { "id":"Q_CC_001", "type":"END",
+      "title":"Disattivare il pulsante di Emergenza e/o chiudere gli sportelli. Verificare il funzionamento.",
+      "result":"NO_ISSUE"
+    },
+
+    { "id":"Q_CC_000", "type":"QUESTION", "title":"Ha controllato che pulsante d'emergenza e sensori degli sportelli funzionino correttamente?", "yes":"Q_CC_0001", "no":"Q_CC_0000" },
+
+    { "id":"Q_CC_0001", "type":"END",
+      "title":"Problemi al dispositivo elettronico o al relè di sicurezza.",
+      "description":"Suggerimenti\n-Procedere alla sostituzione.\n - Chiamare un tecnico specializzato.",
+      "result":"COMPONENT_FAULT"
+    },
+
+    { "id":"Q_CC_0000", "type":"END",
+      "title":"Problemi nel pulsante d'emergenzia oppure nei sensori degli sportelli d'ispezione.",
+      "description":"Suggerimenti:\n-Verificare il corretto funzionamento sia del pulsante di arresto di emergenza, verificando la continuità del contatto, sia dei sensori dello sportello di ispezione, misurando la continuità dall'inizio alla fine del circuito.\n-Chiamare tecnici specializzato",
+      "result":"NO_ISSUE"
+    },
+
+    { "id":"Q_CD", "type":"QUESTION", "title":"La spia \"BloccoTermico\" nel Quadro Elettrico è accesa?", "yes":"Q_CE", "no":"Q_CD_0" },
+
+    { "id":"Q_CD_0", "type":"END",
+      "title":"Problemi nel circuito controllo",
+      "description":"Suggerimento:\n- Controllare dispositivi accensione e interblocco.",
+      "result":"NO_ISSUE"
+    },
 
     { "id":"Q_CE", "type":"QUESTION", "title":"L'interruttore Salvamotore del miscelatore è scattato (pulsante premuto)?", "yes":"Q_CF", "no":"Q_CE_0" },
-    { "id":"Q_CE_0", "type":"END", "title":"Diagnosi: Guasto complesso relè termico/cablaggio. Verificare interblocchi e avviamento/protezione. Contattare tecnici." },
 
-    { "id":"Q_CF", "type":"QUESTION", "title":"SOLUZIONE SEMPLICE: Provare a riarmare il Salvamotore. L'interruttore scatta di nuovo dopo il riarmo?", "yes":"Q_CF_1", "no":"***" },
+    { "id":"Q_CE_0", "type":"END",
+      "title":"Guasto complesso relè termico/cablaggio.",
+      "description":"Suggerimenti:\n- Controllare che i contatti ausiliari d'interblocco funzionano correttamente.\n- Controllare che i dispositivi di avviamento e protezione funzionano correttamente. \nContattare \"Tecnici Specializzati\"",
+      "result":"NO_ISSUE"
+    },
+
+    { "id":"Q_CF", "type":"QUESTION",
+      "title":"SOLUZIONE SEMPLICE: Provare a riarmare il Salvamotore. L'interruttore scatta di nuovo dopo il riarmo?",
+      "yes":"Q_CF_1", "no":"***", "mode":"CONTINUE_ONLY"
+    },
+
     { "id":"Q_CF_1", "type":"QUESTION", "title":"Una volta reinserito, l'interruttore di protezione del motore è scattato di nuovo?", "yes":"Q_CF_11", "no":"Q_CF_10" },
-    { "id":"Q_CF_10", "type":"QUESTION", "title":"Il motore gira?", "yes":"Q_CF_101", "no":"Q_CF_100" },
-    { "id":"Q_CF_100", "type":"QUESTION", "title":"La corrente arriva ai terminali del motore?", "yes":"Q_CF_1001", "no":"Q_CF_1000" },
-    { "id":"Q_CF_1000", "type":"END", "title":"Diagnosi: Accensione/cablaggio. Verificare tensione in uscita, terminali quadro, continuità cablaggio. Tecnico consigliato." },
-    { "id":"Q_CF_1001", "type":"END", "title":"Diagnosi: Problemi interni al motore (bobine in corto). Azioni: Ascoltare ronzio, controllare terminali e continuità. Sostituire motore." },
-    { "id":"Q_CF_101", "type":"QUESTION", "title":"La coclea ruota all'interno del silo?", "yes":"Q_CF_1011", "no":"Q_CF_1010" },
-    { "id":"Q_CF_1010", "type":"QUESTION", "title":"Le cinghie tra il motore e il mixer sono tagliate/usurate?", "yes":"Q_CF_10101", "no":"Q_CF_10100" },
-    { "id":"Q_CF_10100", "type":"END", "title":"Diagnosi: Tensione cinghia/puleggia. Azioni: Regolare cinghie, verificare fissaggio e integrità pulegge." },
-    { "id":"Q_CF_10101", "type":"END", "title":"Diagnosi: Problemi nella trasmissione. Sostituire cinghie. Ricambio: 5× Cinghia SPB 5600." },
-    { "id":"Q_CF_1011", "type":"END", "title":"Diagnosi: Anello coclea gravemente usurato. Contattare il produttore per sostituzione." },
-    { "id":"Q_CF_11", "type":"QUESTION", "title":"Il guardamotore scatta all'istante?", "yes":"Q_CF_110", "no":"Q_CF_111" },
-    { "id":"Q_CF_110", "type":"END", "title":"Diagnosi: Motore bloccato / cuscinetti usurati. Verificare rotazione manuale, tre fasi, rumore cuscinetti, vite senza fine. Ricambio: Motore 30kW 400V B3 3000rpm 50Hz." },
-    { "id":"Q_CF_111", "type":"END", "title":"Diagnosi: Possibile cortocircuito nel motore, cablaggio o dispositivo di accensione. Test d’isolamento, controlli cablaggio e avviamento." },
 
-    { "id":"Q_D", "type":"END", "title":"Il silo funziona correttamente!\n- Scarica manuale digitale\n- Contatti tecnici meccanico: Trimec SRL\n- Contatti tecnici elettrico: TL elettrica SRL\n- Fornitori ricambi; Trimec SRL" }
+    { "id":"Q_CF_10", "type":"QUESTION", "title":"Il motore gira?", "yes":"Q_CF_101", "no":"Q_CF_100" },
+
+    { "id":"Q_CF_100", "type":"QUESTION", "title":"La corrente arriva ai terminali del motore?", "yes":"Q_CF_1001", "no":"Q_CF_1000" },
+
+    { "id":"Q_CF_1000", "type":"END",
+      "title":"Problemi con l'accensione del motore o con il cablaggio.",
+      "description":"Suggerimenti:\n- Controllare la tensione in uscita dall'accensione.\n- Controllare i terminali di uscita sul quadro elettrico.\n- Verificare che il cablaggio dal quadro elettrico al motore non sia interrotto.\n- Chiamare tecnico specializzato",
+      "result":"NO_ISSUE"
+    },
+
+    { "id":"Q_CF_1001", "type":"END",
+      "title":"Problemi interni al motore.\nUna o più bobine sono in cortocircuito.",
+      "description":"Suggerimento:\n-Controllare il rumore del motore all'avvio. Se ronza, è probabile che una delle sue bobine interne sia in cortocircuito.\n-Controllare i terminali di collegamento.\n-Controllare la continuità di tutte le bobine interne.\n-Sostituire il motore.\nChiamare un tecnico specializzato.",
+      "result":"NO_ISSUE"
+    },
+
+    { "id":"Q_CF_101", "type":"QUESTION", "title":"La coclea ruota all'interno del silo?", "yes":"Q_CF_1011", "no":"Q_CF_1010" },
+
+    { "id":"Q_CF_1010", "type":"QUESTION", "title":"Le cinghie tra il motore e il mixer sono tagliate/usurate?", "yes":"Q_CF_10101", "no":"Q_CF_10100" },
+
+    { "id":"Q_CF_10100", "type":"END",
+      "title":"Problema di tensione della cinghia o problema alla puleggia motrice",
+      "description":"Suggerimento:\n- Verificare che le cinghie siano regolate correttamente e non slittino\n- Verificare che le pulegge siano fissate correttamente e non siano rotte",
+      "result":"NO_ISSUE"
+    },
+
+    { "id":"Q_CF_10101", "type":"END",
+      "title":"Problemi nella trasmissione tra il motore e i poli del miscelatore",
+      "description":"Suggerimento:\n-Sostituire le cinghie di trasmissione",
+      "result":"COMPONENT_FAULT"
+    },
+
+    { "id":"Q_CF_1011", "type":"END",
+      "title":"L'anello della coclea è gravemente usurato.",
+      "description":"Suggerimento:\n- Contattare il produttore per la sostituzione della coclea.",
+      "result":"NO_ISSUE"
+    },
+
+    { "id":"Q_CF_11", "type":"QUESTION", "title":"Il guardamotore scatta all'istante?", "yes":"Q_CF_111", "no":"Q_CF_110" },
+
+    { "id":"Q_CF_110", "type":"END",
+      "title":"Motor bloqueado.\nCojinetes desgastados\n",
+      "description":"Sugerencias:\n- Compruebe que el motor gira manualmente.\n- Compruebe que las tres fases llegan al motor.\n- Compruebe el ruido en los cojinetes.\n- Compruebe que el tornillo sin fin non esté bloqueado.",
+      "result":"NO_ISSUE"
+    },
+
+    { "id":"Q_CF_111", "type":"END",
+      "title":"Possibile cortocircuito nel motore, nel cablaggio o nel dispositivo di accensione.",
+      "description":"Suggerimenti:\n- Eseguire test di resistenza di isolamento sul motore.\n- Controllare il cablaggio del motore.\n- Verificare che il dispositivo di accensione non sia difettoso.",
+      "result":"COMPONENT_FAULT"
+    },
+
+    {
+      "id":"Q_D",
+      "type":"END",
+      "title":"Il silo funziona correttamente!\n- Scarica manuale digitale\n- Contatti tecnici meccanico: Trimec SRL\n- Contatti tecnici elettrico: TL elettrica SRL\n- Fornitori ricambi; Trimec SRL",
+      "result":"RESOLVED"
+    }
   ]
 }

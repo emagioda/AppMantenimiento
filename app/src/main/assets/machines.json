@@ -3,7 +3,9 @@
     {
       "id": "TRIMEC_SILO_001",
       "templateId": "trimec_silo_mv18_it",
-      "name": "Silos Miscelatore verticale modello MV18"
+      "name": "Silos di Miscelazione M 10805",
+      "description": "Silos Miscelatore verticale modello MV18",
+      "imageName": "silo_mv18"
     }
   ]
 }
