@@ -168,14 +168,6 @@ private fun EndContent(
             style = MaterialTheme.typography.headlineSmall,
             textAlign = TextAlign.Center
         )
-        node.description?.let {
-            Spacer(Modifier.height(12.dp))
-            Text(
-                text = it,
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center
-            )
-        }
 
         // Card de sugerencias (aparecerá cuando uses description)
         node.description?.let {
@@ -276,7 +268,7 @@ private fun PartCardExpandable(parts: List<PartRefResolved>) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Dati del ricambio",
+                    text = "Piezas de recambio",
                     style = MaterialTheme.typography.titleMedium
                 )
                 Icon(
@@ -288,15 +280,16 @@ private fun PartCardExpandable(parts: List<PartRefResolved>) {
             if (expanded) {
                 Spacer(Modifier.height(16.dp))
 
-                parts.forEach { ref ->
+                parts.forEachIndexed { index, ref ->
                     Text(
                         text = ref.detail.product,
                         style = MaterialTheme.typography.titleSmall
                     )
-                    ref.detail.code?.let { Text("Codice: $it") }
-                    ref.detail.features?.let { Text("Caratteristiche: $it") }
-                    ref.detail.supplier?.let { Text("Fornitore: $it") }
-                    ref.detail.technicalContacts?.let { Text("Contatto tecnico: $it") }
+                    ref.qty?.let { Text("Cantidad: $it") }
+                    ref.detail.code?.let { Text("Código: $it") }
+                    ref.detail.features?.let { Text("Características: $it") }
+                    ref.detail.supplier?.let { Text("Proveedor: $it") }
+                    ref.detail.technicalContacts?.let { Text("Contacto técnico: $it") }
 
                     Spacer(Modifier.height(12.dp))
 
@@ -318,7 +311,11 @@ private fun PartCardExpandable(parts: List<PartRefResolved>) {
                         }
                     }
 
-                    Spacer(Modifier.height(20.dp))
+                    if (index < parts.lastIndex) {
+                        Spacer(Modifier.height(16.dp))
+                        Divider()
+                        Spacer(Modifier.height(16.dp))
+                    }
                 }
             }
         }
