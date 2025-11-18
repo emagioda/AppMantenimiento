@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <!-- App -->
     <string name="app_name">FixQR</string>
 
     <!-- Home -->
     <string name="home_title">Home</string>
-    <string name="home_header">Scansiona il codice QR&#10;e ti guideremo passo dopo passo&#10;per risolvere il problema.</string>
+    <string name="home_header">Scansiona il codice QR e ti guideremo passo dopo passo per risolvere il problema!</string>
     <string name="home_scan_button">Scansiona QR</string>
     <string name="home_help_title">Hai bisogno di aiuto?</string>
     <string name="home_help_contacts">Contatti</string>
-    <string name="home_settings_cd">Impostazioni</string>
 
     <!-- Scanner -->
     <string name="scanner_permission_rationale">Abbiamo bisogno della fotocamera per scansionare il QR.</string>
@@ -39,20 +39,23 @@
     <!-- Comuni -->
     <string name="cd_back">Indietro</string>
 
-    <!-- Impostazioni -->
-    <string name="settings_title">Impostazioni</string>
-    <string name="settings_description_title">Aspetto</string>
-    <string name="settings_description_body">L\'app utilizza una palette dai toni scuri ottimizzata per ambienti poco illuminati.</string>
-
     <!-- Diagnostica -->
     <string name="diagnostic_title">Diagnostica</string>
     <string name="diagnostic_home">Home</string>
     <string name="diagnostic_yes">Sì</string>
     <string name="diagnostic_no">No</string>
+    <string name="diagnostic_continue">Continua</string>
     <string name="diagnostic_error_loading">Errore durante il caricamento del flusso.</string>
     <string name="diagnostic_help">Hai bisogno di aiuto?</string>
+    <string name="diagnostic_suggestions_title">Suggerimenti</string>
+    <string name="diagnostic_parts_title">Ricambi</string>
+    <string name="diagnostic_part_qty_value">Quantità: %1$d</string>
+    <string name="diagnostic_part_code_value">Codice: %1$s</string>
+    <string name="diagnostic_part_features_value">Caratteristiche: %1$s</string>
+    <string name="diagnostic_part_supplier_value">Fornitore: %1$s</string>
+    <string name="diagnostic_part_technical_contact_value">Contatto tecnico: %1$s</string>
 
-    <string name="diagnostic_parts_needed">Componenti da sostituire suggeriti</string>
-    <string name="diagnostic_part_qty">Quantità: %1$d</string>
+    <!-- Dettaglio macchina -->
+    <string name="machine_detail_start">Inizia diagnostica</string>
 
 </resources>

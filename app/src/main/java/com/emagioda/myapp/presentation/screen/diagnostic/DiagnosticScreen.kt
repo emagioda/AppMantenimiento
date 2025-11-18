@@ -6,12 +6,19 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Warning
@@ -19,17 +26,25 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.emagioda.myapp.R
 import com.emagioda.myapp.di.ServiceLocator
 import com.emagioda.myapp.domain.model.*
 import com.emagioda.myapp.presentation.viewmodel.DiagnosticViewModel
+import kotlin.math.max
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,28 +80,45 @@ fun DiagnosticScreen(
                     }
                 }
             )
-        }
+        },
+        contentWindowInsets = WindowInsets(0)
     ) { innerPadding ->
+        val scrollState = rememberScrollState()
+        val canScroll = scrollState.maxValue > 0
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(horizontal = 20.dp),
-            contentAlignment = Alignment.Center        // <- centrado vertical
+                .navigationBarsPadding()
         ) {
-            if (node == null) {
-                Text(stringResource(R.string.diagnostic_error_loading))
-                return@Box
-            }
-
-            when (node.type) {
-                NodeType.QUESTION -> QuestionContent(node = node, vm = vm)
-                NodeType.END -> EndContent(
-                    node = node,
-                    vm = vm,
-                    onRestartToHome = onRestartToHome,
-                    onOpenTechnicians = onOpenTechnicians
-                )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(scrollState)
+                    .padding(horizontal = 20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = if (canScroll) Arrangement.Top else Arrangement.Center
+            ) {
+                if (node == null) {
+                    Spacer(Modifier.height(24.dp))
+                    Text(
+                        text = stringResource(R.string.diagnostic_error_loading),
+                        textAlign = TextAlign.Center
+                    )
+                } else {
+                    Spacer(Modifier.height(24.dp))
+                    when (node.type) {
+                        NodeType.QUESTION -> QuestionContent(node = node, vm = vm)
+                        NodeType.END -> EndContent(
+                            node = node,
+                            vm = vm,
+                            onRestartToHome = onRestartToHome,
+                            onOpenTechnicians = onOpenTechnicians
+                        )
+                    }
+                    Spacer(Modifier.height(24.dp))
+                }
             }
         }
     }
@@ -120,7 +152,7 @@ private fun QuestionContent(
         when (node.mode) {
             QuestionMode.CONTINUE_ONLY -> {
                 Button(onClick = vm::answerYes) {
-                    Text("Continua")
+                    Text(stringResource(R.string.diagnostic_continue))
                 }
             }
 
@@ -157,25 +189,21 @@ private fun EndContent(
         modifier = Modifier.fillMaxWidth(0.92f),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // icono
         EndResultIcon(node.result ?: EndResult.NO_ISSUE)
 
         Spacer(Modifier.height(24.dp))
 
-        // título principal
         Text(
             text = node.title,
             style = MaterialTheme.typography.headlineSmall,
             textAlign = TextAlign.Center
         )
 
-        // Card de sugerencias (aparecerá cuando uses description)
         node.description?.let {
             Spacer(Modifier.height(20.dp))
             SuggestCard(it)
         }
 
-        // Card de recambios si hay partes
         node.parts?.takeIf { it.isNotEmpty() }?.let { parts ->
             Spacer(Modifier.height(20.dp))
             PartCardExpandable(parts)
@@ -240,7 +268,7 @@ private fun SuggestCard(text: String) {
     ) {
         Column(Modifier.padding(16.dp)) {
             Text(
-                text = "Suggerimenti",
+                text = stringResource(R.string.diagnostic_suggestions_title),
                 style = MaterialTheme.typography.titleMedium
             )
             Spacer(Modifier.height(12.dp))
@@ -268,7 +296,7 @@ private fun PartCardExpandable(parts: List<PartRefResolved>) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Piezas de recambio",
+                    text = stringResource(R.string.diagnostic_parts_title),
                     style = MaterialTheme.typography.titleMedium
                 )
                 Icon(
@@ -285,11 +313,13 @@ private fun PartCardExpandable(parts: List<PartRefResolved>) {
                         text = ref.detail.product,
                         style = MaterialTheme.typography.titleSmall
                     )
-                    ref.qty?.let { Text("Cantidad: $it") }
-                    ref.detail.code?.let { Text("Código: $it") }
-                    ref.detail.features?.let { Text("Características: $it") }
-                    ref.detail.supplier?.let { Text("Proveedor: $it") }
-                    ref.detail.technicalContacts?.let { Text("Contacto técnico: $it") }
+                    ref.qty?.let { Text(stringResource(R.string.diagnostic_part_qty_value, it)) }
+                    ref.detail.code?.let { Text(stringResource(R.string.diagnostic_part_code_value, it)) }
+                    ref.detail.features?.let { Text(stringResource(R.string.diagnostic_part_features_value, it)) }
+                    ref.detail.supplier?.let { Text(stringResource(R.string.diagnostic_part_supplier_value, it)) }
+                    ref.detail.technicalContacts?.let {
+                        Text(stringResource(R.string.diagnostic_part_technical_contact_value, it))
+                    }
 
                     Spacer(Modifier.height(12.dp))
 
@@ -301,11 +331,11 @@ private fun PartCardExpandable(parts: List<PartRefResolved>) {
                             context.packageName
                         )
                         if (resId != 0) {
-                            Image(
-                                painter = painterResource(resId),
-                                contentDescription = null,
+                            ZoomablePartImage(
+                                resId = resId,
                                 modifier = Modifier
-                                    .size(120.dp)
+                                    .fillMaxWidth()
+                                    .height(220.dp)
                                     .align(Alignment.CenterHorizontally)
                             )
                         }
@@ -313,11 +343,111 @@ private fun PartCardExpandable(parts: List<PartRefResolved>) {
 
                     if (index < parts.lastIndex) {
                         Spacer(Modifier.height(16.dp))
-                        Divider()
+                        HorizontalDivider()
                         Spacer(Modifier.height(16.dp))
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun ZoomablePartImage(
+    resId: Int,
+    modifier: Modifier = Modifier
+) {
+    var showZoom by remember { mutableStateOf(false) }
+
+    Image(
+        painter = painterResource(resId),
+        contentDescription = null,
+        modifier = modifier.clickable { showZoom = true }
+    )
+
+    if (showZoom) {
+        Dialog(
+            onDismissRequest = { showZoom = false },
+            properties = DialogProperties(
+                usePlatformDefaultWidth = false   // fullscreen real
+            )
+        ) {
+            ZoomableImageDialogContent(
+                resId = resId,
+                onClose = { showZoom = false }
+            )
+        }
+    }
+}
+
+@Composable
+private fun ZoomableImageDialogContent(
+    resId: Int,
+    onClose: () -> Unit
+) {
+    var scale by remember { mutableFloatStateOf(1f) }
+    var offset by remember { mutableStateOf(Offset.Zero) }
+    var boxSize by remember { mutableStateOf(IntSize.Zero) }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black)
+            .onSizeChanged { boxSize = it }
+            .pointerInput(Unit) {
+                detectTransformGestures { _, pan, zoom, _ ->
+                    val newScale = (scale * zoom).coerceIn(1f, 6f)
+
+                    val maxOffsetX =
+                        max(0f, boxSize.width.toFloat() * (newScale - 1f) / 2f)
+                    val maxOffsetY =
+                        max(0f, boxSize.height.toFloat() * (newScale - 1f) / 2f)
+
+                    val rawOffsetX = offset.x + pan.x
+                    val rawOffsetY = offset.y + pan.y
+
+                    val clampedOffsetX = rawOffsetX.coerceIn(-maxOffsetX, maxOffsetX)
+                    val clampedOffsetY = rawOffsetY.coerceIn(-maxOffsetY, maxOffsetY)
+
+                    scale = newScale
+                    offset = Offset(clampedOffsetX, clampedOffsetY)
+                }
+            }
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onDoubleTap = {
+                        scale = 1f
+                        offset = Offset.Zero
+                    }
+                )
+            },
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            painter = painterResource(resId),
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxWidth()
+                .graphicsLayer(
+                    scaleX = scale,
+                    scaleY = scale,
+                    translationX = offset.x,
+                    translationY = offset.y
+                )
+        )
+
+        IconButton(
+            onClick = onClose,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Close,
+                contentDescription = null,
+                tint = Color.White,
+                modifier = Modifier.size(32.dp)
+            )
         }
     }
 }

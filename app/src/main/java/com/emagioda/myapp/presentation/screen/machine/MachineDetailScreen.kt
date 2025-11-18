@@ -146,7 +146,7 @@ fun MachineDetailScreen(
                     .fillMaxWidth()
                     .padding(bottom = 70.dp)
             ) {
-                Text("Inizia diagnostica")
+                Text(stringResource(R.string.machine_detail_start))
             }
         }
     }

@@ -9,7 +9,6 @@
     <string name="home_scan_button">Escanear QR</string>
     <string name="home_help_title">¿Necesitás ayuda?</string>
     <string name="home_help_contacts">Contactos</string>
-    <string name="home_settings_cd">Ajustes</string>
 
     <!-- Scanner -->
     <string name="scanner_permission_rationale">Necesitamos la cámara para escanear el QR.</string>
@@ -39,20 +38,22 @@
     <!-- Comunes -->
     <string name="cd_back">Volver</string>
 
-    <!-- Ajustes -->
-    <string name="settings_title">Configuración</string>
-    <string name="settings_description_title">Apariencia</string>
-    <string name="settings_description_body">La app utiliza una paleta de tonos oscuros optimizada para entornos de baja iluminación.</string>
-
     <!-- Diagnóstico -->
     <string name="diagnostic_title">Diagnóstico</string>
     <string name="diagnostic_home">Inicio</string>
     <string name="diagnostic_yes">Sí</string>
     <string name="diagnostic_no">No</string>
+    <string name="diagnostic_continue">Continuar</string>
     <string name="diagnostic_error_loading">Error al cargar el flujo.</string>
     <string name="diagnostic_help">¿Necesitás ayuda?</string>
+    <string name="diagnostic_suggestions_title">Sugerencias</string>
+    <string name="diagnostic_parts_title">Piezas de recambio</string>
+    <string name="diagnostic_part_qty_value">Cantidad: %1$d</string>
+    <string name="diagnostic_part_code_value">Código: %1$s</string>
+    <string name="diagnostic_part_features_value">Características: %1$s</string>
+    <string name="diagnostic_part_supplier_value">Proveedor: %1$s</string>
+    <string name="diagnostic_part_technical_contact_value">Contacto técnico: %1$s</string>
 
-    <string name="diagnostic_parts_needed">Componenti da sostituire suggeriti</string>
-    <string name="diagnostic_part_qty">Quantità: %1$d</string>
-
+    <!-- Detalle de máquina -->
+    <string name="machine_detail_start">Iniciar diagnóstico</string>
 </resources>

@@ -22,7 +22,6 @@ import com.emagioda.myapp.presentation.screen.diagnostic.DiagnosticScreen
 import com.emagioda.myapp.presentation.screen.home.HomeScreen
 import com.emagioda.myapp.presentation.screen.machine.MachineDetailScreen
 import com.emagioda.myapp.presentation.screen.scanner.ScannerScreen
-import com.emagioda.myapp.presentation.screen.settings.SettingsScreen
 
 sealed class Route(val route: String) {
     data object Home : Route("home")
@@ -40,7 +39,6 @@ sealed class Route(val route: String) {
     data object Contacts : Route("contacts")
     data object ContactsTechnicians : Route("contacts/technicians")
     data object ContactsProviders : Route("contacts/providers")
-    data object Settings : Route("settings")
 }
 
 @Composable
@@ -79,8 +77,7 @@ fun AppNavHost(
             popExitTransition = slideOutRight
         ) {
             HomeScreen(
-                onNavigateToScanner = { navController.navigate(Route.Scanner.route) },
-                onNavigateToSettings = { navController.navigate(Route.Settings.route) }
+                onNavigateToScanner = { navController.navigate(Route.Scanner.route) }
             )
         }
 
@@ -170,17 +167,5 @@ fun AppNavHost(
             ContactsScreen(onBack = { navController.popBackStack() }, initialTab = 1)
         }
 
-        // AJUSTES
-        composable(
-            route = Route.Settings.route,
-            enterTransition = slideInLeft,
-            exitTransition = slideOutLeft,
-            popEnterTransition = slideInRight,
-            popExitTransition = slideOutRight
-        ) {
-            SettingsScreen(
-                onBack = { navController.popBackStack() }
-            )
-        }
     }
 }

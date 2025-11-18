@@ -13,7 +13,7 @@
 
     { "id":"Q_AA_01", "type":"END",
       "title":"Guasto nell'alimentazione principale.",
-      "desciption": "Controllare che l'alimentazione principale non sia scattata. \nContattare tecnici specializzati.",
+      "desciption": "Controllare che l'alimentazione principale non sia scattata.\nContattare tecnici specializzati.",
       "result":"NO_ISSUE"
     },
 
@@ -28,7 +28,7 @@
     { "id":"Q_AC_00", "type":"QUESTION", "title":"Pulsante Emergenza o Sportelli di Ispezione aperti/premuti?", "yes":"Q_AC_001", "no":"Q_AC_000" },
 
     { "id":"Q_AC_01", "type":"END", "title":"La coclea é bloccato perché una o piú sportelli sono aperto.\nSensore finedicorsa danneggiato.",
-      "description": "- Controllare che tutte gli sportelli siano chiusi.\n- Controllare che i sensori siano funzionanti",
+      "description": "• Controllare che tutte gli sportelli siano chiusi.\n• Controllare che i sensori siano funzionanti",
       "result":"NO_ISSUE"
     },
 
@@ -39,12 +39,12 @@
     { "id":"Q_AC_000", "type":"QUESTION", "title":"Ha controllato che sia il pulsante di arresto di emergenza che i sensori di apertura degli sportelli funzionino correttamente?", "yes":"Q_AC_0001", "no":"Q_AC_0000" },
 
     { "id":"Q_AC_0001", "type":"END", "title":"Problemi al dispositivo elettronico o al relè di sicurezza.",
-      "description":"- Procedere alla sostituzione.\n - Chiamare un tecnico specializzato",
+      "description":"• Procedere alla sostituzione.\n• Chiamare un tecnico specializzato",
       "result":"COMPONENT_FAULT"
     },
 
     { "id":"Q_AC_0000", "type":"END", "title":"Problemi nel pulsante d'emergenzia oppure nei sensori degli sportelli d'ispezione.",
-      "description": "-Verificare il corretto funzionamento sia del pulsante di arresto di emergenza, verificando la continuità del contatto, sia dei sensori dello sportello di ispezione, misurando la continuità dall'inizio alla fine del circuito.\n-Chiamare tecnici specializzati",
+      "description": "•Verificare il corretto funzionamento sia del pulsante di arresto di emergenza, verificando la continuità del contatto, sia dei sensori dello sportello di ispezione, misurando la continuità dall'inizio alla fine del circuito.\n•Chiamare tecnici specializzati",
       "result":"NO_ISSUE"
     },
 
@@ -58,9 +58,9 @@
 
     { "id":"Q_AF", "type":"QUESTION", "title":"I chili indicati sulla bilancia corrispondono al carico massimo del silo?", "yes":"Q_AF_1", "no":"Q_AF_0" },
 
-    { "id":"Q_AF_1", "type":"END", "title":"Sistema di sicurezza per il carico del silo attivato, il silo è al livello massimo e la coclea di carico rimarrà bloccata finché il livello del silo non scende.",
-      "description":"Svuotare il silos per potere accendere la coclea",
-      "result":"NO_ISSUE"
+    { "id": "Q_AF_1", "type": "END", "title": "Sistema di sicurezza per il carico del silo attivato, il silo è al livello massimo e la coclea di carico rimarrà bloccata finché il livello del silo non scende.",
+      "description": "Svuotare il silo per poter avviare la coclea.",
+      "result": "NO_ISSUE"
     },
 
     { "id":"Q_AF_0", "type":"END", "title":"Guasto al sensore di livello massimo!",
@@ -72,7 +72,7 @@
 
     { "id":"Q_AE_00", "type":"END",
       "title":"Problemi nel circuito controllo",
-      "description":"- Controllare dispositivi accensione e interblocco.",
+      "description":"• Controllare dispositivi accensione e interblocco.",
       "result":"NO_ISSUE"
     },
 
@@ -80,12 +80,12 @@
 
     { "id":"Q_AE_010", "type":"END",
       "title":"Guasto complesso relè termico/cablaggio.",
-      "description":"- Controllare che i contatti ausiliari d'interblocco funzionano correttamente.\n- Controllare che i dispositivi di avviamento e protezione funzionano correttamente. \nContattare \"Tecnici Specializzati\"",
+      "description":"• Controllare che i contatti ausiliari d'interblocco funzionano correttamente.\n• Controllare che i dispositivi di avviamento e protezione funzionano correttamente.\nContattare \"Tecnici Specializzati\"",
       "result":"NO_ISSUE"
     },
 
     { "id":"Q_AE_011", "type":"QUESTION",
-      "title":"SOLUZIONE SEMPLICE: \nProvare a riarmare il Salvamotore.",
+      "title":"SOLUZIONE SEMPLICE:\nProvare a riarmare il Salvamotore.",
       "yes":"Q_AE_0111", "no":"***", "mode":"CONTINUE_ONLY"
     },
 
@@ -97,13 +97,13 @@
 
     { "id":"Q_AE_0111000", "type":"END",
       "title":"Problemi con l'accensione del motore o con il cablaggio.",
-      "description":"- Controllare la tensione in uscita dall'accensione.\n- Controllare i terminali di uscita sul quadro elettrico.\n- Verificare che il cablaggio dal quadro elettrico al motore non sia interrotto.",
+      "description":"• Controllare la tensione in uscita dall'accensione.\n• Controllare i terminali di uscita sul quadro elettrico.\n• Verificare che il cablaggio dal quadro elettrico al motore non sia interrotto.",
       "result":"NO_ISSUE"
     },
 
     { "id":"Q_AE_0111001", "type":"END",
       "title":"Motore bloccato",
-      "description":"Sugerrimenti:\nControllare che la coclea non sia intasata",
+      "description":"• Controllare che la coclea non sia intasata",
       "result":"NO_ISSUE"
     },
 
@@ -111,7 +111,7 @@
 
     { "id":"Q_AE_0111010", "type":"END",
       "title":"Problmea nel riduttore oppure tra il giunto del motore e il riduttore",
-      "description":"Controllare/sostituire riduttore\nControllare/sostituire giunto tra motore e riduttore",
+      "description":"• Controllare/sostituire riduttore.\n• Controllare/sostituire giunto tra motore e riduttore.",
       "result":"COMPONENT_FAULT"
     },
 
@@ -124,16 +124,15 @@
 
     { "id":"Q_AE_011110", "type":"END",
       "title":"Motore bloccato.",
-      "description":"- Verificare che il motore giri manualmente.\n- Verificare che tutte e tre le fasi raggiungano il motore.\n- Verificare che il riduttore non sia danneggiato.\n- Verificare che la vite senza fine non sia bloccata.\n- Verificare che la boccola della vite senza fine non sia usurata.",
+      "description":"• Verificare che il motore giri manualmente.\n• Verificare che tutte e tre le fasi raggiungano il motore.\n• Verificare che il riduttore non sia danneggiato.\n• Verificare che la vite senza fine non sia bloccata.\n• Verificare che la boccola della vite senza fine non sia usurata.",
       "result":"NO_ISSUE"
     },
 
     { "id":"Q_AE_011111", "type":"END",
       "title":"Possibile cortocircuito nel motore, nel cablaggio o nel dispositivo di accensione.",
-      "description":"- Eseguire test di resistenza di isolamento sul motore.\n- Controllare il cablaggio del motore.\n- Verificare che il dispositivo di accensione non sia difettoso.",
+      "description":"• Eseguire test di resistenza di isolamento sul motore.\n• Controllare il cablaggio del motore.\n• Verificare che il dispositivo di accensione non sia difettoso.",
       "result":"COMPONENT_FAULT"
     },
-
 
     { "id":"Q_B", "type":"QUESTION", "title":"Lo scarico del silo funziona?", "yes":"Q_C", "no":"Q_BA" },
 
@@ -148,7 +147,7 @@
 
     { "id":"Q_BA_01", "type":"END",
       "title":"Il controller della bilancia non funziona correttamente.",
-      "description":"Suggerimenti:\n- Reimpostare il controller.\n- Tarare nuovamente il controller.\n- Verificare che la bilancia pesi correttamente utilizzando un peso standard.\n- Sostituire il controller della bilancia.",
+      "description":"• Reimpostare il controller.\n• Tarare nuovamente il controller.\n• Verificare che la bilancia pesi correttamente utilizzando un peso standard.\n• Sostituire il controller della bilancia.",
       "result":"NO_ISSUE"
     },
 
@@ -162,17 +161,16 @@
     { "id":"Q_BC", "type":"QUESTION", "title":"La valvola di scarico è aperta?", "yes":"Q_BC_1", "no":"Q_BC_0" },
 
     { "id":"Q_BC_0", "type":"END",
-      "title":"Problemi software o hardware con il sistema di scarico.\n\n",
-      "description":"Suggerimenti:\n- Verificare il corretto funzionamento del selettore di scarico.\n- Verificare che la bilancia invii il segnale di apertura all'elettrovalvola.\n- Verificare che la bobina dell'elettrovalvola non sia danneggiata.\n- Verificare che l'aria compressa raggiunga sia l'elettrovalvola che il pistone di apertura.\n- Verificare che il pistone non sia danneggiato (controllare le guarnizioni e le condizioni dell'albero).",
+      "title":"Problemi software o hardware con il sistema di scarico.\n",
+      "description":"• Verificare il corretto funzionamento del selettore di scarico.\n• Verificare che la bilancia invii il segnale di apertura all'elettrovalvola.\n• Verificare che la bobina dell'elettrovalvola non sia danneggiata.\n• Verificare che l'aria compressa raggiunga sia l'elettrovalvola che il pistone di apertura.\n• Verificare che il pistone non sia danneggiato (controllare le guarnizioni e le condizioni dell'albero).",
       "result":"NO_ISSUE"
     },
 
     { "id":"Q_BC_1", "type":"END",
       "title":"Possibile ostruzione nel tubo di scarico.\nCoclea del miscelatore molto usurata.\nSilo vuoto.",
-      "description":"Suggerimenti:\n- Ispezionare visivamente lo scarico del silo per assicurarsi che non sia ostruito.\n- Controllare l'usura della coclea.\n- Verificare che il silo contenga materiale.",
+      "description":"• Ispezionare visivamente lo scarico del silo per assicurarsi che non sia ostruito.\n• Controllare l'usura della coclea.\n• Verificare che il silo contenga materiale.",
       "result":"NO_ISSUE"
     },
-
 
     { "id":"Q_C", "type":"QUESTION", "title":"Il miscelatore del silo principale funziona?", "yes":"Q_D", "no":"Q_CA" },
 
@@ -187,7 +185,7 @@
 
     { "id":"Q_CA_01", "type":"END",
       "title":"Guasto nell'alimentazione principale.",
-      "description":"Suggerimenti:\n-Controllare che l'alimentazione principale non sia scattata\n- Contattare tecnici specializzati",
+      "description":"• Controllare che l'alimentazione principale non sia scattata\n• Contattare tecnici specializzati",
       "result":"NO_ISSUE"
     },
 
@@ -204,7 +202,7 @@
 
     { "id":"Q_CC_01", "type":"END",
       "title":"Il miscelatore é bloccato perché una o piú sportelli sono aperto.\nSensore finedicorsa danneggiato",
-      "description":"Suggerimenti:\n- Controllare che tutte gli sportelli siano chiusi.\n- Controllare che i sensori siano funzionanti",
+      "description":"• Controllare che tutte gli sportelli siano chiusi.\n• Controllare che i sensori siano funzionanti",
       "result":"NO_ISSUE"
     },
 
@@ -219,13 +217,13 @@
 
     { "id":"Q_CC_0001", "type":"END",
       "title":"Problemi al dispositivo elettronico o al relè di sicurezza.",
-      "description":"Suggerimenti\n-Procedere alla sostituzione.\n - Chiamare un tecnico specializzato.",
+      "description":"• Procedere alla sostituzione.\n• Chiamare un tecnico specializzato.",
       "result":"COMPONENT_FAULT"
     },
 
     { "id":"Q_CC_0000", "type":"END",
       "title":"Problemi nel pulsante d'emergenzia oppure nei sensori degli sportelli d'ispezione.",
-      "description":"Suggerimenti:\n-Verificare il corretto funzionamento sia del pulsante di arresto di emergenza, verificando la continuità del contatto, sia dei sensori dello sportello di ispezione, misurando la continuità dall'inizio alla fine del circuito.\n-Chiamare tecnici specializzato",
+      "description":"• Verificare il corretto funzionamento sia del pulsante di arresto di emergenza, verificando la continuità del contatto, sia dei sensori dello sportello di ispezione, misurando la continuità dall'inizio alla fine del circuito.\n•Chiamare tecnici specializzato",
       "result":"NO_ISSUE"
     },
 
@@ -233,7 +231,7 @@
 
     { "id":"Q_CD_0", "type":"END",
       "title":"Problemi nel circuito controllo",
-      "description":"Suggerimento:\n- Controllare dispositivi accensione e interblocco.",
+      "description":"• Controllare dispositivi accensione e interblocco.",
       "result":"NO_ISSUE"
     },
 
@@ -241,12 +239,12 @@
 
     { "id":"Q_CE_0", "type":"END",
       "title":"Guasto complesso relè termico/cablaggio.",
-      "description":"Suggerimenti:\n- Controllare che i contatti ausiliari d'interblocco funzionano correttamente.\n- Controllare che i dispositivi di avviamento e protezione funzionano correttamente. \nContattare \"Tecnici Specializzati\"",
+      "description":"• Controllare che i contatti ausiliari d'interblocco funzionano correttamente.\n• Controllare che i dispositivi di avviamento e protezione funzionano correttamente.\nContattare \"Tecnici Specializzati\"",
       "result":"NO_ISSUE"
     },
 
     { "id":"Q_CF", "type":"QUESTION",
-      "title":"SOLUZIONE SEMPLICE: Provare a riarmare il Salvamotore. L'interruttore scatta di nuovo dopo il riarmo?",
+      "title":"SOLUZIONE SEMPLICE: Provare a riarmare il Salvamotore.",
       "yes":"Q_CF_1", "no":"***", "mode":"CONTINUE_ONLY"
     },
 
@@ -258,13 +256,13 @@
 
     { "id":"Q_CF_1000", "type":"END",
       "title":"Problemi con l'accensione del motore o con il cablaggio.",
-      "description":"Suggerimenti:\n- Controllare la tensione in uscita dall'accensione.\n- Controllare i terminali di uscita sul quadro elettrico.\n- Verificare che il cablaggio dal quadro elettrico al motore non sia interrotto.\n- Chiamare tecnico specializzato",
+      "description":"• Controllare la tensione in uscita dall'accensione.\n• Controllare i terminali di uscita sul quadro elettrico.\n• Verificare che il cablaggio dal quadro elettrico al motore non sia interrotto.\n• Chiamare tecnico specializzato",
       "result":"NO_ISSUE"
     },
 
     { "id":"Q_CF_1001", "type":"END",
       "title":"Problemi interni al motore.\nUna o più bobine sono in cortocircuito.",
-      "description":"Suggerimento:\n-Controllare il rumore del motore all'avvio. Se ronza, è probabile che una delle sue bobine interne sia in cortocircuito.\n-Controllare i terminali di collegamento.\n-Controllare la continuità di tutte le bobine interne.\n-Sostituire il motore.\nChiamare un tecnico specializzato.",
+      "description":"•Controllare il rumore del motore all'avvio. Se ronza, è probabile che una delle sue bobine interne sia in cortocircuito.\n•Controllare i terminali di collegamento.\n•Controllare la continuità di tutte le bobine interne.\n•Sostituire il motore.\nChiamare un tecnico specializzato.",
       "result":"NO_ISSUE"
     },
 
@@ -274,40 +272,41 @@
 
     { "id":"Q_CF_10100", "type":"END",
       "title":"Problema di tensione della cinghia o problema alla puleggia motrice",
-      "description":"Suggerimento:\n- Verificare che le cinghie siano regolate correttamente e non slittino\n- Verificare che le pulegge siano fissate correttamente e non siano rotte",
+      "description":"• Verificare che le cinghie siano regolate correttamente e non slittino\n• Verificare che le pulegge siano fissate correttamente e non siano rotte",
       "result":"NO_ISSUE"
     },
 
     { "id":"Q_CF_10101", "type":"END",
       "title":"Problemi nella trasmissione tra il motore e i poli del miscelatore",
-      "description":"Suggerimento:\n-Sostituire le cinghie di trasmissione",
+      "description":"• Sostituire le cinghie di trasmissione",
       "result":"COMPONENT_FAULT"
     },
 
     { "id":"Q_CF_1011", "type":"END",
       "title":"L'anello della coclea è gravemente usurato.",
-      "description":"Suggerimento:\n- Contattare il produttore per la sostituzione della coclea.",
+      "description":"• Contattare il produttore per la sostituzione della coclea.",
       "result":"NO_ISSUE"
     },
 
     { "id":"Q_CF_11", "type":"QUESTION", "title":"Il guardamotore scatta all'istante?", "yes":"Q_CF_111", "no":"Q_CF_110" },
 
-    { "id":"Q_CF_110", "type":"END",
-      "title":"Motor bloqueado.\nCojinetes desgastados\n",
-      "description":"Sugerencias:\n- Compruebe que el motor gira manualmente.\n- Compruebe que las tres fases llegan al motor.\n- Compruebe el ruido en los cojinetes.\n- Compruebe que el tornillo sin fin non esté bloqueado.",
-      "result":"NO_ISSUE"
+    { "id": "Q_CF_110",
+      "type": "END",
+      "title": "Motore bloccato.\nCuscinetti usurati\n",
+      "description": "• Verificare che il motore giri manualmente.\n• Verificare che le tre fasi arrivino al motore.\n• Verificare eventuali rumori nei cuscinetti.\n• Verificare che la coclea non sia bloccata.",
+      "result": "NO_ISSUE"
     },
 
     { "id":"Q_CF_111", "type":"END",
       "title":"Possibile cortocircuito nel motore, nel cablaggio o nel dispositivo di accensione.",
-      "description":"Suggerimenti:\n- Eseguire test di resistenza di isolamento sul motore.\n- Controllare il cablaggio del motore.\n- Verificare che il dispositivo di accensione non sia difettoso.",
+      "description":"• Eseguire test di resistenza di isolamento sul motore.\n• Controllare il cablaggio del motore.\n• Verificare che il dispositivo di accensione non sia difettoso.",
       "result":"COMPONENT_FAULT"
     },
 
     {
       "id":"Q_D",
       "type":"END",
-      "title":"Il silo funziona correttamente!\n- Scarica manuale digitale\n- Contatti tecnici meccanico: Trimec SRL\n- Contatti tecnici elettrico: TL elettrica SRL\n- Fornitori ricambi; Trimec SRL",
+      "title":"Il silo funziona correttamente!\n• Scarica manuale digitale\n• Contatti tecnici meccanico: Trimec SRL\n• Contatti tecnici elettrico: TL elettrica SRL\n• Fornitori ricambi; Trimec SRL",
       "result":"RESOLVED"
     }
   ]
