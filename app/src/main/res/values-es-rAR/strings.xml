@@ -43,6 +43,7 @@
     <string name="diagnostic_home">Inicio</string>
     <string name="diagnostic_yes">Sí</string>
     <string name="diagnostic_no">No</string>
+    <string name="diagnostic_continue">Continuar</string>
     <string name="diagnostic_error_loading">Error al cargar el flujo.</string>
     <string name="diagnostic_help">¿Necesitás ayuda?</string>
     <string name="diagnostic_suggestions_title">Sugerencias</string>

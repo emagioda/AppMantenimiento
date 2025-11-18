@@ -1,0 +1,596 @@
+{
+  "templateId": "trimec_silo_mv18_es",
+  "version": 1,
+  "locale": "es",
+  "root": "Q_A",
+  "nodes": [
+
+    { "id": "Q_A", "type": "QUESTION",
+      "title": "¿Funciona la rosca sinfín donde se carga el material?",
+      "yes": "Q_B",
+      "no": "Q_AA"
+    },
+
+    { "id": "Q_AA", "type": "QUESTION",
+      "title": "¿Está encendido el indicador \"Presencia de Tensión\"? (Tablero Eléctrico)",
+      "yes": "Q_AB",
+      "no": "Q_AA_0"
+    },
+
+    { "id": "Q_AA_0", "type": "QUESTION",
+      "title": "¿El seccionador principal está activado?",
+      "yes": "Q_AA_01",
+      "no": "Q_AA_00"
+    },
+
+    { "id": "Q_AA_00", "type": "END",
+      "title": "Accionar el seccionador.\nVerificar funcionamiento.",
+      "result": "NO_ISSUE"
+    },
+
+    { "id": "Q_AA_01", "type": "END",
+      "title": "Falla en la alimentación principal.",
+      "description": "• Verifique que la alimentación principal no se haya disparado.\n• Contactar técnicos especializados.",
+      "result": "NO_ISSUE"
+    },
+
+    { "id": "Q_AB", "type": "QUESTION",
+      "title": "¿Presionó el botón \"Reset Auxiliares\"?",
+      "yes": "Q_AC",
+      "no": "Q_AB_0"
+    },
+
+    { "id": "Q_AB_0", "type": "END",
+      "title": "Presione el botón y verifique el funcionamiento del sistema.",
+      "result": "NO_ISSUE"
+    },
+
+    { "id": "Q_AC", "type": "QUESTION",
+      "title": "¿Está encendido el indicador de \"Reset Auxiliares\"?",
+      "yes": "Q_AD",
+      "no": "Q_AC_0"
+    },
+
+    { "id": "Q_AC_0", "type": "QUESTION",
+      "title": "¿Está encendida la luz de \"puerta abierta\"?",
+      "yes": "Q_AC_01",
+      "no": "Q_AC_00"
+    },
+
+    { "id": "Q_AC_00", "type": "QUESTION",
+      "title": "¿El Pulsador de Emergencia o las Puertas de Inspección están abiertos/presionados?",
+      "yes": "Q_AC_001",
+      "no": "Q_AC_000"
+    },
+
+    { "id": "Q_AC_01", "type": "END",
+      "title": "La rosca sinfín está bloqueada porque una o más puertas están abiertas.\nSensor de fin de carrera dañado.",
+      "description": "• Verificar que todas las puertas estén cerradas.\n• Verificar el correcto funcionamiento de los sensores.",
+      "result": "NO_ISSUE"
+    },
+
+    { "id": "Q_AC_001", "type": "END",
+      "title": "Desactivar el Pulsador de Emergencia y/o cerrar las puertas.\nVerificar funcionamiento.",
+      "result": "NO_ISSUE"
+    },
+
+    { "id": "Q_AC_000", "type": "QUESTION",
+      "title": "¿Verificó que el pulsador de emergencia y los sensores de las puertas funcionen correctamente?",
+      "yes": "Q_AC_0001",
+      "no": "Q_AC_0000"
+    },
+
+    { "id": "Q_AC_0001", "type": "END",
+      "title": "Problemas en el dispositivo electrónico o en el relé de seguridad.",
+      "description": "• Proceder a la sustitución.\n• Llamar a un técnico especializado.",
+      "result": "COMPONENT_FAULT"
+    },
+
+    { "id": "Q_AC_0000", "type": "END",
+      "title": "Problemas en el pulsador de emergencia o en los sensores de apertura de puertas.",
+      "description": "• Verificar correcto funcionamiento del pulsador (continui dad del contacto).\n• Verificar continuidad de los sensores desde el inicio al final del circuito.\n• Llamar a técnicos especializados.",
+      "result": "NO_ISSUE"
+    },
+
+    { "id": "Q_AD", "type": "QUESTION",
+      "title": "¿Encendió el mezclador?",
+      "yes": "Q_AE",
+      "no": "Q_AD_0"
+    },
+
+    { "id": "Q_AD_0", "type": "END",
+      "title": "Diagnóstico: la rosca sinfín de carga está bloqueada al arrancar el mezclador.",
+      "description": "Encender el mezclador y luego reiniciar la rosca sinfín.",
+      "result": "NO_ISSUE"
+    },
+
+    { "id": "Q_AE", "type": "QUESTION",
+      "title": "¿Está encendida la luz de \"nivel máximo\" del mezclador?",
+      "yes": "Q_AF",
+      "no": "Q_AE_0"
+    },
+
+    { "id": "Q_AF", "type": "QUESTION",
+      "title": "¿El peso indicado en la balanza coincide con la carga máxima del silo?",
+      "yes": "Q_AF_1",
+      "no": "Q_AF_0"
+    },
+
+    { "id": "Q_AF_1", "type": "END",
+      "title": "El sistema de seguridad de carga del silo está activado. El silo está lleno y la rosca sinfín permanecerá bloqueada hasta que baje el nivel.",
+      "description": "Vaciar el silo para poder volver a activar la rosca sinfín.",
+      "result": "NO_ISSUE"
+    },
+
+    { "id": "Q_AF_0", "type": "END",
+      "title": "¡Falla en el sensor de nivel máximo!",
+      "description": "• Verificar que el sensor no esté obstruido y funcione correctamente.",
+      "result": "COMPONENT_FAULT"
+    },
+
+    { "id": "Q_AE_0", "type": "QUESTION",
+      "title": "¿Está encendida la luz de \"Bloqueo Térmico\" en el tablero eléctrico?",
+      "yes": "Q_AE_01",
+      "no": "Q_AE_00"
+    },
+
+    { "id": "Q_AE_00", "type": "END",
+      "title": "Problemas en el circuito de control.",
+      "description": "• Revisar dispositivos de arranque e interbloqueo.",
+      "result": "NO_ISSUE"
+    },
+
+    { "id": "Q_AE_01", "type": "QUESTION",
+      "title": "¿Se disparó el interruptor guardamotor de la tolva (botón hundido)?",
+      "yes": "Q_AE_011",
+      "no": "Q_AE_010"
+    },
+
+    { "id": "Q_AE_010", "type": "END",
+      "title": "Falla compleja en relé térmico o cableado.",
+      "description": "• Verificar funcionamiento de los contactos auxiliares.\n• Verificar dispositivos de arranque y protección.\n• Contactar servicios técnicos especializados.",
+      "result": "NO_ISSUE"
+    },
+
+    {
+      "id": "Q_AE_011",
+      "type": "QUESTION",
+      "title": "SOLUCIÓN SENCILLA:\nProbar a rearmar el guardamotor.",
+      "yes": "Q_AE_0111",
+      "no": "***",
+      "mode": "CONTINUE_ONLY"
+    },
+
+    {
+      "id": "Q_AE_0111",
+      "type": "QUESTION",
+      "title": "Una vez rearmado, ¿el interruptor de protección del motor vuelve a dispararse?",
+      "yes": "Q_AE_01111",
+      "no": "Q_AE_01110"
+    },
+
+    {
+      "id": "Q_AE_01110",
+      "type": "QUESTION",
+      "title": "¿El motor gira?",
+      "yes": "Q_AE_011101",
+      "no": "Q_AE_011100"
+    },
+    {
+      "id": "Q_AE_011100",
+      "type": "QUESTION",
+      "title": "¿Llega corriente a los terminales del motor?",
+      "yes": "Q_AE_0111001",
+      "no": "Q_AE_0111000"
+    },
+
+    {
+      "id": "Q_AE_0111000",
+      "type": "END",
+      "title": "Problemas en el arranque del motor o en el cableado.",
+      "description": "• Verificar tensión en la salida del arranque.\n• Verificar terminales de salida en el tablero eléctrico.\n• Verificar que el cableado desde el tablero al motor no esté interrumpido.",
+      "result": "NO_ISSUE"
+    },
+
+    {
+      "id": "Q_AE_0111001",
+      "type": "END",
+      "title": "Motor bloqueado.",
+      "description": "Sugerencias:\n• Verificar que la rosca sinfín no esté atascada.",
+      "result": "NO_ISSUE"
+    },
+
+    {
+      "id": "Q_AE_011101",
+      "type": "QUESTION",
+      "title": "¿El reductor gira?",
+      "yes": "Q_AE_0111011",
+      "no": "Q_AE_0111010"
+    },
+
+    {
+      "id": "Q_AE_0111010",
+      "type": "END",
+      "title": "Problema en el reductor o en el acople entre el motor y el reductor.",
+      "description": "• Controlar/sustituir reductor.\n• Controlar/sustituir acople entre motor y reductor.",
+      "result": "COMPONENT_FAULT"
+    },
+
+    {
+      "id": "Q_AE_0111011",
+      "type": "END",
+      "title": "Verificar eje de transmisión entre el reductor y la rosca sinfín.",
+      "result": "NO_ISSUE"
+    },
+
+    {
+      "id": "Q_AE_01111",
+      "type": "QUESTION",
+      "title": "¿El guardamotor salta de inmediato?",
+      "yes": "Q_AE_011111",
+      "no": "Q_AE_011110"
+    },
+
+    {
+      "id": "Q_AE_011110",
+      "type": "END",
+      "title": "Motor bloqueado.",
+      "description": "• Verificar que el motor gire manualmente.\n• Verificar que las tres fases lleguen al motor.\n• Verificar que el reductor no esté dañado.\n• Verificar que el tornillo sin fin no esté bloqueado.\n• Verificar desgaste de la bocina del tornillo sin fin.",
+      "result": "NO_ISSUE"
+    },
+
+    {
+      "id": "Q_AE_011111",
+      "type": "END",
+      "title": "Posible cortocircuito en motor, cableado o equipo de arranque.",
+      "description": "• Realizar prueba de resistencia de aislamiento al motor.\n• Verificar cableado del motor.\n• Verificar que el equipo de arranque no esté defectuoso.",
+      "result": "COMPONENT_FAULT"
+    },
+
+    {
+      "id": "Q_B",
+      "type": "QUESTION",
+      "title": "¿Funciona la descarga del silo?",
+      "yes": "Q_C",
+      "no": "Q_BA"
+    },
+
+    {
+      "id": "Q_BA",
+      "type": "QUESTION",
+      "title": "¿La balanza indica que el silo contiene material?",
+      "yes": "Q_BB",
+      "no": "Q_BA_0"
+    },
+
+    {
+      "id": "Q_BA_0",
+      "type": "QUESTION",
+      "title": "¿Verificó físicamente la presencia de material desde las compuertas de inspección?",
+      "yes": "Q_BA_01",
+      "no": "Q_BA_00"
+    },
+
+    {
+      "id": "Q_BA_00",
+      "type": "END",
+      "title": "Verificar presencia de material abriendo la compuerta inferior del silo.",
+      "result": "NO_ISSUE"
+    },
+
+    {
+      "id": "Q_BA_01",
+      "type": "END",
+      "title": "El controlador de la balanza no funciona correctamente.",
+      "description": "• Reestablecer el controlador.\n• Volver a calibrar la balanza.\n• Verificar pesaje correcto con peso patrón.\n• Sustituir el controlador de la balanza.",
+      "result": "NO_ISSUE"
+    },
+
+    {
+      "id": "Q_BB",
+      "type": "QUESTION",
+      "title": "¿Activó el modo de descarga del silo?",
+      "yes": "Q_BC",
+      "no": "Q_BB_0"
+    },
+
+    {
+      "id": "Q_BB_0",
+      "type": "END",
+      "title": "Activar modo de descarga del silo y verificar funcionamiento.",
+      "result": "NO_ISSUE"
+    },
+
+    {
+      "id": "Q_BC",
+      "type": "QUESTION",
+      "title": "¿La válvula de descarga está abierta?",
+      "yes": "Q_BC_1",
+      "no": "Q_BC_0"
+    },
+
+    {
+      "id": "Q_BC_0",
+      "type": "END",
+      "title": "Problemas de software o hardware en el sistema de descarga.",
+      "description": "• Verificar funcionamiento del selector de descarga.\n• Verificar que la balanza envíe señal de apertura a la electroválvula.\n• Verificar bobina de la electroválvula.\n• Verificar llegada de aire comprimido a la electroválvula y al pistón.\n• Verificar que el pistón no esté dañado (sellos, vástago).",
+      "result": "NO_ISSUE"
+    },
+
+    {
+      "id": "Q_BC_1",
+      "type": "END",
+      "title": "Posible obstrucción en el tubo de descarga.\nRosca del mezclador muy desgastada.\nSilo vacío.",
+      "description": "• Inspeccionar visualmente el tubo de descarga.\n• Verificar desgaste de la rosca.\n• Verificar presencia real de material en el silo.",
+      "result": "NO_ISSUE"
+    },
+
+    {
+      "id": "Q_C",
+      "type": "QUESTION",
+      "title": "¿Funciona el mezclador del silo principal?",
+      "yes": "Q_D",
+      "no": "Q_CA"
+    },
+
+    {
+      "id": "Q_CA",
+      "type": "QUESTION",
+      "title": "¿Está encendido el indicador \"Presencia de Tensión\"? (Tablero Eléctrico)",
+      "yes": "Q_CB",
+      "no": "Q_CA_0"
+    },
+
+    {
+      "id": "Q_CA_0",
+      "type": "QUESTION",
+      "title": "¿El seccionador principal está activado?",
+      "yes": "Q_CA_01",
+      "no": "Q_CA_00"
+    },
+
+    {
+      "id": "Q_CA_00",
+      "type": "END",
+      "title": "Accionar el seccionador.\nVerificar funcionamiento.",
+      "result": "NO_ISSUE"
+    },
+
+    {
+      "id": "Q_CA_01",
+      "type": "END",
+      "title": "Falla en la alimentación principal.",
+      "description": "• Verificar que la alimentación no se haya disparado.\n• Contactar técnicos especializados.",
+      "result": "NO_ISSUE"
+    },
+
+    {
+      "id": "Q_CB",
+      "type": "QUESTION",
+      "title": "¿Presionó el botón \"Reset Auxiliares\"?",
+      "yes": "Q_CC",
+      "no": "Q_CB_0"
+    },
+
+    {
+      "id": "Q_CB_0",
+      "type": "END",
+      "title": "Presione el botón y verifique funcionamiento.",
+      "result": "NO_ISSUE"
+    },
+
+    {
+      "id": "Q_CC",
+      "type": "QUESTION",
+      "title": "¿Está encendido el indicador \"Reset Auxiliares\"?",
+      "yes": "Q_CD",
+      "no": "Q_CC_0"
+    },
+
+    {
+      "id": "Q_CC_0",
+      "type": "QUESTION",
+      "title": "¿Está encendida la luz de \"puerta abierta\"?",
+      "yes": "Q_CC_01",
+      "no": "Q_CC_00"
+    },
+    {
+      "id": "Q_CC_01",
+      "type": "END",
+      "title": "El mezclador está bloqueado porque una o más puertas están abiertas.\nSensor de fin de carrera dañado.",
+      "description": "• Verificar que todas las puertas estén cerradas.\n• Verificar funcionamiento de los sensores.",
+      "result": "NO_ISSUE"
+    },
+
+    {
+      "id": "Q_CC_00",
+      "type": "QUESTION",
+      "title": "¿El Pulsador de Emergencia o las Puertas de Inspección están abiertos/presionados?",
+      "yes": "Q_CC_001",
+      "no": "Q_CC_000"
+    },
+
+    {
+      "id": "Q_CC_001",
+      "type": "END",
+      "title": "Desactivar el pulsador de emergencia y/o cerrar las puertas.\nVerificar funcionamiento.",
+      "result": "NO_ISSUE"
+    },
+
+    {
+      "id": "Q_CC_000",
+      "type": "QUESTION",
+      "title": "¿Verificó que el pulsador de emergencia y los sensores funcionen correctamente?",
+      "yes": "Q_CC_0001",
+      "no": "Q_CC_0000"
+    },
+
+    {
+      "id": "Q_CC_0001",
+      "type": "END",
+      "title": "Problemas en el dispositivo electrónico o en el relé de seguridad.",
+      "description": "• Proceder a la sustitución.\n• Llamar a un técnico especializado.",
+      "result": "COMPONENT_FAULT"
+    },
+
+    {
+      "id": "Q_CC_0000",
+      "type": "END",
+      "title": "Problemas en el pulsador de emergencia o sensores de puertas.",
+      "description": "• Verificar continuidad del pulsador.\n• Verificar continuidad de los sensores.\n• Llamar técnicos especializados.",
+      "result": "NO_ISSUE"
+    },
+
+    {
+      "id": "Q_CD",
+      "type": "QUESTION",
+      "title": "¿Está encendida la luz de \"Bloqueo Térmico\" en el tablero?",
+      "yes": "Q_CE",
+      "no": "Q_CD_0"
+    },
+
+    {
+      "id": "Q_CD_0",
+      "type": "END",
+      "title": "Problemas en el circuito de control.",
+      "description": "• Verificar dispositivos de arranque e interbloqueo.",
+      "result": "NO_ISSUE"
+    },
+
+    {
+      "id": "Q_CE",
+      "type": "QUESTION",
+      "title": "¿Se disparó el interruptor guardamotor del mezclador?",
+      "yes": "Q_CF",
+      "no": "Q_CE_0"
+    },
+
+    {
+      "id": "Q_CE_0",
+      "type": "END",
+      "title": "Falla compleja en relé térmico/cableado.",
+      "description": "• Verificar funcionamiento de contactos auxiliares.\n• Verificar dispositivos de arranque y protección.\n• Contactar técnicos especializados.",
+      "result": "NO_ISSUE"
+    },
+
+    {
+      "id": "Q_CF",
+      "type": "QUESTION",
+      "title": "SOLUCIÓN SENCILLA:\nProbar a rearmar el guardamotor.",
+      "yes": "Q_CF_1",
+      "no": "***",
+      "mode": "CONTINUE_ONLY"
+    },
+
+    {
+      "id": "Q_CF_1",
+      "type": "QUESTION",
+      "title": "Una vez rearmado, ¿el interruptor vuelve a dispararse?",
+      "yes": "Q_CF_11",
+      "no": "Q_CF_10"
+    },
+
+    {
+      "id": "Q_CF_10",
+      "type": "QUESTION",
+      "title": "¿El motor gira?",
+      "yes": "Q_CF_101",
+      "no": "Q_CF_100"
+    },
+
+    {
+      "id": "Q_CF_100",
+      "type": "QUESTION",
+      "title": "¿Llega corriente a los terminales del motor?",
+      "yes": "Q_CF_1001",
+      "no": "Q_CF_1000"
+    },
+
+    {
+      "id": "Q_CF_1000",
+      "type": "END",
+      "title": "Problemas en el arranque del motor o en el cableado.",
+      "description": "• Verificar tensión en la salida del arranque.\n• Verificar terminales en el tablero eléctrico.\n• Verificar cableado hasta el motor.\n• Contactar técnico especializado.",
+      "result": "NO_ISSUE"
+    },
+
+    {
+      "id": "Q_CF_1001",
+      "type": "END",
+      "title": "Problema interno en el motor.\nUna o más bobinas en cortocircuito.",
+      "description": "• Verificar ruido del motor al arrancar.\n• Verificar terminales de conexión.\n• Verificar continuidad de todas las bobinas internas.\n• Sustituir motor.\n• Contactar técnico especializado.",
+      "result": "NO_ISSUE"
+    },
+
+    {
+      "id": "Q_CF_101",
+      "type": "QUESTION",
+      "title": "¿La rosca sinfín gira dentro del silo?",
+      "yes": "Q_CF_1011",
+      "no": "Q_CF_1010"
+    },
+
+    {
+      "id": "Q_CF_1010",
+      "type": "QUESTION",
+      "title": "¿Las correas entre motor y mezclador están cortadas/usadas?",
+      "yes": "Q_CF_10101",
+      "no": "Q_CF_10100"
+    },
+
+    {
+      "id": "Q_CF_10100",
+      "type": "END",
+      "title": "Problema de tensión de correa o en la polea del motor.",
+      "description": "• Verificar tensión correcta de correas.\n• Verificar fijación y estado de poleas.",
+      "result": "NO_ISSUE"
+    },
+
+    {
+      "id": "Q_CF_10101",
+      "type": "END",
+      "title": "Problemas en la transmisión entre motor y los ejes del mezclador.",
+      "description": "• Sustituir correas de transmisión.",
+      "result": "COMPONENT_FAULT"
+    },
+
+    {
+      "id": "Q_CF_1011",
+      "type": "END",
+      "title": "El anillo de la rosca sinfín tiene desgaste severo.",
+      "description": "• Contactar al fabricante para recambio.",
+      "result": "NO_ISSUE"
+    },
+
+    {
+      "id": "Q_CF_11",
+      "type": "QUESTION",
+      "title": "¿El guardamotor salta de inmediato?",
+      "yes": "Q_CF_111",
+      "no": "Q_CF_110"
+    },
+
+    {
+      "id": "Q_CF_110",
+      "type": "END",
+      "title": "Motor bloqueado.\nCojinetes desgastados.",
+      "description": "• Verificar giro manual del motor.\n• Verificar llegada de las 3 fases.\n• Verificar ruidos en los cojinetes.\n• Verificar que la rosca sinfín no esté bloqueada.",
+      "result": "NO_ISSUE"
+    },
+
+    {
+      "id": "Q_CF_111",
+      "type": "END",
+      "title": "Posible cortocircuito en motor, cableado o equipo de arranque.",
+      "description": "• Realizar prueba de aislamiento.\n• Verificar cableado del motor.\n• Verificar equipo de arranque.",
+      "result": "COMPONENT_FAULT"
+    },
+
+    {
+      "id": "Q_D",
+      "type": "END",
+      "title": "¡El silo funciona correctamente!\n• Descarga manual digital\n• Contacto técnico mecánico: Trimec SRL\n• Contacto técnico eléctrico: TL Eléctrica SRL\n• Proveedores de repuestos: Trimec SRL",
+      "result": "RESOLVED"
+    }
+  ]
+}

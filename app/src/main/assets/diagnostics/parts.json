@@ -1,74 +1,74 @@
 {
   "parts": [
     {
-      "id": "part_pizzato_cs_ar_05v024",
+      "id": "P_01",
       "product": "Modulo di sicurezza Pizzato",
       "code": "CS AR-05V024",
       "features": null,
       "supplier": "TL Elettrica SRL",
       "technicalContacts": "Meltec",
-      "imageResName": "part_pizzato_cs_ar_05v024",
+      "imageResName": "img_p_01",
       "nodeRefs": [
         "Q_AC_0001",
         "Q_CC_0001"
       ]
     },
     {
-      "id": "part_indicator_pfg05",
+      "id": "P_02",
       "product": "Indicatore di livello a rotazione",
       "code": "PFG05",
       "features": "IP65 / -20...+70°C",
       "supplier": "Trimec SRL",
       "technicalContacts": "TL Elettrica SRL / Meltec",
-      "imageResName": "part_indicator_pfg05",
+      "imageResName": "img_p_02",
       "nodeRefs": [
         "Q_AF_0"
       ]
     },
     {
-      "id": "part_motor_1_5kw_b5",
+      "id": "P_03",
       "product": "Motore elettrico",
       "code": null,
       "features": "1,5kW - 400V - B5 - 3000 giri - 50Hz",
       "supplier": "Trimec",
       "technicalContacts": "Meltec / TL Elettrica SRL",
-      "imageResName": "part_motor_1_5kw_b5",
+      "imageResName": "img_p_03",
       "nodeRefs": [
         "Q_AE_011111"
       ]
     },
     {
-      "id": "part_reducer_w75_i7_pam90",
+      "id": "P_04",
       "product": "Riduttore",
       "code": "W75 i=7 PAM 90",
       "features": null,
       "supplier": "Trimec SRL",
       "technicalContacts": "Trimec SRL",
-      "imageResName": "part_reducer_w75_i7_pam90",
+      "imageResName": "img_p_04",
       "nodeRefs": [
         "Q_AE_0111010"
       ]
     },
     {
-      "id": "part_motor_30kw_b3",
+      "id": "P_05",
       "product": "Motore elettrico",
       "code": null,
       "features": "30kW - 400V - B3 - 3000 giri - 50Hz",
       "supplier": "Trimec",
       "technicalContacts": "Meltec / TL Elettrica SRL",
-      "imageResName": "part_motor_30kw_b3",
+      "imageResName": "img_p_05",
       "nodeRefs": [
         "Q_CF_111"
       ]
     },
     {
-      "id": "part_cinghia_spb5600",
+      "id": "P_06",
       "product": "Cinghia di trasmissione",
       "code": "SPB 5600",
       "features": "5 pezzi",
       "supplier": "Trimec SRL",
       "technicalContacts": "Trimec SRL",
-      "imageResName": "part_cinghia_spb5600",
+      "imageResName": "img_p_06",
       "nodeRefs": [
         "Q_CF_10101"
       ]
