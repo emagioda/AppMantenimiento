@@ -21,9 +21,7 @@
       "supplier": "Trimec SRL",
       "technicalContacts": "TL Elettrica SRL / Meltec",
       "imageResName": "img_p_02",
-      "nodeRefs": [
-        "Q_AF_0"
-      ]
+      "nodeRefs": ["Q_AF_0"]
     },
     {
       "id": "P_03",
@@ -33,9 +31,7 @@
       "supplier": "Trimec",
       "technicalContacts": "Meltec / TL Elettrica SRL",
       "imageResName": "img_p_03",
-      "nodeRefs": [
-        "Q_AE_011111"
-      ]
+      "nodeRefs": ["Q_AE_011111"]
     },
     {
       "id": "P_04",
@@ -45,9 +41,7 @@
       "supplier": "Trimec SRL",
       "technicalContacts": "Trimec SRL",
       "imageResName": "img_p_04",
-      "nodeRefs": [
-        "Q_AE_0111010"
-      ]
+      "nodeRefs": ["Q_AE_0111010"]
     },
     {
       "id": "P_05",
@@ -57,9 +51,7 @@
       "supplier": "Trimec",
       "technicalContacts": "Meltec / TL Elettrica SRL",
       "imageResName": "img_p_05",
-      "nodeRefs": [
-        "Q_CF_111"
-      ]
+      "nodeRefs": ["Q_CF_111"]
     },
     {
       "id": "P_06",
@@ -69,8 +61,19 @@
       "supplier": "Trimec SRL",
       "technicalContacts": "Trimec SRL",
       "imageResName": "img_p_06",
+      "nodeRefs": ["Q_CF_10101"]
+    },
+    {
+      "id": "P_07",
+      "product": "Interruttore di sicurezza Telemecanique",
+      "code": "XCSTA791",
+      "features": null,
+      "supplier": "TL Elettrica SRL / 2G elettrica",
+      "technicalContacts": "Meltec / TL elettrica",
+      "imageResName": "img_p_07",
       "nodeRefs": [
-        "Q_CF_10101"
+        "Q_AC_0000",
+        "Q_AC_01"
       ]
     }
   ]

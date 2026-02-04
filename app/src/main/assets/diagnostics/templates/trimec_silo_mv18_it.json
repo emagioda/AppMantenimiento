@@ -13,7 +13,7 @@
 
     { "id":"Q_AA_01", "type":"END",
       "title":"Guasto nell'alimentazione principale.",
-      "desciption": "Controllare che l'alimentazione principale non sia scattata.\nContattare tecnici specializzati.",
+      "description": "• Controllare che l'alimentazione principale non sia scattata.\n• Contattare tecnici specializzati.",
       "result":"NO_ISSUE"
     },
 
@@ -29,7 +29,7 @@
 
     { "id":"Q_AC_01", "type":"END", "title":"La coclea é bloccato perché una o piú sportelli sono aperto.\nSensore finedicorsa danneggiato.",
       "description": "• Controllare che tutte gli sportelli siano chiusi.\n• Controllare che i sensori siano funzionanti",
-      "result":"NO_ISSUE"
+      "result":"COMPONENT_FAULT"
     },
 
     { "id":"Q_AC_001", "type":"END", "title":"Disattivare il pulsante di Emergenza e/o chiudere gli sportelli.\nVerificare il funzionamento.",
@@ -39,17 +39,17 @@
     { "id":"Q_AC_000", "type":"QUESTION", "title":"Ha controllato che sia il pulsante di arresto di emergenza che i sensori di apertura degli sportelli funzionino correttamente?", "yes":"Q_AC_0001", "no":"Q_AC_0000" },
 
     { "id":"Q_AC_0001", "type":"END", "title":"Problemi al dispositivo elettronico o al relè di sicurezza.",
-      "description":"• Procedere alla sostituzione.\n• Chiamare un tecnico specializzato",
+      "description":"• Procedere alla sostituzione.\nChiamare un tecnico specializzato",
       "result":"COMPONENT_FAULT"
     },
 
     { "id":"Q_AC_0000", "type":"END", "title":"Problemi nel pulsante d'emergenzia oppure nei sensori degli sportelli d'ispezione.",
-      "description": "•Verificare il corretto funzionamento sia del pulsante di arresto di emergenza, verificando la continuità del contatto, sia dei sensori dello sportello di ispezione, misurando la continuità dall'inizio alla fine del circuito.\n•Chiamare tecnici specializzati",
-      "result":"NO_ISSUE"
+      "description": "• Verificare il corretto funzionamento sia del pulsante di arresto di emergenza, verificando la continuità del contatto, sia dei sensori dello sportello di ispezione, misurando la continuità dall'inizio alla fine del circuito.\n• Chiamare tecnici specializzati",
+      "result":"COMPONENT_FAULT"
     },
 
     { "id":"Q_AD", "type":"QUESTION", "title":"Ha acceso il mixer?", "yes":"Q_AE", "no":"Q_AD_0" },
-    { "id":"Q_AD_0", "type":"END", "title":"Diagnosi: La coclea di ingresso del materiale è bloccata all'avvio del miscelatore.",
+    { "id":"Q_AD_0", "type":"END", "title":"La coclea di ingresso del materiale è bloccata all'avvio del miscelatore.",
       "description": "Avviare il miscelatore e poi riavviare la coclea.",
       "result":"NO_ISSUE"
     },
@@ -59,12 +59,12 @@
     { "id":"Q_AF", "type":"QUESTION", "title":"I chili indicati sulla bilancia corrispondono al carico massimo del silo?", "yes":"Q_AF_1", "no":"Q_AF_0" },
 
     { "id": "Q_AF_1", "type": "END", "title": "Sistema di sicurezza per il carico del silo attivato, il silo è al livello massimo e la coclea di carico rimarrà bloccata finché il livello del silo non scende.",
-      "description": "Svuotare il silo per poter avviare la coclea.",
+      "description": "• Svuotare il silo per poter avviare la coclea.",
       "result": "NO_ISSUE"
     },
 
     { "id":"Q_AF_0", "type":"END", "title":"Guasto al sensore di livello massimo!",
-      "description":"Verificare che il sensore di livello non sia ostruito e funzioni correttamente.",
+      "description":"• Verificare che il sensore di livello non sia ostruito e funzioni correttamente.",
       "result":"COMPONENT_FAULT"
     },
 
@@ -80,7 +80,7 @@
 
     { "id":"Q_AE_010", "type":"END",
       "title":"Guasto complesso relè termico/cablaggio.",
-      "description":"• Controllare che i contatti ausiliari d'interblocco funzionano correttamente.\n• Controllare che i dispositivi di avviamento e protezione funzionano correttamente.\nContattare \"Tecnici Specializzati\"",
+      "description":"• Controllare che i contatti ausiliari d'interblocco funzionano correttamente.\n• Controllare che i dispositivi di avviamento e protezione funzionano correttamente.\n• Contattare \"Tecnici Specializzati\"",
       "result":"NO_ISSUE"
     },
 
@@ -217,7 +217,7 @@
 
     { "id":"Q_CC_0001", "type":"END",
       "title":"Problemi al dispositivo elettronico o al relè di sicurezza.",
-      "description":"• Procedere alla sostituzione.\n• Chiamare un tecnico specializzato.",
+      "description":"• Procedere alla sostituzione.\nChiamare un tecnico specializzato.",
       "result":"COMPONENT_FAULT"
     },
 
@@ -256,13 +256,13 @@
 
     { "id":"Q_CF_1000", "type":"END",
       "title":"Problemi con l'accensione del motore o con il cablaggio.",
-      "description":"• Controllare la tensione in uscita dall'accensione.\n• Controllare i terminali di uscita sul quadro elettrico.\n• Verificare che il cablaggio dal quadro elettrico al motore non sia interrotto.\n• Chiamare tecnico specializzato",
+      "description":"• Controllare la tensione in uscita dall'accensione.\n• Controllare i terminali di uscita sul quadro elettrico.\n• Verificare che il cablaggio dal quadro elettrico al motore non sia interrotto.\nChiamare tecnico specializzato",
       "result":"NO_ISSUE"
     },
 
     { "id":"Q_CF_1001", "type":"END",
       "title":"Problemi interni al motore.\nUna o più bobine sono in cortocircuito.",
-      "description":"•Controllare il rumore del motore all'avvio. Se ronza, è probabile che una delle sue bobine interne sia in cortocircuito.\n•Controllare i terminali di collegamento.\n•Controllare la continuità di tutte le bobine interne.\n•Sostituire il motore.\nChiamare un tecnico specializzato.",
+      "description":"• Controllare il rumore del motore all'avvio. Se ronza, è probabile che una delle sue bobine interne sia in cortocircuito.\n• Controllare i terminali di collegamento.\n• Controllare la continuità di tutte le bobine interne.\n• Sostituire il motore.\nChiamare un tecnico specializzato.",
       "result":"NO_ISSUE"
     },
 

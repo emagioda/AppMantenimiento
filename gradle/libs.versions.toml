@@ -1,6 +1,6 @@
 [versions]
 # Herramientas base
-agp = "8.13.0"                # Android Gradle Plugin
+agp = "8.13.2"                # Android Gradle Plugin
 kotlin = "2.0.21"             # Kotlin
 coreKtx = "1.17.0"            # AndroidX Core KTX
 
