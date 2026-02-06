@@ -2,7 +2,12 @@ package com.emagioda.myapp.presentation.screen.diagnostic
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,6 +24,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.BrokenImage
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Warning
@@ -61,7 +67,8 @@ fun DiagnosticScreen(
             machineId = machineId
         )
     )
-    val node = vm.uiState.current
+    val uiState = vm.uiState
+    val node = uiState.current
 
     BackHandler(enabled = vm.canGoBack()) { vm.goBack() }
 
@@ -100,13 +107,26 @@ fun DiagnosticScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = if (canScroll) Arrangement.Top else Arrangement.Center
             ) {
-                if (node == null) {
+                when {
+                    uiState.isLoading -> {
+                        Spacer(Modifier.height(24.dp))
+                        CircularProgressIndicator()
+                    }
+                    uiState.errorResId != null -> {
+                        Spacer(Modifier.height(24.dp))
+                        Text(
+                            text = stringResource(uiState.errorResId),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                    node == null -> {
                     Spacer(Modifier.height(24.dp))
                     Text(
                         text = stringResource(R.string.diagnostic_error_loading),
                         textAlign = TextAlign.Center
                     )
-                } else {
+                    }
+                    else -> {
                     Spacer(Modifier.height(24.dp))
                     when (node.type) {
                         NodeType.QUESTION -> QuestionContent(node = node, vm = vm)
@@ -118,6 +138,7 @@ fun DiagnosticScreen(
                         )
                     }
                     Spacer(Modifier.height(24.dp))
+                    }
                 }
             }
         }
@@ -129,48 +150,56 @@ private fun QuestionContent(
     node: DiagnosticNode,
     vm: DiagnosticViewModel
 ) {
-    Column(
-        modifier = Modifier.fillMaxWidth(0.92f),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = node.title,
-            style = MaterialTheme.typography.headlineSmall,
-            textAlign = TextAlign.Center
-        )
-        node.description?.let {
+    AnimatedContent(
+        targetState = node,
+        transitionSpec = {
+            fadeIn(animationSpec = tween(220)) togetherWith fadeOut(animationSpec = tween(220))
+        },
+        label = "question-transition"
+    ) { targetNode ->
+        Column(
+            modifier = Modifier.fillMaxWidth(0.92f),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Text(
-                text = it,
-                style = MaterialTheme.typography.bodyMedium,
+                text = targetNode.title,
+                style = MaterialTheme.typography.headlineSmall,
                 textAlign = TextAlign.Center
             )
-        }
-
-        Spacer(Modifier.height(12.dp))
-
-        when (node.mode) {
-            QuestionMode.CONTINUE_ONLY -> {
-                Button(onClick = vm::answerYes) {
-                    Text(stringResource(R.string.diagnostic_continue))
-                }
+            targetNode.description?.let {
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center
+                )
             }
 
-            QuestionMode.YES_NO -> {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+            Spacer(Modifier.height(12.dp))
+
+            when (targetNode.mode) {
+                QuestionMode.CONTINUE_ONLY -> {
                     Button(onClick = vm::answerYes) {
-                        Text(stringResource(R.string.diagnostic_yes))
+                        Text(stringResource(R.string.diagnostic_continue))
                     }
-                    OutlinedButton(
-                        onClick = vm::answerNo,
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = MaterialTheme.colorScheme.onSurface
-                        )
+                }
+
+                QuestionMode.YES_NO -> {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(stringResource(R.string.diagnostic_no))
+                        Button(onClick = vm::answerYes) {
+                            Text(stringResource(R.string.diagnostic_yes))
+                        }
+                        OutlinedButton(
+                            onClick = vm::answerNo,
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = MaterialTheme.colorScheme.onSurface
+                            )
+                        ) {
+                            Text(stringResource(R.string.diagnostic_no))
+                        }
                     }
                 }
             }
@@ -338,6 +367,20 @@ private fun PartCardExpandable(parts: List<PartRefResolved>) {
                                     .height(220.dp)
                                     .align(Alignment.CenterHorizontally)
                             )
+                        } else {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(220.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.BrokenImage,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.size(48.dp)
+                                )
+                            }
                         }
                     }
 

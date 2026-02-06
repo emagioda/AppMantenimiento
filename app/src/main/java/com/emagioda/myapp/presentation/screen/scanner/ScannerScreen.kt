@@ -14,12 +14,16 @@ import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -28,7 +32,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.emagioda.myapp.di.ServiceLocator
 import com.emagioda.myapp.R
+import com.emagioda.myapp.presentation.viewmodel.ScannerViewModel
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
@@ -40,6 +47,8 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalGetImage::class)
 @Composable
@@ -48,6 +57,14 @@ fun ScannerScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val hapticFeedback = LocalHapticFeedback.current
+    val snackbarHostState = remember { SnackbarHostState() }
+    val snackbarScope = rememberCoroutineScope()
+    val vm: ScannerViewModel = viewModel(
+        factory = ScannerViewModel.Factory(
+            ServiceLocator.provideGetMachineIds(context)
+        )
+    )
 
     var hasPermission by remember { mutableStateOf<Boolean?>(null) }
     val requestPermission = rememberLauncherForActivityResult(
@@ -68,7 +85,30 @@ fun ScannerScreen(
         false -> PermissionRationale(
             onRequest = { requestPermission.launch(Manifest.permission.CAMERA) }
         )
-        true -> CameraPreview(onScanned = onScanned, modifier = modifier.fillMaxSize())
+        true -> {
+            Scaffold(
+                snackbarHost = { SnackbarHost(snackbarHostState) },
+                contentWindowInsets = WindowInsets(0)
+            ) { innerPadding ->
+                CameraPreview(
+                    machineIds = vm.uiState.machineIds,
+                    onScanned = { machineId ->
+                        hapticFeedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                        onScanned(machineId)
+                    },
+                    onInvalidMachine = {
+                        snackbarScope.launch {
+                            snackbarHostState.showSnackbar(
+                                message = context.getString(R.string.scanner_invalid_machine)
+                            )
+                        }
+                    },
+                    modifier = modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                )
+            }
+        }
     }
 }
 
@@ -108,7 +148,9 @@ private fun PermissionRationale(
 @ExperimentalGetImage
 @Composable
 private fun CameraPreview(
+    machineIds: Set<String>,
     onScanned: (String) -> Unit,
+    onInvalidMachine: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -116,7 +158,10 @@ private fun CameraPreview(
     val context = LocalContext.current
 
     var handled by rememberSaveable { mutableStateOf(false) }
+    var lastInvalidTime by rememberSaveable { mutableStateOf(0L) }
+    var lastInvalidValue by rememberSaveable { mutableStateOf<String?>(null) }
     val idRegex = remember { Pattern.compile("^[A-Za-z0-9._-]{3,}$") }
+    val mainExecutor = remember { ContextCompat.getMainExecutor(context) }
 
     // Torch state + control
     var torchEnabled by rememberSaveable { mutableStateOf(false) }
@@ -162,10 +207,23 @@ private fun CameraPreview(
                                         .addOnSuccessListener { barcodes ->
                                             val value = barcodes.firstOrNull()?.rawValue?.trim()
                                             if (!value.isNullOrEmpty()
-                                                && value == "TRIMEC_SILO_001" // único QR permitido
+                                                && idRegex.matcher(value).matches()
                                             ) {
-                                                handled = true
-                                                onScanned(value)
+                                                if (machineIds.contains(value)) {
+                                                    handled = true
+                                                    onScanned(value)
+                                                } else {
+                                                    val now = System.currentTimeMillis()
+                                                    val shouldNotify = value != lastInvalidValue
+                                                        || now - lastInvalidTime > 1500
+                                                    if (shouldNotify) {
+                                                        mainExecutor.execute {
+                                                            lastInvalidValue = value
+                                                            lastInvalidTime = now
+                                                            onInvalidMachine()
+                                                        }
+                                                    }
+                                                }
                                             }
 
                                         }

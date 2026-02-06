@@ -157,7 +157,7 @@
       "type": "QUESTION",
       "title": "SOLUCIÓN SENCILLA:\nProbar a rearmar el guardamotor.",
       "yes": "Q_AE_0111",
-      "no": "***",
+      "no": "END",
       "mode": "CONTINUE_ONLY"
     },
 
@@ -478,7 +478,7 @@
       "type": "QUESTION",
       "title": "SOLUCIÓN SENCILLA:\nProbar a rearmar el guardamotor.",
       "yes": "Q_CF_1",
-      "no": "***",
+      "no": "END",
       "mode": "CONTINUE_ONLY"
     },
 

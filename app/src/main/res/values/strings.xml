@@ -19,6 +19,7 @@
     <string name="scanner_torch_off_cd">Accendi torcia</string>
     <string name="scanner_processing_error">Errore durante l\'elaborazione dell\'immagine</string>
     <string name="scanner_bind_error">Errore nell\'inizializzare la fotocamera</string>
+    <string name="scanner_invalid_machine">Macchina non riconosciuta</string>
 
     <!-- Contatti -->
     <string name="contacts_title">Contatti</string>

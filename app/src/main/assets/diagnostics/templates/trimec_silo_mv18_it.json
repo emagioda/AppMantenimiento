@@ -86,7 +86,7 @@
 
     { "id":"Q_AE_011", "type":"QUESTION",
       "title":"SOLUZIONE SEMPLICE:\nProvare a riarmare il Salvamotore.",
-      "yes":"Q_AE_0111", "no":"***", "mode":"CONTINUE_ONLY"
+      "yes":"Q_AE_0111", "no":"END", "mode":"CONTINUE_ONLY"
     },
 
     { "id":"Q_AE_0111", "type":"QUESTION", "title":"Una volta reinserito, l'interruttore di protezione del motore è scattato di nuovo?", "yes":"Q_AE_01111", "no":"Q_AE_01110" },
@@ -245,7 +245,7 @@
 
     { "id":"Q_CF", "type":"QUESTION",
       "title":"SOLUZIONE SEMPLICE: Provare a riarmare il Salvamotore.",
-      "yes":"Q_CF_1", "no":"***", "mode":"CONTINUE_ONLY"
+      "yes":"Q_CF_1", "no":"END", "mode":"CONTINUE_ONLY"
     },
 
     { "id":"Q_CF_1", "type":"QUESTION", "title":"Una volta reinserito, l'interruttore di protezione del motore è scattato di nuovo?", "yes":"Q_CF_11", "no":"Q_CF_10" },
