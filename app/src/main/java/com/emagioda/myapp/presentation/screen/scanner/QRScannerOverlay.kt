@@ -32,7 +32,7 @@ fun QRScannerOverlay(
     modifier: Modifier = Modifier,
     frameSizeDp: Int = 260,
     cornerLenDp: Int = 24,
-    scrimAlpha: Float = 0.55f,
+    scrimAlpha: Float = 0.5f,
     showScanLine: Boolean = true
 ) {
     val yAnim: Float = if (showScanLine) {
@@ -55,9 +55,7 @@ fun QRScannerOverlay(
                 .fillMaxSize()
                 .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
         ) {
-            val scrim = Color.Black.copy(alpha = scrimAlpha)
-
-            drawRect(color = scrim)
+            drawRect(color = Color.Black.copy(alpha = scrimAlpha))
 
             val frameW = frameSizeDp.dp.toPx()
             val frameH = frameSizeDp.dp.toPx()

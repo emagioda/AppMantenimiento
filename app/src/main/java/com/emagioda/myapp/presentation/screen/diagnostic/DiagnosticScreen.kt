@@ -4,10 +4,12 @@ import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,7 +28,6 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.BrokenImage
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -293,7 +294,12 @@ private fun SuggestCard(text: String) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .animateContentSize()
+            .animateContentSize(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Column(Modifier.padding(16.dp)) {
             Text(
@@ -310,12 +316,22 @@ private fun SuggestCard(text: String) {
 @Composable
 private fun PartCardExpandable(parts: List<PartRefResolved>) {
     var expanded by remember { mutableStateOf(false) }
+    val arrowRotation by animateFloatAsState(
+        targetValue = if (expanded) 180f else 0f,
+        animationSpec = tween(durationMillis = 220),
+        label = "arrow-rotation"
+    )
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .animateContentSize()
-            .clickable { expanded = !expanded }
+            .clickable { expanded = !expanded },
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Column(Modifier.padding(16.dp)) {
 
@@ -329,8 +345,9 @@ private fun PartCardExpandable(parts: List<PartRefResolved>) {
                     style = MaterialTheme.typography.titleMedium
                 )
                 Icon(
-                    imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                    contentDescription = null
+                    imageVector = Icons.Filled.KeyboardArrowDown,
+                    contentDescription = null,
+                    modifier = Modifier.graphicsLayer { rotationZ = arrowRotation }
                 )
             }
 
@@ -342,12 +359,35 @@ private fun PartCardExpandable(parts: List<PartRefResolved>) {
                         text = ref.detail.product,
                         style = MaterialTheme.typography.titleSmall
                     )
-                    ref.qty?.let { Text(stringResource(R.string.diagnostic_part_qty_value, it)) }
-                    ref.detail.code?.let { Text(stringResource(R.string.diagnostic_part_code_value, it)) }
-                    ref.detail.features?.let { Text(stringResource(R.string.diagnostic_part_features_value, it)) }
-                    ref.detail.supplier?.let { Text(stringResource(R.string.diagnostic_part_supplier_value, it)) }
+                    ref.qty?.let {
+                        Text(
+                            text = stringResource(R.string.diagnostic_part_qty_value, it),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                    ref.detail.code?.let {
+                        Text(
+                            text = stringResource(R.string.diagnostic_part_code_value, it),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                    ref.detail.features?.let {
+                        Text(
+                            text = stringResource(R.string.diagnostic_part_features_value, it),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                    ref.detail.supplier?.let {
+                        Text(
+                            text = stringResource(R.string.diagnostic_part_supplier_value, it),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
                     ref.detail.technicalContacts?.let {
-                        Text(stringResource(R.string.diagnostic_part_technical_contact_value, it))
+                        Text(
+                            text = stringResource(R.string.diagnostic_part_technical_contact_value, it),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
                     }
 
                     Spacer(Modifier.height(12.dp))
