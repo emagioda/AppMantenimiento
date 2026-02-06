@@ -13,6 +13,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator // IMPORTANTE: Agregado
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -90,23 +91,38 @@ fun ScannerScreen(
                 snackbarHost = { SnackbarHost(snackbarHostState) },
                 contentWindowInsets = WindowInsets(0)
             ) { innerPadding ->
-                CameraPreview(
-                    machineIds = vm.uiState.machineIds,
-                    onScanned = { machineId ->
-                        hapticFeedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                        onScanned(machineId)
-                    },
-                    onInvalidMachine = {
-                        snackbarScope.launch {
-                            snackbarHostState.showSnackbar(
-                                message = context.getString(R.string.scanner_invalid_machine)
-                            )
-                        }
-                    },
-                    modifier = modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)
-                )
+
+                // CORRECCIÓN PROFESIONAL:
+                // Esperamos a que el ViewModel termine de cargar la lista de máquinas.
+                if (vm.uiState.isLoading) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                } else {
+                    // Solo iniciamos la cámara cuando tenemos los datos listos.
+                    CameraPreview(
+                        machineIds = vm.uiState.machineIds,
+                        onScanned = { machineId ->
+                            hapticFeedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                            onScanned(machineId)
+                        },
+                        onInvalidMachine = {
+                            snackbarScope.launch {
+                                snackbarHostState.showSnackbar(
+                                    message = context.getString(R.string.scanner_invalid_machine)
+                                )
+                            }
+                        },
+                        modifier = modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
+                    )
+                }
             }
         }
     }
@@ -158,8 +174,11 @@ private fun CameraPreview(
     val context = LocalContext.current
 
     var handled by rememberSaveable { mutableStateOf(false) }
+
+    // Control de "spam" de errores
     var lastInvalidTime by rememberSaveable { mutableStateOf(0L) }
     var lastInvalidValue by rememberSaveable { mutableStateOf<String?>(null) }
+
     val idRegex = remember { Pattern.compile("^[A-Za-z0-9._-]{3,}$") }
     val mainExecutor = remember { ContextCompat.getMainExecutor(context) }
 
@@ -215,7 +234,7 @@ private fun CameraPreview(
                                                 } else {
                                                     val now = System.currentTimeMillis()
                                                     val shouldNotify = value != lastInvalidValue
-                                                        || now - lastInvalidTime > 1500
+                                                            || now - lastInvalidTime > 1500
                                                     if (shouldNotify) {
                                                         mainExecutor.execute {
                                                             lastInvalidValue = value
