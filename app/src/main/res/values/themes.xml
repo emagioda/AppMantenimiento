@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Tema normal de tu app -->
+    <!-- Tema principale dell'app -->
     <style name="Theme.MyApp" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Personalización general -->
+        <!-- Personalizzazione generale -->
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/black</item>
     </style>
 
-    <!-- Tema del Splash -->
+    <!-- Tema dello splash -->
     <style name="Theme.MyApp.Splash" parent="Theme.SplashScreen">
-        <!-- Fondo del splash -->
+        <!-- Sfondo dello splash -->
         <item name="windowSplashScreenBackground">@color/splash_background</item>
 
-        <!-- Ícono o logo que se mostrará -->
+        <!-- Icona o logo da mostrare -->
         <item name="windowSplashScreenAnimatedIcon">@drawable/splash_logo_inset</item>
 
-        <!-- Sin animación (para mantener el 3D estático) -->
+        <!-- Nessuna animazione (per mantenere il 3D statico) -->
         <item name="windowSplashScreenAnimationDuration">0</item>
 
-        <!-- Fondo del ícono (lo dejamos transparente) -->
+        <!-- Sfondo dell'icona (lo lasciamo trasparente) -->
         <item name="windowSplashScreenIconBackgroundColor">@android:color/transparent</item>
 
-        <!-- Tema que se aplicará luego del splash -->
+        <!-- Tema applicato dopo lo splash -->
         <item name="postSplashScreenTheme">@style/Theme.MyApp</item>
 
-        <!-- Fallback para Android < 12 -->
+        <!-- Fallback per Android < 12 -->
         <item name="android:windowBackground">@drawable/splash_background</item>
         <item name="android:windowFullscreen">true</item>
     </style>

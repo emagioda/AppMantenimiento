@@ -5,7 +5,6 @@ import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import java.io.BufferedReader
 import java.io.InputStreamReader
-import java.util.Locale
 
 class AssetsDiagnosticDataSource(
     private val context: Context,
@@ -83,24 +82,17 @@ class AssetsDiagnosticDataSource(
 
     fun readTemplateRaw(templateId: String): RawTree {
 
-        // Detectar idioma del celular
-        val lang = Locale.getDefault().language.lowercase()
+        // L'app è solo in italiano: usiamo sempre il template italiano.
+        val suffix = "it"
 
-        // Seleccionar sufijo
-        val suffix = when {
-            lang.startsWith("es") -> "es"       // español
-            lang.startsWith("it") -> "it"       // italiano
-            else -> "it"                        // fallback
-        }
-
-        // Construir ruta con idioma preferido
+        // Costruisci il percorso con la lingua preferita
         val requestedPath = "diagnostics/templates/${templateId}_${suffix}.json"
 
-        // Si el archivo existe → usarlo
+        // Se il file esiste → usalo
         val finalJson = try {
             readAsset(requestedPath)
         } catch (e: Exception) {
-            // Fallback seguro a italiano (templateId_it.json)
+            // Fallback sicuro all'italiano (templateId_it.json)
             val fallbackPath = "diagnostics/templates/${templateId}_it.json"
             readAsset(fallbackPath)
         }

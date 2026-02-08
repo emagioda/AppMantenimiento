@@ -13,7 +13,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator // IMPORTANTE: Agregado
+import androidx.compose.material3.CircularProgressIndicator // IMPORTANTE: aggiunto
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -92,8 +92,8 @@ fun ScannerScreen(
                 contentWindowInsets = WindowInsets(0)
             ) { innerPadding ->
 
-                // CORRECCIÓN PROFESIONAL:
-                // Esperamos a que el ViewModel termine de cargar la lista de máquinas.
+                // CORREZIONE PROFESSIONALE:
+                // Attendiamo che il ViewModel finisca di caricare l'elenco delle macchine.
                 if (vm.uiState.isLoading) {
                     Box(
                         modifier = Modifier
@@ -104,7 +104,7 @@ fun ScannerScreen(
                         CircularProgressIndicator()
                     }
                 } else {
-                    // Solo iniciamos la cámara cuando tenemos los datos listos.
+                    // Avviamo la fotocamera solo quando i dati sono pronti.
                     CameraPreview(
                         machineIds = vm.uiState.machineIds,
                         onScanned = { machineId ->
@@ -143,7 +143,7 @@ private fun PermissionRationale(
         Column(
             modifier = Modifier
                 .align(Alignment.Center)
-                // Lo levantamos un poco para que no lo tape el diálogo del permiso
+                // Lo solleviamo un po' per non coprirlo con il dialogo di permesso
                 .offset(y = if (liftABit) (-32).dp else 0.dp)
                 .padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -175,14 +175,14 @@ private fun CameraPreview(
 
     var handled by rememberSaveable { mutableStateOf(false) }
 
-    // Control de "spam" de errores
+    // Controllo dello "spam" di errori
     var lastInvalidTime by rememberSaveable { mutableStateOf(0L) }
     var lastInvalidValue by rememberSaveable { mutableStateOf<String?>(null) }
 
     val idRegex = remember { Pattern.compile("^[A-Za-z0-9._-]{3,}$") }
     val mainExecutor = remember { ContextCompat.getMainExecutor(context) }
 
-    // Torch state + control
+    // Stato e controllo della torcia
     var torchEnabled by rememberSaveable { mutableStateOf(false) }
     var cameraControl: CameraControl? by remember { mutableStateOf(null) }
     var cameraProvider: ProcessCameraProvider? by remember { mutableStateOf(null) }

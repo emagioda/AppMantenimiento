@@ -27,7 +27,7 @@ sealed class Route(val route: String) {
     data object Home : Route("home")
     data object Scanner : Route("scanner")
 
-    // NUEVA RUTA: Detalle de máquina
+    // NUOVA ROTTA: dettaglio macchina
     data object MachineDetail : Route("machineDetail/{machineId}") {
         fun createRoute(machineId: String) = "machineDetail/$machineId"
     }
@@ -81,7 +81,7 @@ fun AppNavHost(
             )
         }
 
-        // SCANNER → ahora navega a MachineDetail
+        // SCANNER → ora naviga a MachineDetail
         composable(
             route = Route.Scanner.route,
             enterTransition = slideInLeft,
@@ -97,7 +97,7 @@ fun AppNavHost(
             )
         }
 
-        // NUEVO: DETALLE DE MÁQUINA
+        // NUOVO: DETTAGLIO MACCHINA
         composable(
             route = Route.MachineDetail.route,
             enterTransition = slideInLeft,
@@ -116,7 +116,7 @@ fun AppNavHost(
             )
         }
 
-        // DIAGNÓSTICO (igual que antes)
+        // DIAGNOSTICA (come prima)
         composable(
             route = Route.Diagnostic.route,
             enterTransition = slideInLeft,
@@ -134,7 +134,7 @@ fun AppNavHost(
             )
         }
 
-        // CONTACTOS
+        // CONTATTI
         composable(
             route = Route.Contacts.route,
             enterTransition = slideInLeft,
@@ -145,7 +145,7 @@ fun AppNavHost(
             ContactsScreen(onBack = { navController.popBackStack() }, initialTab = 0)
         }
 
-        // CONTACTOS → Técnicos
+        // CONTATTI → Tecnici
         composable(
             route = Route.ContactsTechnicians.route,
             enterTransition = slideInLeft,
@@ -156,7 +156,7 @@ fun AppNavHost(
             ContactsScreen(onBack = { navController.popBackStack() }, initialTab = 0)
         }
 
-        // CONTACTOS → Proveedores
+        // CONTATTI → Fornitori
         composable(
             route = Route.ContactsProviders.route,
             enterTransition = slideInLeft,
