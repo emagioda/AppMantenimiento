@@ -18,8 +18,9 @@ class DiagnosticRepositoryImpl(
         val rawTree = ds.readTemplateRaw(machine.templateId)
         val partsCatalog = ds.readPartsCatalog()
 
-        // 3) Precalcola i ricambi per nodo usando i nodeRefs del catalogo
-        val partsByNodeId = buildPartsByNodeId(partsCatalog)
+        // 3) Creare una mappa veloce per cercare i dettagli delle parti per ID
+        // Ora il JSON parts.json non ha nodeRefs, è solo un elenco.
+        val partsMap = partsCatalog.parts.associateBy { it.id }
 
         // 4) Mappa i nodi grezzi -> nodi di dominio
         val nodes = rawTree.nodes.map { raw ->
@@ -37,21 +38,16 @@ class DiagnosticRepositoryImpl(
                 else -> QuestionMode.YES_NO
             }
 
-            // Ricambi dal catalogo (nodeRefs)
-            val catalogParts = partsByNodeId[raw.id].orEmpty()
-
-            // Ricambi definiti inline nello stesso nodo (se mai servissero)
-            val inlineParts = raw.parts.orEmpty().mapNotNull { ref ->
-                val detailRaw = partsCatalog.parts.firstOrNull { it.id == ref.id }
-                    ?: return@mapNotNull null
+            // Nuova logica: Le parti sono definite nel nodo (raw.parts).
+            // Dobbiamo prendere l'ID dal nodo e cercare i dettagli completi nel partsMap.
+            val nodeParts = raw.parts.orEmpty().mapNotNull { ref ->
+                val detailRaw = partsMap[ref.id] ?: return@mapNotNull null
 
                 PartRefResolved(
                     detail = detailRaw.toDomain(),
                     qty = ref.qty
                 )
             }
-
-            val combinedParts = (catalogParts + inlineParts).takeIf { it.isNotEmpty() }
 
             DiagnosticNode(
                 id = raw.id,
@@ -62,7 +58,7 @@ class DiagnosticRepositoryImpl(
                 no = raw.no,
                 providersShortcut = raw.providersShortcut,
                 result = result,
-                parts = combinedParts,
+                parts = nodeParts.takeIf { it.isNotEmpty() },
                 mode = mode
             )
         }
@@ -88,24 +84,6 @@ class DiagnosticRepositoryImpl(
             technicalContacts = technicalContacts,
             imageResName = imageResName
         )
-
-    private fun buildPartsByNodeId(
-        catalog: AssetsDiagnosticDataSource.PartsCatalog
-    ): Map<String, List<PartRefResolved>> {
-        val map = mutableMapOf<String, MutableList<PartRefResolved>>()
-
-        catalog.parts.forEach { raw ->
-            val detail = raw.toDomain()
-            // nodeRefs non ha quantità, quindi la lasciamo null (non mostra "Quantità")
-            val ref = PartRefResolved(detail = detail, qty = null)
-
-            raw.nodeRefs.forEach { nodeId ->
-                map.getOrPut(nodeId) { mutableListOf() }.add(ref)
-            }
-        }
-
-        return map
-    }
 
     private fun mapResult(raw: String): EndResult? =
         when (raw.uppercase()) {

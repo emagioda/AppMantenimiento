@@ -69,8 +69,8 @@ class AssetsDiagnosticDataSource(
         val features: String?,
         val supplier: String?,
         val technicalContacts: String?,
-        val imageResName: String?,
-        val nodeRefs: List<String>
+        val imageResName: String?
+        // ELIMINADO: val nodeRefs: List<String>
     )
 
 
