@@ -6,7 +6,7 @@
       "code": "CS AR-05V024",
       "features": null,
       "supplier": "TL Elettrica SRL",
-      "contacts": "Meltec",
+      "technicalContacts": "Meltec",
       "imageResName": "img_p_01"
     },
     {
@@ -15,7 +15,7 @@
       "code": "PFG05",
       "features": "IP65 / -20...+70°C",
       "supplier": "Trimec SRL",
-      "contacts": "TL Elettrica SRL / Meltec",
+      "technicalContacts": "TL Elettrica SRL / Meltec",
       "imageResName": "img_p_02"
     },
     {
@@ -24,7 +24,7 @@
       "code": null,
       "features": "1,5kW - 400V - B5 - 3000 giri - 50Hz",
       "supplier": "Trimec",
-      "contacts": "Meltec / TL Elettrica SRL",
+      "technicalContacts": "Meltec / TL Elettrica SRL",
       "imageResName": "img_p_03"
     },
     {
@@ -33,7 +33,7 @@
       "code": "W75 i=7 PAM 90",
       "features": null,
       "supplier": "Trimec SRL",
-      "contacts": "Trimec SRL",
+      "technicalContacts": "Trimec SRL",
       "imageResName": "img_p_04"
     },
     {
@@ -42,7 +42,7 @@
       "code": null,
       "features": "30kW - 400V - B3 - 3000 giri - 50Hz",
       "supplier": "Trimec",
-      "contacts": "Meltec / TL Elettrica SRL",
+      "technicalContacts": "Meltec / TL Elettrica SRL",
       "imageResName": "img_p_05"
     },
     {
@@ -51,7 +51,7 @@
       "code": "SPB 5600",
       "features": "5 pezzi",
       "supplier": "Trimec SRL",
-      "contacts": "Trimec SRL",
+      "technicalContacts": "Trimec SRL",
       "imageResName": "img_p_06"
     },
     {
@@ -60,7 +60,7 @@
       "code": "XCSTA791",
       "features": null,
       "supplier": "TL Elettrica SRL / 2G elettrica",
-      "contacts": "Meltec / TL elettrica",
+      "technicalContacts": "Meltec / TL elettrica",
       "imageResName": "img_p_07"
     }
   ]
