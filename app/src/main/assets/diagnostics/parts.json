@@ -62,6 +62,15 @@
       "supplier": "TL Elettrica SRL / 2G elettrica",
       "technicalContacts": "Meltec / TL elettrica",
       "imageResName": "img_p_07"
+    },
+    {
+      "id": "P_08",
+      "product": "Celle di carico LAUMAS",
+      "code": "CBX50000",
+      "features": "Accaio inox 17-4 PH. ERRORE COMBINATO +-0,035%. GRADO DI PROTEZIONE IP68",
+      "supplier": "TL Elettrica SRL",
+      "technicalContacts": "Meltec / TL elettrica",
+      "imageResName": "img_p_08"
     }
   ]
 }

@@ -121,8 +121,10 @@
     },
 
     { "id":"Q_AE_0111011", "type":"END",
-      "title":"Verificare albero di trasmissione tra il riduttore e la coclea.",
-      "result":"NO_ISSUE"
+      "title":"• Il bullone che collega il riduttore alla vite senza fine potrebbe essersi rotto.\n• Il cuscinetto/boccola della vite senza fine è rotto o non è lubrificato correttamente.",
+      "description":"• Verificare che il bullone tra il cambio e la vite senza fine non sia tranciato.\n• Verificare che il cuscinetto/boccola della vite senza fine sia in buone condizioni.\n• Ingrassare il cuscinetto/boccola della vite senza fine.",
+      "parts": [{"id": "P_04"}],
+      "result":"COMPONENT_FAULT"
     },
 
     { "id":"Q_AE_01111", "type":"QUESTION", "title":"Il guardamotore scatta all'istante?", "yes":"Q_AE_011111", "no":"Q_AE_011110" },
@@ -154,7 +156,8 @@
     { "id":"Q_BA_01", "type":"END",
       "title":"Il controller della bilancia non funziona correttamente.",
       "description":"• Reimpostare il controller.\n• Tarare nuovamente il controller.\n• Verificare che la bilancia pesi correttamente utilizzando un peso standard.\n• Sostituire il controller della bilancia.",
-      "result":"NO_ISSUE"
+      "parts": [{"id": "P_08"},{"id": "P_07"}],
+      "result":"COMPONENT_FAULT"
     },
 
     { "id":"Q_BB", "type":"QUESTION", "title":"Ha attivato la modalità di scarico del silo?", "yes":"Q_BC", "no":"Q_BB_0" },
