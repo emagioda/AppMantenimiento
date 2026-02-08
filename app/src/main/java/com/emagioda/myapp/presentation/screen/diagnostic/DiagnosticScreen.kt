@@ -9,6 +9,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -26,16 +28,17 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.BrokenImage
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -235,7 +238,7 @@ private fun EndContent(
 
         node.parts?.takeIf { it.isNotEmpty() }?.let { parts ->
             Spacer(Modifier.height(20.dp))
-            PartCardExpandable(parts)
+            DiagnosticPartsSection(parts)
         }
 
         Spacer(Modifier.height(28.dp))
@@ -306,89 +309,116 @@ private fun SuggestCard(text: String) {
     }
 }
 
+@Composable
+private fun DiagnosticPartsSection(parts: List<PartRefResolved>) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = "Pezzi di ricambio",
+            style = MaterialTheme.typography.titleMedium
+        )
+        Spacer(Modifier.height(16.dp))
+        parts.forEachIndexed { index, part ->
+            IndividualPartCard(part)
+            if (index < parts.lastIndex) {
+                Spacer(Modifier.height(16.dp))
+            }
+        }
+    }
+}
+
 @SuppressLint("LocalContextResourcesRead", "DiscouragedApi")
 @Composable
-private fun PartCardExpandable(parts: List<PartRefResolved>) {
+private fun IndividualPartCard(part: PartRefResolved) {
     var expanded by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val resId = part.detail.imageResName?.let { resName ->
+        context.resources.getIdentifier(resName, "drawable", context.packageName)
+    } ?: 0
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .animateContentSize()
-            .clickable { expanded = !expanded }
+            .clickable { expanded = !expanded },
+        colors = CardDefaults.elevatedCardColors(),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Column(Modifier.padding(16.dp)) {
-
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    text = stringResource(R.string.diagnostic_parts_title),
-                    style = MaterialTheme.typography.titleMedium
-                )
+                if (resId != 0) {
+                    Image(
+                        painter = painterResource(resId),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(64.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                    )
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .size(64.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.surfaceVariant,
+                                shape = RoundedCornerShape(12.dp)
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.BrokenImage,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
+                }
+
+                Spacer(Modifier.width(12.dp))
+
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = part.detail.product,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    part.detail.code?.let {
+                        Text(
+                            text = "Codice: $it",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
+
                 Icon(
-                    imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                    contentDescription = null
+                    imageVector = Icons.Filled.KeyboardArrowDown,
+                    contentDescription = null,
+                    modifier = Modifier.graphicsLayer {
+                        rotationZ = if (expanded) 180f else 0f
+                    }
                 )
             }
 
             if (expanded) {
                 Spacer(Modifier.height(16.dp))
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    part.qty?.let { Text(text = "Quantità: $it") }
+                    part.detail.features?.let { Text(text = "Caratteristiche: $it") }
+                    part.detail.supplier?.let { Text(text = "Fornitore: $it") }
+                    part.detail.technicalContacts?.let { Text(text = "Contatti tecnici: $it") }
+                }
 
-                parts.forEachIndexed { index, ref ->
-                    Text(
-                        text = ref.detail.product,
-                        style = MaterialTheme.typography.titleSmall
-                    )
-                    ref.qty?.let { Text(stringResource(R.string.diagnostic_part_qty_value, it)) }
-                    ref.detail.code?.let { Text(stringResource(R.string.diagnostic_part_code_value, it)) }
-                    ref.detail.features?.let { Text(stringResource(R.string.diagnostic_part_features_value, it)) }
-                    ref.detail.supplier?.let { Text(stringResource(R.string.diagnostic_part_supplier_value, it)) }
-                    ref.detail.technicalContacts?.let {
-                        Text(stringResource(R.string.diagnostic_part_technical_contact_value, it))
-                    }
-
+                if (resId != 0) {
                     Spacer(Modifier.height(12.dp))
-
-                    ref.detail.imageResName?.let { resName ->
-                        val context = LocalContext.current
-                        val resId = context.resources.getIdentifier(
-                            resName,
-                            "drawable",
-                            context.packageName
-                        )
-                        if (resId != 0) {
-                            ZoomablePartImage(
-                                resId = resId,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(220.dp)
-                                    .align(Alignment.CenterHorizontally)
-                            )
-                        } else {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(220.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.BrokenImage,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.size(48.dp)
-                                )
-                            }
-                        }
-                    }
-
-                    if (index < parts.lastIndex) {
-                        Spacer(Modifier.height(16.dp))
-                        HorizontalDivider()
-                        Spacer(Modifier.height(16.dp))
-                    }
+                    ZoomablePartImage(
+                        resId = resId,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(220.dp)
+                    )
                 }
             }
         }
