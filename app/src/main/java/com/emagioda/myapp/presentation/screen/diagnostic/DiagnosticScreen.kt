@@ -28,6 +28,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.BrokenImage
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -311,6 +312,10 @@ private fun SuggestCard(text: String) {
 
 @Composable
 private fun DiagnosticPartsSection(parts: List<PartRefResolved>) {
+    if (parts.isEmpty()) {
+        return
+    }
+
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = "Pezzi di ricambio",
@@ -318,7 +323,7 @@ private fun DiagnosticPartsSection(parts: List<PartRefResolved>) {
         )
         Spacer(Modifier.height(16.dp))
         parts.forEachIndexed { index, part ->
-            IndividualPartCard(part)
+            TransformablePartCard(part)
             if (index < parts.lastIndex) {
                 Spacer(Modifier.height(16.dp))
             }
@@ -328,14 +333,14 @@ private fun DiagnosticPartsSection(parts: List<PartRefResolved>) {
 
 @SuppressLint("LocalContextResourcesRead", "DiscouragedApi")
 @Composable
-private fun IndividualPartCard(part: PartRefResolved) {
+private fun TransformablePartCard(part: PartRefResolved) {
     var expanded by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val resId = part.detail.imageResName?.let { resName ->
         context.resources.getIdentifier(resName, "drawable", context.packageName)
     } ?: 0
 
-    Card(
+    ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
             .animateContentSize()
@@ -348,35 +353,37 @@ private fun IndividualPartCard(part: PartRefResolved) {
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                if (resId != 0) {
-                    Image(
-                        painter = painterResource(resId),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(64.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                    )
-                } else {
-                    Box(
-                        modifier = Modifier
-                            .size(64.dp)
-                            .background(
-                                color = MaterialTheme.colorScheme.surfaceVariant,
-                                shape = RoundedCornerShape(12.dp)
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.BrokenImage,
+                if (!expanded) {
+                    if (resId != 0) {
+                        Image(
+                            painter = painterResource(resId),
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.size(28.dp)
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .size(64.dp)
+                                .clip(RoundedCornerShape(12.dp))
                         )
+                    } else {
+                        Box(
+                            modifier = Modifier
+                                .size(64.dp)
+                                .background(
+                                    color = MaterialTheme.colorScheme.surfaceVariant,
+                                    shape = RoundedCornerShape(12.dp)
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.BrokenImage,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.size(28.dp)
+                            )
+                        }
                     }
-                }
 
-                Spacer(Modifier.width(12.dp))
+                    Spacer(Modifier.width(12.dp))
+                }
 
                 Column(
                     modifier = Modifier.weight(1f)
@@ -394,11 +401,13 @@ private fun IndividualPartCard(part: PartRefResolved) {
                 }
 
                 Icon(
-                    imageVector = Icons.Filled.KeyboardArrowDown,
+                    imageVector = if (expanded) {
+                        Icons.Filled.KeyboardArrowUp
+                    } else {
+                        Icons.Filled.KeyboardArrowDown
+                    },
                     contentDescription = null,
-                    modifier = Modifier.graphicsLayer {
-                        rotationZ = if (expanded) 180f else 0f
-                    }
+                    modifier = Modifier.size(28.dp)
                 )
             }
 
@@ -406,7 +415,6 @@ private fun IndividualPartCard(part: PartRefResolved) {
                 Spacer(Modifier.height(16.dp))
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     part.qty?.let { Text(text = "Quantità: $it") }
-                    part.detail.features?.let { Text(text = "Caratteristiche: $it") }
                     part.detail.supplier?.let { Text(text = "Fornitore: $it") }
                     part.detail.technicalContacts?.let { Text(text = "Contatti tecnici: $it") }
                 }
