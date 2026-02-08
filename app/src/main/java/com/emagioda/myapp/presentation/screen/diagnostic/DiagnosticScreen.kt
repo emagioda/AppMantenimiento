@@ -11,6 +11,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
@@ -344,9 +345,12 @@ private fun TransformablePartCard(part: PartRefResolved) {
         modifier = Modifier
             .fillMaxWidth()
             .animateContentSize()
-            .clickable { expanded = !expanded },
-        colors = CardDefaults.elevatedCardColors(),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+            .clickable { expanded = !expanded }
+            .border(
+                BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                RoundedCornerShape(12.dp)
+            ),
+        colors = CardDefaults.elevatedCardColors()
     ) {
         Column(Modifier.padding(16.dp)) {
             Row(
