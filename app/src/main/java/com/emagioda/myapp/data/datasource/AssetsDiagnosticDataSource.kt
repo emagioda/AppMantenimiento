@@ -2,13 +2,36 @@ package com.emagioda.myapp.data.datasource
 
 import android.content.Context
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonParseException
 import com.google.gson.annotations.SerializedName
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
 class AssetsDiagnosticDataSource(
     private val context: Context,
-    private val gson: Gson = Gson()
+    private val gson: Gson = GsonBuilder()
+        .registerTypeAdapter(
+            RawPartRef::class.java,
+            JsonDeserializer<RawPartRef> { json, _, _ ->
+                if (json == null || json.isJsonNull) {
+                    throw JsonParseException("Missing part reference")
+                }
+                if (json.isJsonPrimitive && json.asJsonPrimitive.isString) {
+                    return@JsonDeserializer RawPartRef(id = json.asString)
+                }
+                val obj = json.asJsonObject
+                val idElement = obj.get("id")
+                if (idElement == null || idElement.isJsonNull) {
+                    throw JsonParseException("Missing part id")
+                }
+                val qtyElement = obj.get("qty")
+                val qty = if (qtyElement == null || qtyElement.isJsonNull) null else qtyElement.asInt
+                RawPartRef(id = idElement.asString, qty = qty)
+            }
+        )
+        .create()
 ) {
 
     // --------------------------
@@ -29,9 +52,9 @@ class AssetsDiagnosticDataSource(
     // Raw Diagnostic Tree
     // --------------------------
     data class RawTree(
-        val templateId: String,
-        val version: Int,
-        val locale: String,
+        val templateId: String?,
+        val version: Int?,
+        val locale: String?,
         val root: String,
         val nodes: List<RawNode>
     )

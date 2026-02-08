@@ -60,9 +60,9 @@ class DiagnosticRepositoryImpl(
         }
 
         return DiagnosticTree(
-            templateId = rawTree.templateId,
-            version = rawTree.version,
-            locale = rawTree.locale,
+            templateId = rawTree.templateId ?: machine.templateId,
+            version = rawTree.version ?: 1,
+            locale = rawTree.locale ?: "it",
             root = rawTree.root,
             nodes = nodes
         )
