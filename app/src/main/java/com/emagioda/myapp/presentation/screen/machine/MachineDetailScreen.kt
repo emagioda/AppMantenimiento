@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.emagioda.myapp.R
 import com.google.gson.Gson
 
-// --------- MODELOS / CARGA JSON ---------
+// --------- MODELLI / CARICAMENTO JSON ---------
 
 private data class MachinesWrapper(
     val machines: List<MachineJson>
@@ -94,7 +94,7 @@ fun MachineDetailScreen(
             }
 
             // ---------------------------------------------------------
-            //  NUEVO: contenido centrado ENTRE topbar y botón
+            //  NUOVO: contenuto centrato TRA topbar e pulsante
             // ---------------------------------------------------------
             Column(
                 modifier = Modifier
@@ -105,7 +105,7 @@ fun MachineDetailScreen(
                 verticalArrangement = Arrangement.Center
             ) {
 
-                // Imagen con aspectRatio
+                // Immagine con aspectRatio
                 machine.imageName?.let { imageName ->
                     val resId = remember(imageName) {
                         context.resources.getIdentifier(
@@ -121,14 +121,14 @@ fun MachineDetailScreen(
                             contentDescription = machine.name,
                             modifier = Modifier
                                 .fillMaxWidth(0.9f)
-                                .aspectRatio(0.70f)  // <<--- LO QUE PEDISTE
+                                .aspectRatio(0.70f)  // <<--- come richiesto
                                 .clip(RoundedCornerShape(16.dp)),
                             contentScale = ContentScale.Fit
                         )
                     }
                 }
 
-                // Descripción
+                // Descrizione
                 machine.description?.let {
                     Spacer(modifier = Modifier.height(20.dp))
                     Text(
@@ -138,7 +138,7 @@ fun MachineDetailScreen(
                 }
             }
 
-            // Botón más arriba del nav bar
+            // Pulsante più in alto rispetto alla nav bar
             Button(
                 onClick = { onStartDiagnostic(machineId) },
                 modifier = Modifier

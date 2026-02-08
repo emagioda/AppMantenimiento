@@ -23,8 +23,8 @@ android {
     buildTypes {
         release {
         
-            // Configuración release
-            // (minifyEnabled = false → aún no hay ProGuard)
+            // Configurazione release
+            // (minifyEnabled = false → ProGuard non ancora attivo)
         
             isMinifyEnabled = false
             proguardFiles(
@@ -85,10 +85,10 @@ dependencies {
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.androidx.camera.view)
 
-    // ML Kit (escáner QR)
+    // ML Kit (scanner QR)
     implementation(libs.mlkit.barcode.scanning)
 
-    // Gson (lectura de JSON de assets)
+    // Gson (lettura JSON dagli asset)
     implementation(libs.google.gson)
 
     // Testing

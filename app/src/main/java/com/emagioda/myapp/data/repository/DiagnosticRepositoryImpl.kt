@@ -9,19 +9,19 @@ class DiagnosticRepositoryImpl(
 ) : DiagnosticRepository {
 
     override fun getTreeForMachine(machineId: String): DiagnosticTree {
-        // 1) Buscar máquina -> template
+        // 1) Trova la macchina -> template
         val machinesIndex = ds.readMachinesIndex()
         val machine = machinesIndex.machines.firstOrNull { it.id == machineId }
             ?: error("Machine not found for id=$machineId")
 
-        // 2) Cargar árbol crudo + catálogo de piezas
+        // 2) Carica l'albero grezzo + catalogo ricambi
         val rawTree = ds.readTemplateRaw(machine.templateId)
         val partsCatalog = ds.readPartsCatalog()
 
-        // 3) Precalcular piezas por nodo, usando nodeRefs del catálogo
+        // 3) Precalcola i ricambi per nodo usando i nodeRefs del catalogo
         val partsByNodeId = buildPartsByNodeId(partsCatalog)
 
-        // 4) Mapear nodos crudos -> nodos de dominio
+        // 4) Mappa i nodi grezzi -> nodi di dominio
         val nodes = rawTree.nodes.map { raw ->
             val type = when (raw.type.uppercase()) {
                 "QUESTION" -> NodeType.QUESTION
@@ -37,10 +37,10 @@ class DiagnosticRepositoryImpl(
                 else -> QuestionMode.YES_NO
             }
 
-            // Piezas desde catálogo (nodeRefs)
+            // Ricambi dal catalogo (nodeRefs)
             val catalogParts = partsByNodeId[raw.id].orEmpty()
 
-            // Piezas definidas inline en el propio nodo (si algún día las usas)
+            // Ricambi definiti inline nello stesso nodo (se mai servissero)
             val inlineParts = raw.parts.orEmpty().mapNotNull { ref ->
                 val detailRaw = partsCatalog.parts.firstOrNull { it.id == ref.id }
                     ?: return@mapNotNull null
@@ -96,7 +96,7 @@ class DiagnosticRepositoryImpl(
 
         catalog.parts.forEach { raw ->
             val detail = raw.toDomain()
-            // nodeRefs no tiene cantidad, así que la dejamos null (no se muestra "Cantidad")
+            // nodeRefs non ha quantità, quindi la lasciamo null (non mostra "Quantità")
             val ref = PartRefResolved(detail = detail, qty = null)
 
             raw.nodeRefs.forEach { nodeId ->

@@ -29,7 +29,7 @@ import com.emagioda.myapp.presentation.viewmodel.ContactsViewModel
 @Composable
 fun ContactsScreen(
     onBack: (() -> Unit)? = null,
-    initialTab: Int = 0 // 0 = Técnicos, 1 = Proveedores
+    initialTab: Int = 0 // 0 = Tecnici, 1 = Fornitori
 ) {
     val context = LocalContext.current
     val vm: ContactsViewModel = viewModel(
