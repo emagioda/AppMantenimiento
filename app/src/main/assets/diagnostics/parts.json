@@ -7,11 +7,7 @@
       "features": null,
       "supplier": "TL Elettrica SRL",
       "technicalContacts": "Meltec",
-      "imageResName": "img_p_01",
-      "nodeRefs": [
-        "Q_AC_0001",
-        "Q_CC_0001"
-      ]
+      "imageResName": "img_p_01"
     },
     {
       "id": "P_02",
@@ -20,8 +16,7 @@
       "features": "IP65 / -20...+70°C",
       "supplier": "Trimec SRL",
       "technicalContacts": "TL Elettrica SRL / Meltec",
-      "imageResName": "img_p_02",
-      "nodeRefs": ["Q_AF_0"]
+      "imageResName": "img_p_02"
     },
     {
       "id": "P_03",
@@ -30,8 +25,7 @@
       "features": "1,5kW - 400V - B5 - 3000 giri - 50Hz",
       "supplier": "Trimec",
       "technicalContacts": "Meltec / TL Elettrica SRL",
-      "imageResName": "img_p_03",
-      "nodeRefs": ["Q_AE_011111"]
+      "imageResName": "img_p_03"
     },
     {
       "id": "P_04",
@@ -40,8 +34,7 @@
       "features": null,
       "supplier": "Trimec SRL",
       "technicalContacts": "Trimec SRL",
-      "imageResName": "img_p_04",
-      "nodeRefs": ["Q_AE_0111010"]
+      "imageResName": "img_p_04"
     },
     {
       "id": "P_05",
@@ -50,8 +43,7 @@
       "features": "30kW - 400V - B3 - 3000 giri - 50Hz",
       "supplier": "Trimec",
       "technicalContacts": "Meltec / TL Elettrica SRL",
-      "imageResName": "img_p_05",
-      "nodeRefs": ["Q_CF_111"]
+      "imageResName": "img_p_05"
     },
     {
       "id": "P_06",
@@ -60,8 +52,7 @@
       "features": "5 pezzi",
       "supplier": "Trimec SRL",
       "technicalContacts": "Trimec SRL",
-      "imageResName": "img_p_06",
-      "nodeRefs": ["Q_CF_10101"]
+      "imageResName": "img_p_06"
     },
     {
       "id": "P_07",
@@ -70,11 +61,7 @@
       "features": null,
       "supplier": "TL Elettrica SRL / 2G elettrica",
       "technicalContacts": "Meltec / TL elettrica",
-      "imageResName": "img_p_07",
-      "nodeRefs": [
-        "Q_AC_0000",
-        "Q_AC_01"
-      ]
+      "imageResName": "img_p_07"
     }
   ]
 }
