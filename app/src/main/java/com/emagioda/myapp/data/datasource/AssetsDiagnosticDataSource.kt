@@ -5,7 +5,6 @@ import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import java.io.BufferedReader
 import java.io.InputStreamReader
-import java.util.Locale
 
 class AssetsDiagnosticDataSource(
     private val context: Context,
@@ -70,8 +69,7 @@ class AssetsDiagnosticDataSource(
         val features: String?,
         val supplier: String?,
         val technicalContacts: String?,
-        val imageResName: String?,
-        val nodeRefs: List<String>
+        val imageResName: String?
     )
 
 
@@ -82,30 +80,8 @@ class AssetsDiagnosticDataSource(
         gson.fromJson(readAsset("machines.json"), MachinesIndex::class.java)
 
     fun readTemplateRaw(templateId: String): RawTree {
-
-        // Detectar idioma del celular
-        val lang = Locale.getDefault().language.lowercase()
-
-        // Seleccionar sufijo
-        val suffix = when {
-            lang.startsWith("es") -> "es"       // español
-            lang.startsWith("it") -> "it"       // italiano
-            else -> "it"                        // fallback
-        }
-
-        // Construir ruta con idioma preferido
-        val requestedPath = "diagnostics/templates/${templateId}_${suffix}.json"
-
-        // Si el archivo existe → usarlo
-        val finalJson = try {
-            readAsset(requestedPath)
-        } catch (e: Exception) {
-            // Fallback seguro a italiano (templateId_it.json)
-            val fallbackPath = "diagnostics/templates/${templateId}_it.json"
-            readAsset(fallbackPath)
-        }
-
-        return gson.fromJson(finalJson, RawTree::class.java)
+        val path = "diagnostics/templates/${templateId}_it.json"
+        return gson.fromJson(readAsset(path), RawTree::class.java)
     }
 
     fun readPartsCatalog(): PartsCatalog {
