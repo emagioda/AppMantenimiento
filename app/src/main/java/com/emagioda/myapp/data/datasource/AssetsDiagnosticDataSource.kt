@@ -69,9 +69,8 @@ class AssetsDiagnosticDataSource(
         val code: String?,
         val features: String?,
         val supplier: String?,
-        val technicalContacts: String?,
-        val imageResName: String?,
-        val nodeRefs: List<String>
+        @SerializedName("contacts") val technicalContacts: String?,
+        val imageResName: String?
     )
 
 
