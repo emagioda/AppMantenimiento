@@ -96,13 +96,15 @@ fun MachineDetailScreen(
                 return@Box
             }
 
-            // Contenido desplazado hacia arriba para dejar espacio al botón
+            // --- CAMBIOS APLICADOS AQUÍ ---
+            // Se centra la columna en el Box y se deja padding solo abajo
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .align(Alignment.TopCenter)
-                    .padding(top = 20.dp, bottom = 100.dp), // Bottom padding para no tapar con el botón
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .align(Alignment.Center) // Centrado vertical en la pantalla
+                    .padding(bottom = 100.dp), // Espacio para que no choque con el botón
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
 
                 // Immagine
