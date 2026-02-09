@@ -1,23 +1,26 @@
 package com.emagioda.myapp.presentation.screen.contacts
 
 import android.content.Intent
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Chat
+import androidx.compose.material.icons.filled.Call
+
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.graphics.Color // Importante para el color blanco
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.emagioda.myapp.R
@@ -29,178 +32,238 @@ import com.emagioda.myapp.presentation.viewmodel.ContactsViewModel
 @Composable
 fun ContactsScreen(
     onBack: (() -> Unit)? = null,
-    initialTab: Int = 0 // 0 = Tecnici, 1 = Fornitori
+    initialTab: Int = 0
 ) {
     val context = LocalContext.current
+
     val vm: ContactsViewModel = viewModel(
-        factory = ContactsViewModel.Factory(ServiceLocator.provideGetContacts(context))
+        factory = ContactsViewModel.Factory(
+            getContacts = ServiceLocator.provideGetContacts(context)
+        )
     )
 
-    var tab by rememberSaveable { mutableIntStateOf(initialTab.coerceIn(0, 1)) }
+    var selectedTabIndex by rememberSaveable { mutableIntStateOf(initialTab) }
+
     val tabs = listOf(
         stringResource(R.string.contacts_tab_technicians),
         stringResource(R.string.contacts_tab_providers)
     )
-    val items: List<Contact> = if (tab == 0) vm.technicians() else vm.providers()
 
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val currentContacts = remember(selectedTabIndex) {
+        if (selectedTabIndex == 0) vm.technicians() else vm.providers()
+    }
+
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text(stringResource(R.string.contacts_title)) },
-                navigationIcon = {
-                    if (onBack != null) {
-                        IconButton(onClick = onBack) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = stringResource(R.string.cd_back)
-                            )
+            Column {
+                CenterAlignedTopAppBar(
+                    title = { Text(stringResource(R.string.contacts_title)) },
+                    navigationIcon = {
+                        if (onBack != null) {
+                            IconButton(onClick = onBack) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                    contentDescription = stringResource(R.string.cd_back)
+                                )
+                            }
                         }
                     }
-                },
-                scrollBehavior = scrollBehavior
-            )
-        }
-    ) { inner ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(inner)
-        ) {
-            TabRow(selectedTabIndex = tab) {
-                tabs.forEachIndexed { i, title ->
-                    Tab(
-                        selected = tab == i,
-                        onClick = { tab = i },
-                        selectedContentColor = MaterialTheme.colorScheme.onSurface,
-                        unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                        text = { Text(title) }
-                    )
-                }
-            }
-
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                if (items.isEmpty()) {
-                    item { EmptyState() }
-                } else {
-                    items(items = items, key = { c -> c.id }) { c ->
-                        ContactCard(
-                            contact = c,
-                            onCall = { phone ->
-                                context.startActivity(Intent(Intent.ACTION_DIAL, "tel:$phone".toUri()))
-                            },
-                            onWhatsApp = { number ->
-                                val clean = number.filter { it.isDigit() || it == '+' }
-                                context.startActivity(Intent(Intent.ACTION_VIEW, "https://wa.me/$clean".toUri()))
-                            },
-                            onEmail = { email ->
-                                context.startActivity(Intent(Intent.ACTION_SENDTO, "mailto:$email".toUri()))
+                )
+                TabRow(selectedTabIndex = selectedTabIndex) {
+                    tabs.forEachIndexed { index, title ->
+                        Tab(
+                            selected = selectedTabIndex == index,
+                            onClick = { selectedTabIndex = index },
+                            text = {
+                                // CAMBIO 1: Títulos de los Tabs en BLANCO
+                                Text(
+                                    title,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold
+                                )
                             }
                         )
                     }
                 }
             }
         }
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            LazyColumn(
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                items(currentContacts) { contact ->
+                    ContactCard(
+                        contact = contact,
+                        onCall = { phone ->
+                            val intent = Intent(Intent.ACTION_DIAL).apply {
+                                data = "tel:$phone".toUri()
+                            }
+                            context.startActivity(intent)
+                        },
+                        onWhatsApp = { number ->
+                            val url = "https://api.whatsapp.com/send?phone=$number"
+                            val intent = Intent(Intent.ACTION_VIEW).apply {
+                                data = url.toUri()
+                            }
+                            try {
+                                context.startActivity(intent)
+                            } catch (e: Exception) {
+                            }
+                        },
+                        onEmail = { email ->
+                            val intent = Intent(Intent.ACTION_SENDTO).apply {
+                                data = "mailto:$email".toUri()
+                            }
+                            try {
+                                context.startActivity(intent)
+                            } catch (e: Exception) {
+                            }
+                        }
+                    )
+                }
+            }
+        }
     }
 }
 
 @Composable
-private fun EmptyState() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 48.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = stringResource(R.string.contacts_empty_title),
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-        Spacer(Modifier.height(6.dp))
-        Text(
-            text = stringResource(R.string.contacts_empty_subtitle),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center
-        )
-    }
-}
-
-@Composable
-private fun ContactCard(
+fun ContactCard(
     contact: Contact,
     onCall: (String) -> Unit,
     onWhatsApp: (String) -> Unit,
     onEmail: (String) -> Unit
 ) {
-    OutlinedCard(
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-        modifier = Modifier.fillMaxWidth()
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            // OJO: Si el texto es blanco, este fondo debería ser oscuro para que se lea.
+            // Si usas el tema por defecto, quizás quieras forzar un color oscuro aquí, ej:
+            // containerColor = MaterialTheme.colorScheme.primaryContainer
+            // O déjalo como 'surfaceContainer' si tu tema ya es oscuro.
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+        ) {
+            // CAMBIO 2: Nombre en BLANCO
+            Text(
+                text = contact.name,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            val roleText = contact.roles?.firstOrNull() ?: contact.company
+            roleText?.let {
+                // CAMBIO 3: Rol en BLANCO
                 Text(
-                    text = contact.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    text = it,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.White
                 )
-                if (contact.isEmergency) {
-                    Text(
-                        text = stringResource(R.string.contacts_emergency),
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-                if (contact.isFavorite) {
-                    Text(
-                        text = stringResource(R.string.contacts_favorite),
-                        color = MaterialTheme.colorScheme.primary,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
             }
 
-            contact.company?.let {
-                Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
-            }
+            Spacer(Modifier.height(8.dp))
+
+            // CAMBIO 4: Especialidades y Ubicación en BLANCO
             contact.specialties?.takeIf { it.isNotEmpty() }?.let {
                 Text(
                     it.joinToString(" · "),
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = Color.White
                 )
             }
             contact.location?.let {
-                Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
+                Text(
+                    it,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.White
+                )
             }
 
-            Spacer(Modifier.height(12.dp))
-            HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.7f))
+            Spacer(Modifier.height(16.dp))
+            HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
             Spacer(Modifier.height(12.dp))
 
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            // --- BOTONES DE ACCIÓN ---
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 val phone = contact.phones?.firstOrNull()
                 val wa = contact.whatsapp
                 val email = contact.emails?.firstOrNull()
 
                 if (!phone.isNullOrBlank()) {
-                    AssistChip(onClick = { onCall(phone) }, label = { Text(stringResource(R.string.contacts_action_call)) })
+                    ActionButton(
+                        text = stringResource(R.string.contacts_action_call),
+                        icon = Icons.Default.Call,
+                        onClick = { onCall(phone) }
+                    )
                 }
+
                 if (!wa.isNullOrBlank()) {
-                    AssistChip(onClick = { onWhatsApp(wa) }, label = { Text(stringResource(R.string.contacts_action_whatsapp)) })
+                    ActionButton(
+                        text = stringResource(R.string.contacts_action_whatsapp),
+                        icon = Icons.AutoMirrored.Filled.Chat,
+                        onClick = { onWhatsApp(wa) }
+                    )
                 }
+
                 if (!email.isNullOrBlank()) {
-                    AssistChip(onClick = { onEmail(email) }, label = { Text(stringResource(R.string.contacts_action_email)) })
+                    ActionButton(
+                        text = stringResource(R.string.contacts_action_email),
+                        icon = Icons.Default.Email,
+                        onClick = { onEmail(email) }
+                    )
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun RowScope.ActionButton(
+    text: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    onClick: () -> Unit
+) {
+    FilledTonalButton(
+        onClick = onClick,
+        modifier = Modifier
+            .weight(1f)
+            .height(48.dp),
+        shape = MaterialTheme.shapes.small,
+        contentPadding = PaddingValues(horizontal = 4.dp),
+        // CAMBIO 5: Forzar el contenido del botón a BLANCO
+        colors = ButtonDefaults.filledTonalButtonColors(
+            contentColor = Color.White
+        )
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.size(18.dp)
+        )
+        Spacer(Modifier.width(8.dp))
+        Text(
+            text = text,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = MaterialTheme.typography.labelLarge,
+            fontSize = 13.sp
+        )
     }
 }

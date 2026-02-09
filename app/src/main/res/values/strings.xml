@@ -23,8 +23,8 @@
 
     <!-- Contatti -->
     <string name="contacts_title">Contatti</string>
-    <string name="contacts_tab_technicians">Tecnici</string>
-    <string name="contacts_tab_providers">Fornitori</string>
+    <string name="contacts_tab_technicians">TECNICI</string>
+    <string name="contacts_tab_providers">FORNITORI</string>
     <string name="contacts_empty_title">Nessun contatto in questa categoria</string>
     <string name="contacts_empty_subtitle">Aggiungi contatti per visualizzarli qui.</string>
     <string name="contacts_action_call">Chiama</string>
