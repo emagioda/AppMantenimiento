@@ -19,3 +19,14 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Gson models used for asset parsing
+-keep class com.emagioda.myapp.data.datasource.AssetsDiagnosticDataSource$MachinesIndex { *; }
+-keep class com.emagioda.myapp.data.datasource.AssetsDiagnosticDataSource$MachineMap { *; }
+-keep class com.emagioda.myapp.data.datasource.AssetsDiagnosticDataSource$RawTree { *; }
+-keep class com.emagioda.myapp.data.datasource.AssetsDiagnosticDataSource$RawNode { *; }
+-keep class com.emagioda.myapp.data.datasource.AssetsDiagnosticDataSource$RawPartRef { *; }
+-keep class com.emagioda.myapp.data.datasource.AssetsDiagnosticDataSource$PartsCatalog { *; }
+-keep class com.emagioda.myapp.data.datasource.AssetsDiagnosticDataSource$PartDetailRaw { *; }
+-keep class com.emagioda.myapp.data.datasource.AssetsContactsDataSource$Envelope { *; }
+-keep class com.emagioda.myapp.data.datasource.AssetsContactsDataSource$ContactRaw { *; }

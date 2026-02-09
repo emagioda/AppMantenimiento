@@ -305,8 +305,8 @@ private fun CameraPreview(
                         .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                         .build().apply {
                             setAnalyzer(analysisExecutor) { imageProxy ->
-                                // Si ya se manejó un QR exitoso, no procesamos más frames hasta que se resetee
                                 if (handled) { imageProxy.close(); return@setAnalyzer }
+                                // Si ya se manejó un QR exitoso, no procesamos más frames hasta que se resetee
 
                                 val mediaImage = imageProxy.image
                                 if (mediaImage != null) {
@@ -368,8 +368,7 @@ private fun CameraPreview(
                 }, ContextCompat.getMainExecutor(ctx))
 
                 previewView
-            },
-            onRelease = { analysisExecutor.shutdown() }
+            }
         )
 
         QRScannerOverlay()
