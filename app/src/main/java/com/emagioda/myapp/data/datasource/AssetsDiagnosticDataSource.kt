@@ -44,6 +44,7 @@ class AssetsDiagnosticDataSource(
         val yes: String? = null,
         val no: String? = null,
         val providersShortcut: Boolean? = null,
+        val safetyWarning: Boolean? = null,
         val result: String? = null,
         val parts: List<RawPartRef>? = null,
         val mode: String? = null

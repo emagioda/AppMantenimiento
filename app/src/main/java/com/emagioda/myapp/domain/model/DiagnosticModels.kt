@@ -38,6 +38,7 @@ data class DiagnosticNode(
     val yes: String? = null,
     val no: String? = null,
     val providersShortcut: Boolean? = null,
+    val safetyWarning: Boolean = false,
     val result: EndResult? = null,
     val parts: List<PartRefResolved>? = null,
     val mode: QuestionMode = QuestionMode.YES_NO
