@@ -54,6 +54,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.emagioda.myapp.R
 import com.emagioda.myapp.di.ServiceLocator
 import com.emagioda.myapp.domain.model.*
+import com.emagioda.myapp.presentation.common.SafetyWarningDialog
 import com.emagioda.myapp.presentation.viewmodel.DiagnosticViewModel
 import kotlin.math.max
 
@@ -74,6 +75,9 @@ fun DiagnosticScreen(
     )
     val uiState = vm.uiState
     val node = uiState.current
+    var showSafetyDialog by remember(node?.id) {
+        mutableStateOf(node?.safetyWarning == true)
+    }
 
     BackHandler(enabled = vm.canGoBack()) { vm.goBack() }
 
@@ -145,6 +149,12 @@ fun DiagnosticScreen(
                     Spacer(Modifier.height(24.dp))
                     }
                 }
+            }
+
+            if (showSafetyDialog) {
+                SafetyWarningDialog(
+                    onConfirm = { showSafetyDialog = false }
+                )
             }
         }
     }

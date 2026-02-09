@@ -57,6 +57,7 @@ class DiagnosticRepositoryImpl(
                 yes = raw.yes,
                 no = raw.no,
                 providersShortcut = raw.providersShortcut,
+                safetyWarning = raw.safetyWarning ?: false,
                 result = result,
                 parts = nodeParts.takeIf { it.isNotEmpty() },
                 mode = mode

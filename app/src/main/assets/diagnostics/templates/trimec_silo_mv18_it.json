@@ -29,6 +29,7 @@
 
     { "id":"Q_AC_01", "type":"END", "title":"La coclea é bloccato perché una o piú sportelli sono aperto.\nSensore finedicorsa danneggiato.",
       "description": "• Controllare che tutte gli sportelli siano chiusi.\n• Controllare che i sensori siano funzionanti",
+      "safetyWarning": true,
       "parts": [{"id": "P_07"}],
       "result":"COMPONENT_FAULT"
     },
@@ -41,12 +42,14 @@
 
     { "id":"Q_AC_0001", "type":"END", "title":"Problemi al dispositivo elettronico o al relè di sicurezza.",
       "description":"• Procedere alla sostituzione.\nChiamare un tecnico specializzato",
+      "safetyWarning": true,
       "parts": [{"id": "P_01"}],
       "result":"COMPONENT_FAULT"
     },
 
     { "id":"Q_AC_0000", "type":"END", "title":"Problemi nel pulsante d'emergenzia oppure nei sensori degli sportelli d'ispezione.",
       "description": "• Verificare il corretto funzionamento sia del pulsante di arresto di emergenza, verificando la continuità del contatto, sia dei sensori dello sportello di ispezione, misurando la continuità dall'inizio alla fine del circuito.\n• Chiamare tecnici specializzati",
+      "safetyWarning": true,
       "parts": [{"id": "P_07"}],
       "result":"COMPONENT_FAULT"
     },
@@ -68,6 +71,7 @@
 
     { "id":"Q_AF_0", "type":"END", "title":"Guasto al sensore di livello massimo!",
       "description":"• Verificare che il sensore di livello non sia ostruito e funzioni correttamente.",
+      "safetyWarning": true,
       "parts": [{"id": "P_02"}],
       "result":"COMPONENT_FAULT"
     },
@@ -116,6 +120,7 @@
     { "id":"Q_AE_0111010", "type":"END",
       "title":"Problmea nel riduttore oppure tra il giunto del motore e il riduttore",
       "description":"• Controllare/sostituire riduttore.\n• Controllare/sostituire giunto tra motore e riduttore.",
+      "safetyWarning": true,
       "parts": [{"id": "P_04"}],
       "result":"COMPONENT_FAULT"
     },
@@ -123,6 +128,7 @@
     { "id":"Q_AE_0111011", "type":"END",
       "title":"• Il bullone che collega il riduttore alla vite senza fine potrebbe essersi rotto.\n• Il cuscinetto/boccola della vite senza fine è rotto o non è lubrificato correttamente.",
       "description":"• Verificare che il bullone tra il cambio e la vite senza fine non sia tranciato.\n• Verificare che il cuscinetto/boccola della vite senza fine sia in buone condizioni.\n• Ingrassare il cuscinetto/boccola della vite senza fine.",
+      "safetyWarning": true,
       "parts": [{"id": "P_04"}],
       "result":"COMPONENT_FAULT"
     },
@@ -138,6 +144,7 @@
     { "id":"Q_AE_011111", "type":"END",
       "title":"Possibile cortocircuito nel motore, nel cablaggio o nel dispositivo di accensione.",
       "description":"• Eseguire test di resistenza di isolamento sul motore.\n• Controllare il cablaggio del motore.\n• Verificare che il dispositivo di accensione non sia difettoso.",
+      "safetyWarning": true,
       "parts": [{"id": "P_03"}],
       "result":"COMPONENT_FAULT"
     },
@@ -156,6 +163,7 @@
     { "id":"Q_BA_01", "type":"END",
       "title":"Il controller della bilancia non funziona correttamente.",
       "description":"• Reimpostare il controller.\n• Tarare nuovamente il controller.\n• Verificare che la bilancia pesi correttamente utilizzando un peso standard.\n• Sostituire il controller della bilancia.",
+      "safetyWarning": true,
       "parts": [{"id": "P_08"},{"id": "P_07"}],
       "result":"COMPONENT_FAULT"
     },
@@ -227,6 +235,7 @@
     { "id":"Q_CC_0001", "type":"END",
       "title":"Problemi al dispositivo elettronico o al relè di sicurezza.",
       "description":"• Procedere alla sostituzione.\nChiamare un tecnico specializzato.",
+      "safetyWarning": true,
       "parts": [{"id": "P_01"}],
       "result":"COMPONENT_FAULT"
     },
@@ -289,6 +298,7 @@
     { "id":"Q_CF_10101", "type":"END",
       "title":"Problemi nella trasmissione tra il motore e i poli del miscelatore",
       "description":"• Sostituire le cinghie di trasmissione",
+      "safetyWarning": true,
       "parts": [{"id": "P_06"}],
       "result":"COMPONENT_FAULT"
     },
@@ -311,6 +321,7 @@
     { "id":"Q_CF_111", "type":"END",
       "title":"Possibile cortocircuito nel motore, nel cablaggio o nel dispositivo di accensione.",
       "description":"• Eseguire test di resistenza di isolamento sul motore.\n• Controllare il cablaggio del motore.\n• Verificare che il dispositivo di accensione non sia difettoso.",
+      "safetyWarning": true,
       "parts": [{"id": "P_05"}],
       "result":"COMPONENT_FAULT"
     },
