@@ -43,7 +43,7 @@ fun DiagnosticScreen(
     onRestartToHome: () -> Unit,
     onOpenContacts: () -> Unit,
     onOpenTechnicians: () -> Unit = onOpenContacts,
-    onOpenProviders: () -> Unit = onOpenContacts   // reservado para futuro
+    onOpenProviders: () -> Unit = onOpenContacts
 ) {
     val vm: DiagnosticViewModel = viewModel(
         factory = DiagnosticViewModel.Factory(
@@ -53,9 +53,9 @@ fun DiagnosticScreen(
     )
     val uiState = vm.uiState
     val node = uiState.current
-    var showSafetyDialog by remember(node?.id) {
-        mutableStateOf(node?.safetyWarning == true)
-    }
+
+    // CAMBIO: La lógica de mostrar diálogo ahora depende del estado del ViewModel
+    val showSafetyDialog = (node?.safetyWarning == true) && !uiState.safetyWarningDismissed
 
     BackHandler(enabled = vm.canGoBack()) { vm.goBack() }
 
@@ -107,31 +107,31 @@ fun DiagnosticScreen(
                         )
                     }
                     node == null -> {
-                    Spacer(Modifier.height(24.dp))
-                    Text(
-                        text = stringResource(R.string.diagnostic_error_loading),
-                        textAlign = TextAlign.Center
-                    )
-                    }
-                    else -> {
-                    Spacer(Modifier.height(24.dp))
-                    when (node.type) {
-                        NodeType.QUESTION -> QuestionContent(node = node, vm = vm)
-                        NodeType.END -> EndContent(
-                            node = node,
-                            vm = vm,
-                            onRestartToHome = onRestartToHome,
-                            onOpenTechnicians = onOpenTechnicians
+                        Spacer(Modifier.height(24.dp))
+                        Text(
+                            text = stringResource(R.string.diagnostic_error_loading),
+                            textAlign = TextAlign.Center
                         )
                     }
-                    Spacer(Modifier.height(24.dp))
+                    else -> {
+                        Spacer(Modifier.height(24.dp))
+                        when (node.type) {
+                            NodeType.QUESTION -> QuestionContent(node = node, vm = vm)
+                            NodeType.END -> EndContent(
+                                node = node,
+                                vm = vm,
+                                onRestartToHome = onRestartToHome,
+                                onOpenTechnicians = onOpenTechnicians
+                            )
+                        }
+                        Spacer(Modifier.height(24.dp))
                     }
                 }
             }
 
             if (showSafetyDialog) {
                 SafetyWarningDialog(
-                    onConfirm = { showSafetyDialog = false }
+                    onConfirm = { vm.dismissSafetyWarning() } // CAMBIO: Llama al ViewModel
                 )
             }
         }

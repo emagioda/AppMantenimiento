@@ -21,7 +21,8 @@ data class DiagnosticUiState(
     val current: DiagnosticNode?,
     val path: List<String> = emptyList(),
     val isLoading: Boolean = true,
-    val errorResId: Int? = null
+    val errorResId: Int? = null,
+    val safetyWarningDismissed: Boolean = false // <-- NUEVO CAMPO
 )
 
 class DiagnosticViewModel(
@@ -72,6 +73,11 @@ class DiagnosticViewModel(
                 }
             }
         }
+    }
+
+    // <-- NUEVA FUNCIÓN para confirmar que se leyó la advertencia
+    fun dismissSafetyWarning() {
+        uiState = uiState.copy(safetyWarningDismissed = true)
     }
 
     fun answerYes() {
@@ -142,6 +148,7 @@ class DiagnosticViewModel(
         uiState = uiState.copy(
             current = current,
             path = path.toList(),
+            safetyWarningDismissed = false, // <-- IMPORTANTE: Reseteamos al cambiar de nodo
             errorResId = if (current == null)
                 R.string.diagnostic_error_loading
             else null
