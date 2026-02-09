@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -159,14 +160,13 @@ private fun QuestionContent(
                     .padding(horizontal = 20.dp),
                 contentAlignment = Alignment.Center
             ) {
-                // CORRECCIÓN: El borde se aplica con el Modifier porque ElevatedCard no tiene parámetro 'border'
                 ElevatedCard(
                     modifier = Modifier
                         .fillMaxWidth()
                         .border(
                             width = 2.dp,
                             color = MaterialTheme.colorScheme.outline,
-                            shape = CardDefaults.elevatedShape // Importante: Que el borde siga la forma de la tarjeta
+                            shape = CardDefaults.elevatedShape
                         ),
                     colors = CardDefaults.elevatedCardColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
@@ -221,7 +221,8 @@ private fun QuestionContent(
                         ) {
                             Text(
                                 stringResource(R.string.diagnostic_continue).uppercase(),
-                                style = MaterialTheme.typography.titleMedium
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold
                             )
                         }
                     }
@@ -242,7 +243,8 @@ private fun QuestionContent(
                             ) {
                                 Text(
                                     stringResource(R.string.diagnostic_no).uppercase(),
-                                    style = MaterialTheme.typography.titleMedium
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold
                                 )
                             }
 
@@ -256,7 +258,8 @@ private fun QuestionContent(
                             ) {
                                 Text(
                                     stringResource(R.string.diagnostic_yes).uppercase(),
-                                    style = MaterialTheme.typography.titleMedium
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold
                                 )
                             }
                         }
@@ -280,7 +283,9 @@ private fun EndContent(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .padding(horizontal = 20.dp, vertical = 24.dp),
+            .padding(horizontal = 20.dp)
+            // Aumentamos el padding superior e inferior para darle aire
+            .padding(top = 32.dp, bottom = 40.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         EndResultIcon(node.result ?: EndResult.NO_ISSUE)
@@ -294,40 +299,53 @@ private fun EndContent(
         )
 
         node.description?.let {
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(24.dp))
             SuggestCard(it)
         }
 
         node.parts?.takeIf { it.isNotEmpty() }?.let { parts ->
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(24.dp))
             DiagnosticPartsSection(parts)
         }
 
-        Spacer(Modifier.height(28.dp))
+        Spacer(Modifier.height(40.dp))
 
-        OutlinedButton(
+        // --- BOTONES UNIFICADOS Y VISIBLES ---
+
+        // 1. Botón Técnicos: CAMBIADO a FilledTonalButton para mejor visibilidad
+        FilledTonalButton(
             onClick = onOpenTechnicians,
-            colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = MaterialTheme.colorScheme.onSurface
-            ),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            shape = MaterialTheme.shapes.medium
         ) {
-            Text(stringResource(R.string.contacts_tech_shortcut))
+            Text(
+                text = stringResource(R.string.contacts_tech_shortcut).uppercase(),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
         }
 
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(16.dp))
 
+        // 2. Botón Home (Acción Principal)
         Button(
             onClick = {
                 vm.restart()
                 onRestartToHome()
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            shape = MaterialTheme.shapes.medium
         ) {
-            Text(stringResource(R.string.diagnostic_home))
+            Text(
+                text = stringResource(R.string.diagnostic_home).uppercase(),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
         }
-
-        Spacer(Modifier.height(20.dp))
     }
 }
 
@@ -340,12 +358,12 @@ private fun EndResultIcon(result: EndResult) {
     }
 
     Box(
-        modifier = Modifier.size(100.dp),
+        modifier = Modifier.size(120.dp), // Icono final un poco más grande
         contentAlignment = Alignment.Center
     ) {
         Box(
             modifier = Modifier
-                .size(100.dp)
+                .fillMaxSize()
                 .background(bg, CircleShape),
             contentAlignment = Alignment.Center
         ) {
@@ -353,7 +371,7 @@ private fun EndResultIcon(result: EndResult) {
                 imageVector = icon,
                 contentDescription = null,
                 tint = Color.White,
-                modifier = Modifier.size(50.dp)
+                modifier = Modifier.size(64.dp)
             )
         }
     }
@@ -361,18 +379,34 @@ private fun EndResultIcon(result: EndResult) {
 
 @Composable
 private fun SuggestCard(text: String) {
-    Card(
+    // Usamos el mismo estilo de tarjeta industrial para las sugerencias
+    ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
-            .animateContentSize()
+            .border(
+                width = 2.dp,
+                color = MaterialTheme.colorScheme.outline,
+                shape = CardDefaults.elevatedShape
+            )
+            .animateContentSize(),
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
+        ),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 8.dp)
     ) {
-        Column(Modifier.padding(16.dp)) {
+        Column(Modifier.padding(20.dp)) {
             Text(
                 text = stringResource(R.string.diagnostic_suggestions_title),
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(Modifier.height(12.dp))
-            Text(text)
+            Text(
+                text = text,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }

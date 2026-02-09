@@ -69,6 +69,7 @@ dependencies {
     // Tooling / Previews (usados en desarrollo)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.foundation)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 

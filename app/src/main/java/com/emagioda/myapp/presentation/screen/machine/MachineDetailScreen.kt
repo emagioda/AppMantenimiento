@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -16,11 +17,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.emagioda.myapp.R
 import com.google.gson.Gson
 
-// --------- MODELLI / CARICAMENTO JSON ---------
+// --------- MODELLI / CARICAMENTO JSON (Sin cambios) ---------
 
 private data class MachinesWrapper(
     val machines: List<MachineJson>
@@ -93,19 +96,16 @@ fun MachineDetailScreen(
                 return@Box
             }
 
-            // ---------------------------------------------------------
-            //  NUOVO: contenuto centrato TRA topbar e pulsante
-            // ---------------------------------------------------------
+            // Contenido desplazado hacia arriba para dejar espacio al botón
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.TopCenter)
-                    .padding(top = 40.dp, bottom = 130.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                    .padding(top = 20.dp, bottom = 100.dp), // Bottom padding para no tapar con el botón
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                // Immagine con aspectRatio
+                // Immagine
                 machine.imageName?.let { imageName ->
                     val resId = remember(imageName) {
                         context.resources.getIdentifier(
@@ -121,7 +121,7 @@ fun MachineDetailScreen(
                             contentDescription = machine.name,
                             modifier = Modifier
                                 .fillMaxWidth(0.9f)
-                                .aspectRatio(0.70f)  // <<--- come richiesto
+                                .aspectRatio(0.75f)
                                 .clip(RoundedCornerShape(16.dp)),
                             contentScale = ContentScale.Fit
                         )
@@ -130,23 +130,31 @@ fun MachineDetailScreen(
 
                 // Descrizione
                 machine.description?.let {
-                    Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(24.dp))
                     Text(
                         text = it,
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodyLarge
                     )
                 }
             }
 
-            // Pulsante più in alto rispetto alla nav bar
+            // --- BOTÓN ESTILO INDUSTRIAL ---
             Button(
                 onClick = { onStartDiagnostic(machineId) },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .padding(bottom = 70.dp)
+                    .padding(bottom = 40.dp) // Zona segura ergonómica
+                    .height(56.dp),
+                shape = MaterialTheme.shapes.medium
             ) {
-                Text(stringResource(R.string.machine_detail_start))
+                Icon(Icons.Default.PlayArrow, contentDescription = null)
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    text = stringResource(R.string.machine_detail_start).uppercase(),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }
