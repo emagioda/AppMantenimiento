@@ -6,8 +6,11 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -54,7 +57,6 @@ fun DiagnosticScreen(
     val uiState = vm.uiState
     val node = uiState.current
 
-    // CAMBIO: La lógica de mostrar diálogo ahora depende del estado del ViewModel
     val showSafetyDialog = (node?.safetyWarning == true) && !uiState.safetyWarningDismissed
 
     BackHandler(enabled = vm.canGoBack()) { vm.goBack() }
@@ -77,8 +79,6 @@ fun DiagnosticScreen(
         },
         contentWindowInsets = WindowInsets(0)
     ) { innerPadding ->
-        val scrollState = rememberScrollState()
-        val canScroll = scrollState.maxValue > 0
 
         Box(
             modifier = Modifier
@@ -86,52 +86,46 @@ fun DiagnosticScreen(
                 .padding(innerPadding)
                 .navigationBarsPadding()
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(scrollState)
-                    .padding(horizontal = 20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = if (canScroll) Arrangement.Top else Arrangement.Center
-            ) {
-                when {
-                    uiState.isLoading -> {
-                        Spacer(Modifier.height(24.dp))
+            when {
+                uiState.isLoading -> {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         CircularProgressIndicator()
                     }
-                    uiState.errorResId != null -> {
-                        Spacer(Modifier.height(24.dp))
+                }
+                uiState.errorResId != null -> {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Text(
                             text = stringResource(uiState.errorResId),
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(20.dp)
                         )
                     }
-                    node == null -> {
-                        Spacer(Modifier.height(24.dp))
+                }
+                node == null -> {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Text(
                             text = stringResource(R.string.diagnostic_error_loading),
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(20.dp)
                         )
                     }
-                    else -> {
-                        Spacer(Modifier.height(24.dp))
-                        when (node.type) {
-                            NodeType.QUESTION -> QuestionContent(node = node, vm = vm)
-                            NodeType.END -> EndContent(
-                                node = node,
-                                vm = vm,
-                                onRestartToHome = onRestartToHome,
-                                onOpenTechnicians = onOpenTechnicians
-                            )
-                        }
-                        Spacer(Modifier.height(24.dp))
+                }
+                else -> {
+                    when (node.type) {
+                        NodeType.QUESTION -> QuestionContent(node = node, vm = vm)
+                        NodeType.END -> EndContent(
+                            node = node,
+                            vm = vm,
+                            onRestartToHome = onRestartToHome,
+                            onOpenTechnicians = onOpenTechnicians
+                        )
                     }
                 }
             }
 
             if (showSafetyDialog) {
                 SafetyWarningDialog(
-                    onConfirm = { vm.dismissSafetyWarning() } // CAMBIO: Llama al ViewModel
+                    onConfirm = { vm.dismissSafetyWarning() }
                 )
             }
         }
@@ -146,52 +140,125 @@ private fun QuestionContent(
     AnimatedContent(
         targetState = node,
         transitionSpec = {
-            fadeIn(animationSpec = tween(220)) togetherWith fadeOut(animationSpec = tween(220))
+            (slideInHorizontally { width -> width } + fadeIn(animationSpec = tween(300))).togetherWith(
+                slideOutHorizontally { width -> -width } + fadeOut(animationSpec = tween(300)))
         },
         label = "question-transition"
     ) { targetNode ->
         Column(
-            modifier = Modifier.fillMaxWidth(0.92f),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = 40.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = targetNode.title,
-                style = MaterialTheme.typography.headlineSmall,
-                textAlign = TextAlign.Center
-            )
-            targetNode.description?.let {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.bodyMedium,
-                    textAlign = TextAlign.Center
-                )
-            }
 
-            Spacer(Modifier.height(12.dp))
-
-            when (targetNode.mode) {
-                QuestionMode.CONTINUE_ONLY -> {
-                    Button(onClick = vm::answerYes) {
-                        Text(stringResource(R.string.diagnostic_continue))
+            // --- ZONA SUPERIOR: LA TARJETA CON LA PREGUNTA ---
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 20.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                // CORRECCIÓN: El borde se aplica con el Modifier porque ElevatedCard no tiene parámetro 'border'
+                ElevatedCard(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(
+                            width = 2.dp,
+                            color = MaterialTheme.colorScheme.outline,
+                            shape = CardDefaults.elevatedShape // Importante: Que el borde siga la forma de la tarjeta
+                        ),
+                    colors = CardDefaults.elevatedCardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
+                    ),
+                    elevation = CardDefaults.elevatedCardElevation(defaultElevation = 12.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .padding(24.dp)
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        Text(
+                            text = targetNode.title,
+                            style = MaterialTheme.typography.headlineSmall,
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        targetNode.description?.let {
+                            Text(
+                                text = it,
+                                style = MaterialTheme.typography.bodyLarge,
+                                textAlign = TextAlign.Center,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     }
                 }
+            }
 
-                QuestionMode.YES_NO -> {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Button(onClick = vm::answerYes) {
-                            Text(stringResource(R.string.diagnostic_yes))
-                        }
-                        OutlinedButton(
-                            onClick = vm::answerNo,
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = MaterialTheme.colorScheme.onSurface
-                            )
+            Spacer(Modifier.height(24.dp))
+
+            // --- ZONA INFERIOR: LOS BOTONES GRANDES ---
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                val buttonHeight = 56.dp
+                val buttonShape = MaterialTheme.shapes.medium
+
+                when (targetNode.mode) {
+                    QuestionMode.CONTINUE_ONLY -> {
+                        Button(
+                            onClick = vm::answerYes,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(buttonHeight),
+                            shape = buttonShape
                         ) {
-                            Text(stringResource(R.string.diagnostic_no))
+                            Text(
+                                stringResource(R.string.diagnostic_continue).uppercase(),
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                        }
+                    }
+
+                    QuestionMode.YES_NO -> {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            // Botón NO
+                            FilledTonalButton(
+                                onClick = vm::answerNo,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(buttonHeight),
+                                shape = buttonShape
+                            ) {
+                                Text(
+                                    stringResource(R.string.diagnostic_no).uppercase(),
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                            }
+
+                            // Botón SÍ
+                            Button(
+                                onClick = vm::answerYes,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(buttonHeight),
+                                shape = buttonShape
+                            ) {
+                                Text(
+                                    stringResource(R.string.diagnostic_yes).uppercase(),
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                            }
                         }
                     }
                 }
@@ -207,8 +274,13 @@ private fun EndContent(
     onRestartToHome: () -> Unit,
     onOpenTechnicians: () -> Unit
 ) {
+    val scrollState = rememberScrollState()
+
     Column(
-        modifier = Modifier.fillMaxWidth(0.92f),
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(scrollState)
+            .padding(horizontal = 20.dp, vertical = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         EndResultIcon(node.result ?: EndResult.NO_ISSUE)
@@ -237,19 +309,25 @@ private fun EndContent(
             onClick = onOpenTechnicians,
             colors = ButtonDefaults.outlinedButtonColors(
                 contentColor = MaterialTheme.colorScheme.onSurface
-            )
+            ),
+            modifier = Modifier.fillMaxWidth()
         ) {
             Text(stringResource(R.string.contacts_tech_shortcut))
         }
 
-        Spacer(Modifier.height(20.dp))
+        Spacer(Modifier.height(12.dp))
 
-        Button(onClick = {
-            vm.restart()
-            onRestartToHome()
-        }) {
+        Button(
+            onClick = {
+                vm.restart()
+                onRestartToHome()
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
             Text(stringResource(R.string.diagnostic_home))
         }
+
+        Spacer(Modifier.height(20.dp))
     }
 }
 
