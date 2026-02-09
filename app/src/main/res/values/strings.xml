@@ -56,11 +56,11 @@
     <string name="diagnostic_part_code">Codice: %1$s</string>
 
     <!-- Safety -->
-    <string name="safety_protocol_title">PROTOCOLO DE SEGURIDAD REQUERIDO</string>
-    <string name="safety_risk_type">RIESGO ELÉCTRICO / MECÁNICO</string>
-    <string name="safety_body_warning">Está a punto de acceder a una sección que requiere intervención técnica.\n\nSOLO PERSONAL AUTORIZADO.\n\nAsegúrese de aplicar el procedimiento de bloqueo (LOTO) y verificar ausencia de tensión antes de continuar.</string>
-    <string name="safety_btn_confirm">ENTENDIDO, CONTINUAR</string>
-    <string name="safety_btn_wait">Habilitar confirmación (%1$d)...</string>
+    <string name="safety_protocol_title">PROTOCOLLO DI SICUREZZA RICHIESTO</string>
+    <string name="safety_risk_type">RISCHIO ELETTRICO / MECCANICO</string>
+    <string name="safety_body_warning">Si sta per accedere a una sezione che richiede un intervento tecnico.\n\nSOLO PERSONALE AUTORIZZATO.\n\nAssicurarsi di applicare la procedura di blocco (LOTO) e verificare l\'assenza di tensione prima di continuare.</string>
+    <string name="safety_btn_confirm">HO CAPITO, CONTINUA</string>
+    <string name="safety_btn_wait">Abilitazione conferma (%1$d)...</string>
 
     <!-- Dettaglio macchina -->
     <string name="machine_detail_start">Inizia diagnostica</string>
