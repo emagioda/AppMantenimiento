@@ -34,12 +34,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.emagioda.myapp.R
 import com.emagioda.myapp.domain.model.PartRefResolved
-import com.emagioda.myapp.presentation.screen.diagnostic.util.PartsImageMap
 
 @Composable
 fun DiagnosticPartsSection(parts: List<PartRefResolved>) {
@@ -65,8 +65,9 @@ fun DiagnosticPartsSection(parts: List<PartRefResolved>) {
 @Composable
 private fun TransformablePartCard(part: PartRefResolved) {
     var expanded by remember { mutableStateOf(false) }
+    val context = LocalContext.current
     val resId = part.detail.imageResName?.let { resName ->
-        PartsImageMap[resName]
+        context.resources.getIdentifier(resName, "drawable", context.packageName)
     } ?: 0
 
     ElevatedCard(

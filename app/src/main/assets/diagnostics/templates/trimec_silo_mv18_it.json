@@ -27,7 +27,7 @@
 
     { "id":"Q_AC_00", "type":"QUESTION", "title":"Pulsante Emergenza o Sportelli di Ispezione aperti/premuti?", "yes":"Q_AC_001", "no":"Q_AC_000" },
 
-    { "id":"Q_AC_01", "type":"END", "title":"La coclea é bloccato perché una o piú sportelli sono aperto.\nSensore finedicorsa danneggiato.",
+    { "id":"Q_AC_01", "type":"END", "title":"La coclea é bloccato perché uno o più sportelli sono aperti.\nSensore finedicorsa danneggiato.",
       "description": "• Controllare che tutte gli sportelli siano chiusi.\n• Controllare che i sensori siano funzionanti",
       "safetyWarning": true,
       "parts": [{"id": "P_07"}],
@@ -47,7 +47,7 @@
       "result":"COMPONENT_FAULT"
     },
 
-    { "id":"Q_AC_0000", "type":"END", "title":"Problemi nel pulsante d'emergenzia oppure nei sensori degli sportelli d'ispezione.",
+    { "id":"Q_AC_0000", "type":"END", "title":"Problemi nel pulsante d'emergenza oppure nei sensori degli sportelli d'ispezione.",
       "description": "• Verificare il corretto funzionamento sia del pulsante di arresto di emergenza, verificando la continuità del contatto, sia dei sensori dello sportello di ispezione, misurando la continuità dall'inizio alla fine del circuito.\n• Chiamare tecnici specializzati",
       "safetyWarning": true,
       "parts": [{"id": "P_07"}],
@@ -118,7 +118,7 @@
     { "id":"Q_AE_011101", "type":"QUESTION", "title":"Il riduttore gira?", "yes":"Q_AE_0111011", "no":"Q_AE_0111010" },
 
     { "id":"Q_AE_0111010", "type":"END",
-      "title":"Problmea nel riduttore oppure tra il giunto del motore e il riduttore",
+      "title":"Problema nel riduttore oppure tra il giunto del motore e il riduttore",
       "description":"• Controllare/sostituire riduttore.\n• Controllare/sostituire giunto tra motore e riduttore.",
       "safetyWarning": true,
       "parts": [{"id": "P_04"}],
@@ -196,7 +196,7 @@
     { "id":"Q_CA_0", "type":"QUESTION", "title":"Sezionatore principale azionato?", "yes":"Q_CA_01", "no":"Q_CA_00" },
 
     { "id":"Q_CA_00", "type":"END",
-      "title":"Azionare il sezionatore.\nVerificare il funzioname",
+      "title":"Azionare il sezionatore.\nVerificare il funzionamento",
       "result":"NO_ISSUE"
     },
 
@@ -242,7 +242,7 @@
 
     { "id":"Q_CC_0000", "type":"END",
       "title":"Problemi nel pulsante d'emergenzia oppure nei sensori degli sportelli d'ispezione.",
-      "description":"• Verificare il corretto funzionamento sia del pulsante di arresto di emergenza, verificando la continuità del contatto, sia dei sensori dello sportello di ispezione, misurando la continuità dall'inizio alla fine del circuito.\n•Chiamare tecnici specializzato",
+      "description":"• Verificare il corretto funzionamento sia del pulsante di arresto di emergenza, verificando la continuità del contatto, sia dei sensori dello sportello di ispezione, misurando la continuità dall'inizio alla fine del circuito.\n• Chiamare tecnici specializzati",
       "result":"NO_ISSUE"
     },
 
@@ -296,7 +296,7 @@
     },
 
     { "id":"Q_CF_10101", "type":"END",
-      "title":"Problemi nella trasmissione tra il motore e i poli del miscelatore",
+      "title":"Problema nella trasmissione tra il motore e i poli del miscelatore",
       "description":"• Sostituire le cinghie di trasmissione",
       "safetyWarning": true,
       "parts": [{"id": "P_06"}],

@@ -82,23 +82,9 @@ class AssetsDiagnosticDataSource(
         gson.fromJson(readAsset("machines.json"), MachinesIndex::class.java)
 
     fun readTemplateRaw(templateId: String): RawTree {
-
         // L'app è solo in italiano: usiamo sempre il template italiano.
-        val suffix = "it"
-
-        // Costruisci il percorso con la lingua preferita
-        val requestedPath = "diagnostics/templates/${templateId}_${suffix}.json"
-
-        // Se il file esiste → usalo
-        val finalJson = try {
-            readAsset(requestedPath)
-        } catch (e: Exception) {
-            // Fallback sicuro all'italiano (templateId_it.json)
-            val fallbackPath = "diagnostics/templates/${templateId}_it.json"
-            readAsset(fallbackPath)
-        }
-
-        return gson.fromJson(finalJson, RawTree::class.java)
+        val path = "diagnostics/templates/${templateId}_it.json"
+        return gson.fromJson(readAsset(path), RawTree::class.java)
     }
 
     fun readPartsCatalog(): PartsCatalog {

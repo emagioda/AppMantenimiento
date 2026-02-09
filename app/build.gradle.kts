@@ -26,7 +26,7 @@ android {
             // Configurazione release
             // (minifyEnabled = false → ProGuard non ancora attivo)
         
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
