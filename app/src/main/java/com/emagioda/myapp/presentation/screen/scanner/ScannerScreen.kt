@@ -12,13 +12,15 @@ import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.Button
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -29,6 +31,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
@@ -39,6 +43,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.emagioda.myapp.di.ServiceLocator
 import com.emagioda.myapp.R
 import com.emagioda.myapp.presentation.viewmodel.ScannerViewModel
+import android.content.Intent
+import android.net.Uri
+import android.content.Context
+import android.content.ContextWrapper
+import android.app.Activity
+import android.provider.Settings
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
@@ -52,6 +64,17 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import kotlinx.coroutines.launch
+
+private fun Context.findActivity(): Activity? {
+    var currentContext = this
+    while (currentContext is ContextWrapper) {
+        if (currentContext is Activity) {
+            return currentContext
+        }
+        currentContext = currentContext.baseContext
+    }
+    return null
+}
 
 @OptIn(ExperimentalGetImage::class)
 @Composable
@@ -70,25 +93,49 @@ fun ScannerScreen(
     )
 
     var hasPermission by remember { mutableStateOf<Boolean?>(null) }
+    var showRationale by remember { mutableStateOf(false) }
+    var hasRequestedPermission by rememberSaveable { mutableStateOf(false) }
     val requestPermission = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
-        onResult = { granted -> hasPermission = granted }
+        onResult = { granted ->
+            hasPermission = granted
+            showRationale = !granted
+        }
     )
 
     LaunchedEffect(Unit) {
-        hasPermission = ContextCompat.checkSelfPermission(
+        val granted = ContextCompat.checkSelfPermission(
             context, Manifest.permission.CAMERA
         ) == PackageManager.PERMISSION_GRANTED
-
-        if (hasPermission == false) requestPermission.launch(Manifest.permission.CAMERA)
+        hasPermission = granted
+        if (!granted) {
+            if (!hasRequestedPermission) {
+                hasRequestedPermission = true
+                requestPermission.launch(Manifest.permission.CAMERA)
+            } else {
+                showRationale = true
+            }
+        }
     }
 
-    when (hasPermission) {
-        null -> {}
-        false -> PermissionRationale(
-            onRequest = { requestPermission.launch(Manifest.permission.CAMERA) }
-        )
-        true -> {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                val granted = ContextCompat.checkSelfPermission(
+                    context, Manifest.permission.CAMERA
+                ) == PackageManager.PERMISSION_GRANTED
+                hasPermission = granted
+                showRationale = !granted && hasRequestedPermission
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+    when {
+        hasPermission == null -> {}
+        hasPermission == true -> {
             Scaffold(
                 snackbarHost = { SnackbarHost(snackbarHostState) },
                 contentWindowInsets = WindowInsets(0)
@@ -124,15 +171,17 @@ fun ScannerScreen(
                 }
             }
         }
+        showRationale -> PermissionRationale()
+        else -> {}
     }
 }
 
 @Composable
 private fun PermissionRationale(
-    onRequest: () -> Unit,
     liftABit: Boolean = true
 ) {
     val safeInsets = WindowInsets.safeDrawing.asPaddingValues()
+    val context = LocalContext.current
 
     Box(
         modifier = Modifier
@@ -147,14 +196,41 @@ private fun PermissionRationale(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            Icon(
+                imageVector = Icons.Default.Settings,
+                contentDescription = null,
+                modifier = Modifier.size(72.dp)
+            )
+            Spacer(Modifier.height(16.dp))
             Text(
                 text = stringResource(R.string.scanner_permission_rationale),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onBackground
             )
-            Spacer(Modifier.height(12.dp))
-            Button(onClick = onRequest) {
-                Text(stringResource(R.string.scanner_permission_button))
-            }
+        }
+
+        Button(
+            onClick = {
+                val intent = Intent(
+                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                    Uri.fromParts("package", context.packageName, null)
+                )
+                context.findActivity()?.startActivity(intent)
+            },
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .padding(bottom = 40.dp)
+                .height(56.dp),
+            shape = MaterialTheme.shapes.medium
+        ) {
+            Icon(Icons.Default.Settings, contentDescription = null)
+            Spacer(Modifier.width(8.dp))
+            Text(
+                text = stringResource(R.string.scanner_permission_button).uppercase(),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }
