@@ -1,6 +1,5 @@
 package com.emagioda.myapp.presentation.screen.diagnostic
 
-import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
@@ -8,55 +7,34 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.BrokenImage
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.emagioda.myapp.R
 import com.emagioda.myapp.di.ServiceLocator
 import com.emagioda.myapp.domain.model.*
 import com.emagioda.myapp.presentation.common.SafetyWarningDialog
+import com.emagioda.myapp.presentation.screen.diagnostic.components.DiagnosticPartsSection
 import com.emagioda.myapp.presentation.viewmodel.DiagnosticViewModel
-import kotlin.math.max
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -322,227 +300,3 @@ private fun SuggestCard(text: String) {
 }
 
 @Composable
-private fun DiagnosticPartsSection(parts: List<PartRefResolved>) {
-    if (parts.isEmpty()) {
-        return
-    }
-
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = "Pezzi di ricambio",
-            style = MaterialTheme.typography.titleMedium
-        )
-        Spacer(Modifier.height(16.dp))
-        parts.forEachIndexed { index, part ->
-            TransformablePartCard(part)
-            if (index < parts.lastIndex) {
-                Spacer(Modifier.height(16.dp))
-            }
-        }
-    }
-}
-
-@SuppressLint("LocalContextResourcesRead", "DiscouragedApi")
-@Composable
-private fun TransformablePartCard(part: PartRefResolved) {
-    var expanded by remember { mutableStateOf(false) }
-    val context = LocalContext.current
-    val resId = part.detail.imageResName?.let { resName ->
-        context.resources.getIdentifier(resName, "drawable", context.packageName)
-    } ?: 0
-
-    ElevatedCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .animateContentSize()
-            .clickable { expanded = !expanded }
-            .border(
-                BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                RoundedCornerShape(12.dp)
-            ),
-        colors = CardDefaults.elevatedCardColors()
-    ) {
-        Column(Modifier.padding(16.dp)) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                if (!expanded) {
-                    if (resId != 0) {
-                        Image(
-                            painter = painterResource(resId),
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .size(64.dp)
-                                .clip(RoundedCornerShape(12.dp))
-                        )
-                    } else {
-                        Box(
-                            modifier = Modifier
-                                .size(64.dp)
-                                .background(
-                                    color = MaterialTheme.colorScheme.surfaceVariant,
-                                    shape = RoundedCornerShape(12.dp)
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.BrokenImage,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.size(28.dp)
-                            )
-                        }
-                    }
-
-                    Spacer(Modifier.width(12.dp))
-                }
-
-                Column(
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(
-                        text = part.detail.product,
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    part.detail.code?.let {
-                        Text(
-                            text = "Codice: $it",
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                }
-
-                Icon(
-                    imageVector = if (expanded) {
-                        Icons.Filled.KeyboardArrowUp
-                    } else {
-                        Icons.Filled.KeyboardArrowDown
-                    },
-                    contentDescription = null,
-                    modifier = Modifier.size(28.dp)
-                )
-            }
-
-            if (expanded) {
-                Spacer(Modifier.height(16.dp))
-                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    part.qty?.let { Text(text = "Quantità: $it") }
-                    part.detail.supplier?.let { Text(text = "Fornitore: $it") }
-                    part.detail.technicalContacts?.let { Text(text = "Contatti tecnici: $it") }
-                }
-
-                if (resId != 0) {
-                    Spacer(Modifier.height(12.dp))
-                    ZoomablePartImage(
-                        resId = resId,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(220.dp)
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun ZoomablePartImage(
-    resId: Int,
-    modifier: Modifier = Modifier
-) {
-    var showZoom by remember { mutableStateOf(false) }
-
-    Image(
-        painter = painterResource(resId),
-        contentDescription = null,
-        modifier = modifier.clickable { showZoom = true }
-    )
-
-    if (showZoom) {
-        Dialog(
-            onDismissRequest = { showZoom = false },
-            properties = DialogProperties(
-                usePlatformDefaultWidth = false   // fullscreen real
-            )
-        ) {
-            ZoomableImageDialogContent(
-                resId = resId,
-                onClose = { showZoom = false }
-            )
-        }
-    }
-}
-
-@Composable
-private fun ZoomableImageDialogContent(
-    resId: Int,
-    onClose: () -> Unit
-) {
-    var scale by remember { mutableFloatStateOf(1f) }
-    var offset by remember { mutableStateOf(Offset.Zero) }
-    var boxSize by remember { mutableStateOf(IntSize.Zero) }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black)
-            .onSizeChanged { boxSize = it }
-            .pointerInput(Unit) {
-                detectTransformGestures { _, pan, zoom, _ ->
-                    val newScale = (scale * zoom).coerceIn(1f, 6f)
-
-                    val maxOffsetX =
-                        max(0f, boxSize.width.toFloat() * (newScale - 1f) / 2f)
-                    val maxOffsetY =
-                        max(0f, boxSize.height.toFloat() * (newScale - 1f) / 2f)
-
-                    val rawOffsetX = offset.x + pan.x
-                    val rawOffsetY = offset.y + pan.y
-
-                    val clampedOffsetX = rawOffsetX.coerceIn(-maxOffsetX, maxOffsetX)
-                    val clampedOffsetY = rawOffsetY.coerceIn(-maxOffsetY, maxOffsetY)
-
-                    scale = newScale
-                    offset = Offset(clampedOffsetX, clampedOffsetY)
-                }
-            }
-            .pointerInput(Unit) {
-                detectTapGestures(
-                    onDoubleTap = {
-                        scale = 1f
-                        offset = Offset.Zero
-                    }
-                )
-            },
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            painter = painterResource(resId),
-            contentDescription = null,
-            modifier = Modifier
-                .fillMaxWidth()
-                .graphicsLayer(
-                    scaleX = scale,
-                    scaleY = scale,
-                    translationX = offset.x,
-                    translationY = offset.y
-                )
-        )
-
-        IconButton(
-            onClick = onClose,
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(16.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Close,
-                contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier.size(32.dp)
-            )
-        }
-    }
-}
