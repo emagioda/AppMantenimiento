@@ -13,7 +13,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator // IMPORTANTE: aggiunto
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -32,6 +32,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle // IMPORTANTE: Agregado para la corrección
+import androidx.lifecycle.LifecycleEventObserver // IMPORTANTE: Agregado para la corrección
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.emagioda.myapp.di.ServiceLocator
@@ -92,8 +94,6 @@ fun ScannerScreen(
                 contentWindowInsets = WindowInsets(0)
             ) { innerPadding ->
 
-                // CORREZIONE PROFESSIONALE:
-                // Attendiamo che il ViewModel finisca di caricare l'elenco delle macchine.
                 if (vm.uiState.isLoading) {
                     Box(
                         modifier = Modifier
@@ -104,7 +104,6 @@ fun ScannerScreen(
                         CircularProgressIndicator()
                     }
                 } else {
-                    // Avviamo la fotocamera solo quando i dati sono pronti.
                     CameraPreview(
                         machineIds = vm.uiState.machineIds,
                         onScanned = { machineId ->
@@ -143,7 +142,6 @@ private fun PermissionRationale(
         Column(
             modifier = Modifier
                 .align(Alignment.Center)
-                // Lo solleviamo un po' per non coprirlo con il dialogo di permesso
                 .offset(y = if (liftABit) (-32).dp else 0.dp)
                 .padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -173,7 +171,23 @@ private fun CameraPreview(
     val analysisExecutor = remember { Executors.newSingleThreadExecutor() }
     val context = LocalContext.current
 
+    // Esta variable impide múltiples lecturas rápidas
     var handled by rememberSaveable { mutableStateOf(false) }
+
+    // --- CORRECCIÓN: Resetear 'handled' cuando la pantalla vuelve a primer plano (ON_RESUME) ---
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                handled = false
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+    // ----------------------------------------------------------------------------------------
 
     // Controllo dello "spam" di errori
     var lastInvalidTime by rememberSaveable { mutableStateOf(0L) }
@@ -215,6 +229,7 @@ private fun CameraPreview(
                         .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                         .build().apply {
                             setAnalyzer(analysisExecutor) { imageProxy ->
+                                // Si ya se manejó un QR exitoso, no procesamos más frames hasta que se resetee
                                 if (handled) { imageProxy.close(); return@setAnalyzer }
 
                                 val mediaImage = imageProxy.image
