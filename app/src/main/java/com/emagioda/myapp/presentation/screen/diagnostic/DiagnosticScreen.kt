@@ -112,8 +112,13 @@ fun DiagnosticScreen(
                     }
                 }
                 else -> {
+                    // Pasamos uiState.isBackNavigation al contenido
                     when (node.type) {
-                        NodeType.QUESTION -> QuestionContent(node = node, vm = vm)
+                        NodeType.QUESTION -> QuestionContent(
+                            node = node,
+                            isBack = uiState.isBackNavigation,
+                            vm = vm
+                        )
                         NodeType.END -> EndContent(
                             node = node,
                             vm = vm,
@@ -136,16 +141,28 @@ fun DiagnosticScreen(
 @Composable
 private fun QuestionContent(
     node: DiagnosticNode,
+    isBack: Boolean,
     vm: DiagnosticViewModel
 ) {
+    // Usamos (node, isBack) como clave para detectar cambios y dirección
     AnimatedContent(
-        targetState = node,
+        targetState = node to isBack,
         transitionSpec = {
-            (slideInHorizontally { width -> width } + fadeIn(animationSpec = tween(300))).togetherWith(
-                slideOutHorizontally { width -> -width } + fadeOut(animationSpec = tween(300)))
+            val (_, back) = targetState
+            if (back) {
+                // VOLVER: Entra desde Izquierda (negativo), sale a Derecha (positivo)
+                (slideInHorizontally { -it } + fadeIn(tween(300))).togetherWith(
+                    slideOutHorizontally { it } + fadeOut(tween(300))
+                )
+            } else {
+                // AVANZAR: Entra desde Derecha (positivo), sale a Izquierda (negativo)
+                (slideInHorizontally { it } + fadeIn(tween(300))).togetherWith(
+                    slideOutHorizontally { -it } + fadeOut(tween(300))
+                )
+            }
         },
         label = "question-transition"
-    ) { targetNode ->
+    ) { (targetNode, _) ->
         Column(
             modifier = Modifier
                 .fillMaxSize()

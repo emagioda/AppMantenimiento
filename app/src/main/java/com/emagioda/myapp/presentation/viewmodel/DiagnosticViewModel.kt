@@ -22,7 +22,8 @@ data class DiagnosticUiState(
     val path: List<String> = emptyList(),
     val isLoading: Boolean = true,
     val errorResId: Int? = null,
-    val safetyWarningDismissed: Boolean = false // <-- NUEVO CAMPO
+    val safetyWarningDismissed: Boolean = false,
+    val isBackNavigation: Boolean = false // <-- NUEVO: Bandera de dirección
 )
 
 class DiagnosticViewModel(
@@ -61,7 +62,8 @@ class DiagnosticViewModel(
                         current = rootNode,
                         path = path.toList(),
                         isLoading = false,
-                        errorResId = null
+                        errorResId = null,
+                        isBackNavigation = false
                     )
                 }
             } catch (e: Exception) {
@@ -75,7 +77,6 @@ class DiagnosticViewModel(
         }
     }
 
-    // <-- NUEVA FUNCIÓN para confirmar que se leyó la advertencia
     fun dismissSafetyWarning() {
         uiState = uiState.copy(safetyWarningDismissed = true)
     }
@@ -99,7 +100,7 @@ class DiagnosticViewModel(
         path.clear()
         currentNodeId = localTree.root
         path.add(localTree.root)
-        publish(nodesById[localTree.root])
+        publish(nodesById[localTree.root], isBack = false)
     }
 
     fun goBack() {
@@ -112,7 +113,7 @@ class DiagnosticViewModel(
         if (path.size <= 1) {
             val localTree = tree ?: return
             currentNodeId = localTree.root
-            publish(nodesById[currentNodeId])
+            publish(nodesById[currentNodeId], isBack = true)
             return
         }
 
@@ -120,7 +121,7 @@ class DiagnosticViewModel(
         val localTree = tree ?: return
         val previousId = path.lastOrNull() ?: localTree.root
         currentNodeId = previousId
-        publish(nodesById[previousId])
+        publish(nodesById[previousId], isBack = true) // <-- IMPORTANTE: isBack = true
     }
 
     fun canGoBack(): Boolean = path.size > 1
@@ -141,17 +142,16 @@ class DiagnosticViewModel(
             currentNodeId = nextIdOrEnd
         }
 
-        publish(nextNode)
+        publish(nextNode, isBack = false) // <-- Avanzar: isBack = false
     }
 
-    private fun publish(current: DiagnosticNode?) {
+    private fun publish(current: DiagnosticNode?, isBack: Boolean) {
         uiState = uiState.copy(
             current = current,
             path = path.toList(),
-            safetyWarningDismissed = false, // <-- IMPORTANTE: Reseteamos al cambiar de nodo
-            errorResId = if (current == null)
-                R.string.diagnostic_error_loading
-            else null
+            safetyWarningDismissed = false,
+            errorResId = if (current == null) R.string.diagnostic_error_loading else null,
+            isBackNavigation = isBack // <-- Actualizamos el estado
         )
     }
 

@@ -66,9 +66,13 @@ fun DiagnosticPartsSection(parts: List<PartRefResolved>) {
 private fun TransformablePartCard(part: PartRefResolved) {
     var expanded by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    val resId = part.detail.imageResName?.let { resName ->
-        context.resources.getIdentifier(resName, "drawable", context.packageName)
-    } ?: 0
+
+
+    val resId = remember(part.detail.imageResName) {
+        part.detail.imageResName?.let { resName ->
+            context.resources.getIdentifier(resName, "drawable", context.packageName)
+        } ?: 0
+    }
 
     ElevatedCard(
         modifier = Modifier
@@ -158,6 +162,8 @@ private fun TransformablePartCard(part: PartRefResolved) {
 
                 if (resId != 0) {
                     Spacer(Modifier.height(12.dp))
+                    // Asegúrate de que ZoomablePartImage esté disponible en tu proyecto
+                    // (normalmente en ZoomableImageDialog.kt)
                     ZoomablePartImage(
                         resId = resId,
                         modifier = Modifier
