@@ -28,7 +28,7 @@ class ContactsRepositoryImpl(
                 whatsapp = it.whatsapp,
                 emails = it.emails,
                 location = it.location,
-                servicearea = it.servicearea,
+                serviceArea = it.serviceArea,
             )
         }.sortedBy { it.name.lowercase() }
     }

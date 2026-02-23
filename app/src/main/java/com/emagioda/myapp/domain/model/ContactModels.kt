@@ -10,7 +10,7 @@ data class Contact(
     val whatsapp: String?,
     val emails: List<String>?,
     val location: String?,
-    val servicearea: List<String>?,
+    val serviceArea: List<String>?,
 )
 
 enum class ContactType { TECHNICIAN, PROVIDER }

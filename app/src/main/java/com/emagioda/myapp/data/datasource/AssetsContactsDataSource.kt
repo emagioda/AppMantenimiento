@@ -21,7 +21,8 @@ class AssetsContactsDataSource(
         val whatsapp: String? = null,
         val emails: List<String>? = null,
         val location: String? = null,
-        val sevicearea: List<String>? = null,
+        @SerializedName("servicearea")
+        val serviceArea: List<String>? = null,
         val isManufacturer: Boolean = false,
         val isTechnician: Boolean = false
     )
