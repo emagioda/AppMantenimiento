@@ -8,7 +8,6 @@ data class Contact(
     val phones: List<String>?,
     val whatsapp: String?,
     val emails: List<String>?,
-    val location: String?,
     val serviceArea: List<String>?,
 )
 

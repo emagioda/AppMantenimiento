@@ -13,7 +13,6 @@
       "emails": [
         "ventas@repuestosglobal.com"
       ],
-      "location": "Italia",
       "seviceArea": [
         "Italia",
         "Europa"
@@ -34,7 +33,6 @@
       "emails": [
         "pedidos@motoresind.com"
       ],
-      "location": "Italia Nord",
       "seviceArea": [
         "Italia Nord"
       ],
@@ -57,7 +55,6 @@
       "emails": [
         "info@tlelettrica.it"
       ],
-      "location": "Padova, Italia",
       "seviceArea": [
         "Italia Nord"
       ],
@@ -77,7 +74,6 @@
       "emails": [
         "ordini@2gmock.it"
       ],
-      "location": "Vicenza, Italia",
       "seviceArea": [
         "Italia"
       ],
@@ -98,7 +94,6 @@
       "emails": [
         "supporto@meltecmock.it"
       ],
-      "location": "Bergamo, Italia",
       "seviceArea": [
         "Italia",
         "Europa"

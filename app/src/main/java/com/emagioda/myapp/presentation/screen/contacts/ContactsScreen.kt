@@ -213,14 +213,6 @@ fun ContactCard(
                     color = Color.White
                 )
             }
-            contact.location?.let {
-                Text(
-                    it,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.White
-                )
-            }
-
             contact.serviceArea?.takeIf { it.isNotEmpty() }?.let { areas ->
                 Spacer(Modifier.height(10.dp))
                 Text(

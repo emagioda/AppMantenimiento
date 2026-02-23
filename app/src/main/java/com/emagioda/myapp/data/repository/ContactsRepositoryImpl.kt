@@ -26,7 +26,6 @@ class ContactsRepositoryImpl(
                 phones = it.phones,
                 whatsapp = it.whatsapp,
                 emails = it.emails,
-                location = it.location,
                 serviceArea = it.seviceArea,
             )
         }.sortedBy { it.company?.lowercase() ?: it.id.lowercase() }
