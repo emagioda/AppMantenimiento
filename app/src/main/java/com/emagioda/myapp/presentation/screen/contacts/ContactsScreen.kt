@@ -13,7 +13,9 @@ import androidx.compose.material.icons.filled.Call
 
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.*
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color // Importante para el color blanco
 import androidx.compose.ui.platform.LocalContext
@@ -73,7 +75,17 @@ fun ContactsScreen(
                         }
                     }
                 )
-                TabRow(selectedTabIndex = pagerState.currentPage) {
+                TabRow(
+                    selectedTabIndex = pagerState.currentPage,
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    indicator = { tabPositions ->
+                        TabRowDefaults.SecondaryIndicator(
+                            modifier = Modifier.tabIndicatorOffset(tabPositions[pagerState.currentPage]),
+                            color = MaterialTheme.colorScheme.primary,
+                            height = 4.dp
+                        )
+                    }
+                ) {
                     tabs.forEachIndexed { index, title ->
                         Tab(
                             selected = pagerState.currentPage == index,
@@ -81,13 +93,17 @@ fun ContactsScreen(
                                 scope.launch { pagerState.animateScrollToPage(index) }
                             },
                             text = {
-                                // CAMBIO 1: Títulos de los Tabs en BLANCO
+                                // Destacar visualmente el tab seleccionado
                                 Text(
                                     title,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
-                                    color = Color.White,
-                                    fontWeight = FontWeight.Bold
+                                    color = if (pagerState.currentPage == index) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                    },
+                                    fontWeight = if (pagerState.currentPage == index) FontWeight.ExtraBold else FontWeight.Medium
                                 )
                             }
                         )
@@ -108,8 +124,9 @@ fun ContactsScreen(
                 val pageContacts = if (page == 0) vm.technicians() else vm.providers()
 
                 LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top)
                 ) {
                     items(pageContacts) { contact ->
                         ContactCard(
