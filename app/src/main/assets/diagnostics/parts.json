@@ -71,6 +71,42 @@
       "supplier": "TL Elettrica SRL",
       "technicalContacts": "Meltec / TL elettrica",
       "imageResName": "img_p_08"
+    },
+    {
+      "id": "P_09",
+      "product": "Cuscinetto superiore miscelatore",
+      "code": "UKF218",
+      "features": null,
+      "supplier": "Trimec SRL",
+      "technicalContacts": "Trimec SRL",
+      "imageResName": "img_p_09"
+    },
+    {
+      "id": "P_10",
+      "product": "Cuscinetto inferiore miscelatore",
+      "code": "UKF214",
+      "features": null,
+      "supplier": "Trimec SRL",
+      "technicalContacts": "Trimec SRL",
+      "imageResName": "img_p_10"
+    },
+    {
+      "id": "P_11",
+      "product": "Puleggia coclea",
+      "code": "SPB 5G 800",
+      "features": null,
+      "supplier": "Trimec SRL",
+      "technicalContacts": "Trimec SRL",
+      "imageResName": "img_p_11"
+    },
+    {
+      "id": "P_12",
+      "product": "Puleggia motore",
+      "code": "SPB 5G 132",
+      "features": null,
+      "supplier": "Trimec SRL",
+      "technicalContacts": "Trimec SRL",
+      "imageResName": "img_p_12"
     }
   ]
 }

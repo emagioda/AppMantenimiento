@@ -89,6 +89,7 @@
     { "id":"Q_AE_010", "type":"END",
       "title":"Guasto complesso relè termico/cablaggio.",
       "description":"• Controllare che i contatti ausiliari d'interblocco funzionano correttamente.\n• Controllare che i dispositivi di avviamento e protezione funzionano correttamente.\n• Contattare \"Tecnici Specializzati\"",
+      "safetyWarning": true,
       "result":"NO_ISSUE"
     },
 
@@ -106,12 +107,14 @@
     { "id":"Q_AE_0111000", "type":"END",
       "title":"Problemi con l'accensione del motore o con il cablaggio.",
       "description":"• Controllare la tensione in uscita dall'accensione.\n• Controllare i terminali di uscita sul quadro elettrico.\n• Verificare che il cablaggio dal quadro elettrico al motore non sia interrotto.",
+      "safetyWarning": true,
       "result":"NO_ISSUE"
     },
 
     { "id":"Q_AE_0111001", "type":"END",
       "title":"Motore bloccato",
       "description":"• Controllare che la coclea non sia intasata",
+      "safetyWarning": true,
       "result":"NO_ISSUE"
     },
 
@@ -138,6 +141,7 @@
     { "id":"Q_AE_011110", "type":"END",
       "title":"Motore bloccato.",
       "description":"• Verificare che il motore giri manualmente.\n• Verificare che tutte e tre le fasi raggiungano il motore.\n• Verificare che il riduttore non sia danneggiato.\n• Verificare che la vite senza fine non sia bloccata.\n• Verificare che la boccola della vite senza fine non sia usurata.",
+      "safetyWarning": true,
       "result":"NO_ISSUE"
     },
 
@@ -180,12 +184,14 @@
     { "id":"Q_BC_0", "type":"END",
       "title":"Problemi software o hardware con il sistema di scarico.\n",
       "description":"• Verificare il corretto funzionamento del selettore di scarico.\n• Verificare che la bilancia invii il segnale di apertura all'elettrovalvola.\n• Verificare che la bobina dell'elettrovalvola non sia danneggiata.\n• Verificare che l'aria compressa raggiunga sia l'elettrovalvola che il pistone di apertura.\n• Verificare che il pistone non sia danneggiato (controllare le guarnizioni e le condizioni dell'albero).",
+      "safetyWarning": true,
       "result":"NO_ISSUE"
     },
 
     { "id":"Q_BC_1", "type":"END",
       "title":"Possibile ostruzione nel tubo di scarico.\nCoclea del miscelatore molto usurata.\nSilo vuoto.",
       "description":"• Ispezionare visivamente lo scarico del silo per assicurarsi che non sia ostruito.\n• Controllare l'usura della coclea.\n• Verificare che il silo contenga materiale.",
+      "safetyWarning": true,
       "result":"NO_ISSUE"
     },
 
@@ -220,7 +226,8 @@
     { "id":"Q_CC_01", "type":"END",
       "title":"Il miscelatore é bloccato perché una o piú sportelli sono aperto.\nSensore finedicorsa danneggiato",
       "description":"• Controllare che tutte gli sportelli siano chiusi.\n• Controllare che i sensori siano funzionanti",
-      "result":"NO_ISSUE"
+      "parts": [{"id": "P_07"}],
+      "result":"COMPONENT_FAULT"
     },
 
     { "id":"Q_CC_00", "type":"QUESTION", "title":"Pulsante Emergenza o Sportelli di Ispezione aperti/premuti?", "yes":"Q_CC_001", "no":"Q_CC_000" },
@@ -243,7 +250,8 @@
     { "id":"Q_CC_0000", "type":"END",
       "title":"Problemi nel pulsante d'emergenzia oppure nei sensori degli sportelli d'ispezione.",
       "description":"• Verificare il corretto funzionamento sia del pulsante di arresto di emergenza, verificando la continuità del contatto, sia dei sensori dello sportello di ispezione, misurando la continuità dall'inizio alla fine del circuito.\n• Chiamare tecnici specializzati",
-      "result":"NO_ISSUE"
+      "parts": [{"id": "P_07"}],
+      "result":"COMPONENT_FAULT"
     },
 
     { "id":"Q_CD", "type":"QUESTION", "title":"La spia \"BloccoTermico\" nel Quadro Elettrico è accesa?", "yes":"Q_CE", "no":"Q_CD_0" },
@@ -251,6 +259,7 @@
     { "id":"Q_CD_0", "type":"END",
       "title":"Problemi nel circuito controllo",
       "description":"• Controllare dispositivi accensione e interblocco.",
+      "safetyWarning": true,
       "result":"NO_ISSUE"
     },
 
@@ -259,6 +268,7 @@
     { "id":"Q_CE_0", "type":"END",
       "title":"Guasto complesso relè termico/cablaggio.",
       "description":"• Controllare che i contatti ausiliari d'interblocco funzionano correttamente.\n• Controllare che i dispositivi di avviamento e protezione funzionano correttamente.\nContattare \"Tecnici Specializzati\"",
+      "safetyWarning": true,
       "result":"NO_ISSUE"
     },
 
@@ -292,7 +302,9 @@
     { "id":"Q_CF_10100", "type":"END",
       "title":"Problema di tensione della cinghia o problema alla puleggia motrice",
       "description":"• Verificare che le cinghie siano regolate correttamente e non slittino\n• Verificare che le pulegge siano fissate correttamente e non siano rotte",
-      "result":"NO_ISSUE"
+      "safetyWarning": true,
+      "parts": [{"id": "P_11"},{"id": "P_12"}],
+      "result":"COMPONENT_FAULT"
     },
 
     { "id":"Q_CF_10101", "type":"END",
@@ -315,7 +327,9 @@
       "type": "END",
       "title": "Motore bloccato.\nCuscinetti usurati\n",
       "description": "• Verificare che il motore giri manualmente.\n• Verificare che le tre fasi arrivino al motore.\n• Verificare eventuali rumori nei cuscinetti.\n• Verificare che la coclea non sia bloccata.",
-      "result": "NO_ISSUE"
+      "safetyWarning": true,
+      "parts": [{"id": "P_09"},{"id": "P_10"}],
+      "result":"COMPONENT_FAULT"
     },
 
     { "id":"Q_CF_111", "type":"END",
