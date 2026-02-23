@@ -5,7 +5,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -162,23 +161,7 @@ private fun TransformablePartCard(
                 val technicianIds = part.detail.technicalContacts.orEmpty().map { it.id }
 
                 Spacer(Modifier.height(16.dp))
-                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    part.qty?.let { Text(text = stringResource(R.string.diagnostic_part_qty, it)) }
-                    if (supplierIds.isNotEmpty()) {
-                        Text(text = stringResource(R.string.diagnostic_part_supplier, supplierIds.joinToString(", ")))
-                    }
-                    if (technicianIds.isNotEmpty()) {
-                        Text(text = stringResource(R.string.diagnostic_part_contacts, technicianIds.joinToString(", ")))
-                    }
-                }
-
-                Spacer(Modifier.height(12.dp))
-                Button(
-                    onClick = { onContactClick(supplierIds, technicianIds) },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(text = stringResource(R.string.diagnostic_part_contact_support))
-                }
+                part.qty?.let { Text(text = stringResource(R.string.diagnostic_part_qty, it)) }
 
                 if (resId != 0) {
                     Spacer(Modifier.height(12.dp))
@@ -188,6 +171,14 @@ private fun TransformablePartCard(
                             .fillMaxWidth()
                             .height(220.dp)
                     )
+                }
+
+                Spacer(Modifier.height(12.dp))
+                Button(
+                    onClick = { onContactClick(supplierIds, technicianIds) },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = stringResource(R.string.diagnostic_part_contact_support))
                 }
             }
         }

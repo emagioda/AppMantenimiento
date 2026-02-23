@@ -14,7 +14,6 @@ class AssetsContactsDataSource(
 
     data class ContactRaw(
         val id: String,
-        val type: String,
         val name: String,
         val company: String? = null,
         val roles: List<String>? = null,
@@ -24,13 +23,14 @@ class AssetsContactsDataSource(
         val emails: List<String>? = null,
         val location: String? = null,
         val coverage: List<String>? = null,
+        val isManufacturer: Boolean = false,
+        val isTechnician: Boolean = false,
         val isEmergency: Boolean = false,
         val isFavorite: Boolean = false,
         val notes: String? = null
     )
 
-    fun loadTechnicians(): List<ContactRaw> = load("contacts/technicians.json")
-    fun loadProviders(): List<ContactRaw> = load("contacts/providers.json")
+    fun loadContacts(): List<ContactRaw> = load("contacts/contacts.json")
 
     private fun load(path: String): List<ContactRaw> {
         val json = readAsset(path)

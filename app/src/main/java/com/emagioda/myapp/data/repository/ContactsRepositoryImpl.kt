@@ -10,11 +10,14 @@ class ContactsRepositoryImpl(
 ) : ContactsRepository {
 
     override fun getContacts(type: ContactType): List<Contact> {
-        val raws = when (type) {
-            ContactType.TECHNICIAN -> ds.loadTechnicians()
-            ContactType.PROVIDER -> ds.loadProviders()
+        val raws = ds.loadContacts().filter { raw ->
+            when (type) {
+                ContactType.TECHNICIAN -> raw.isTechnician
+                ContactType.PROVIDER -> raw.isManufacturer
+            }
         }
-        val mapped = raws.map {
+
+        return raws.map {
             Contact(
                 id = it.id,
                 type = type,
@@ -31,8 +34,7 @@ class ContactsRepositoryImpl(
                 isFavorite = it.isFavorite,
                 notes = it.notes
             )
-        }
-        return mapped.sortedWith(
+        }.sortedWith(
             compareByDescending<Contact> { it.isEmergency }
                 .thenByDescending { it.isFavorite }
                 .thenBy { it.name.lowercase() }

@@ -51,8 +51,6 @@
     <string name="diagnostic_suggestions_title">Suggerimenti</string>
     <string name="diagnostic_parts_title">Pezzi di ricambio</string>
     <string name="diagnostic_part_qty">Quantità: %1$d</string>
-    <string name="diagnostic_part_supplier">Fornitore: %1$s</string>
-    <string name="diagnostic_part_contacts">Contatti tecnici: %1$s</string>
     <string name="diagnostic_part_code">Codice: %1$s</string>
     <string name="diagnostic_part_contact_support">Contactar Soporte</string>
 
