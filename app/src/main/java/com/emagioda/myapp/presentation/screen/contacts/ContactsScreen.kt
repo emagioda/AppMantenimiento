@@ -208,13 +208,15 @@ fun ContactCard(
                 color = Color.White
             )
 
-            contact.company?.let {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.White
-                )
-            }
+            contact.company
+                ?.takeIf { it.isNotBlank() && !it.equals(contact.name, ignoreCase = true) }
+                ?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.White
+                    )
+                }
 
             Spacer(Modifier.height(8.dp))
 
