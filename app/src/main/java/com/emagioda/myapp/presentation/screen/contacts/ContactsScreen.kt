@@ -169,9 +169,7 @@ fun ContactCard(
                 color = Color.White
             )
 
-            val roleText = contact.roles?.firstOrNull() ?: contact.company
-            roleText?.let {
-                // CAMBIO 3: Rol en BLANCO
+            contact.company?.let {
                 Text(
                     text = it,
                     style = MaterialTheme.typography.bodyMedium,

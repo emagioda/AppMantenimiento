@@ -4,9 +4,6 @@
       "id": "001",
       "name": "TRIMEC SRL",
       "company": "TRIMEC SRL",
-      "roles": [
-        "Fornitore"
-      ],
       "specialties": [
         "Produzione"
       ],
@@ -23,18 +20,12 @@
         "Europa"
       ],
       "isManufacturer": true,
-      "isTechnician": false,
-      "isEmergency": false,
-      "isFavorite": false,
-      "notes": ""
+      "isTechnician": false
     },
     {
       "id": "002",
       "name": "Motori Industriali",
       "company": "Motori Industriali",
-      "roles": [
-        "Fornitore"
-      ],
       "specialties": [
         "Motori"
       ],
@@ -50,19 +41,12 @@
         "Italia Nord"
       ],
       "isManufacturer": true,
-      "isTechnician": false,
-      "isEmergency": false,
-      "isFavorite": false,
-      "notes": ""
+      "isTechnician": false
     },
     {
       "id": "003",
       "name": "TL Elettrica SRL",
       "company": "TL Elettrica SRL",
-      "roles": [
-        "Fornitore",
-        "Tecnico"
-      ],
       "specialties": [
         "Elettrico",
         "Elettronica",
@@ -82,18 +66,12 @@
         "Italia Nord"
       ],
       "isManufacturer": true,
-      "isTechnician": true,
-      "isEmergency": false,
-      "isFavorite": false,
-      "notes": "Contatto unificato TL Elettrica (antes TEC_ELE_002)."
+      "isTechnician": true
     },
     {
       "id": "004",
       "name": "2G Elettrica",
       "company": "2G Elettrica",
-      "roles": [
-        "Fornitore"
-      ],
       "specialties": [
         "Componenti elettrici"
       ],
@@ -109,18 +87,12 @@
         "Italia"
       ],
       "isManufacturer": true,
-      "isTechnician": false,
-      "isEmergency": false,
-      "isFavorite": false,
-      "notes": "Contatto mock per ricambi sicurezza."
+      "isTechnician": false
     },
     {
       "id": "005",
       "name": "Meltec Service",
       "company": "Meltec",
-      "roles": [
-        "Tecnico"
-      ],
       "specialties": [
         "Diagnostica impianti",
         "Sicurezza macchine"
@@ -138,10 +110,7 @@
         "Europa"
       ],
       "isManufacturer": false,
-      "isTechnician": true,
-      "isEmergency": true,
-      "isFavorite": false,
-      "notes": "Tecnico mock aggiunto per riferimenti parti."
+      "isTechnician": true
     }
   ]
 }

@@ -16,7 +16,6 @@ class AssetsContactsDataSource(
         val id: String,
         val name: String,
         val company: String? = null,
-        val roles: List<String>? = null,
         val specialties: List<String>? = null,
         val phones: List<String>? = null,
         val whatsapp: String? = null,
@@ -24,10 +23,7 @@ class AssetsContactsDataSource(
         val location: String? = null,
         val coverage: List<String>? = null,
         val isManufacturer: Boolean = false,
-        val isTechnician: Boolean = false,
-        val isEmergency: Boolean = false,
-        val isFavorite: Boolean = false,
-        val notes: String? = null
+        val isTechnician: Boolean = false
     )
 
     fun loadContacts(): List<ContactRaw> = load("contacts/contacts.json")
