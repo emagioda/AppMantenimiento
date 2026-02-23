@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BrokenImage
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
@@ -42,7 +43,10 @@ import com.emagioda.myapp.R
 import com.emagioda.myapp.domain.model.PartRefResolved
 
 @Composable
-fun DiagnosticPartsSection(parts: List<PartRefResolved>) {
+fun DiagnosticPartsSection(
+    parts: List<PartRefResolved>,
+    onContactClick: (List<String>, List<String>) -> Unit
+) {
     if (parts.isEmpty()) {
         return
     }
@@ -54,7 +58,10 @@ fun DiagnosticPartsSection(parts: List<PartRefResolved>) {
         )
         Spacer(Modifier.height(16.dp))
         parts.forEachIndexed { index, part ->
-            TransformablePartCard(part)
+            TransformablePartCard(
+                part = part,
+                onContactClick = onContactClick
+            )
             if (index < parts.lastIndex) {
                 Spacer(Modifier.height(16.dp))
             }
@@ -63,10 +70,12 @@ fun DiagnosticPartsSection(parts: List<PartRefResolved>) {
 }
 
 @Composable
-private fun TransformablePartCard(part: PartRefResolved) {
+private fun TransformablePartCard(
+    part: PartRefResolved,
+    onContactClick: (List<String>, List<String>) -> Unit
+) {
     var expanded by remember { mutableStateOf(false) }
     val context = LocalContext.current
-
 
     val resId = remember(part.detail.imageResName) {
         part.detail.imageResName?.let { resName ->
@@ -149,21 +158,30 @@ private fun TransformablePartCard(part: PartRefResolved) {
             }
 
             if (expanded) {
+                val supplierIds = part.detail.supplier.orEmpty().map { it.id }
+                val technicianIds = part.detail.technicalContacts.orEmpty().map { it.id }
+
                 Spacer(Modifier.height(16.dp))
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     part.qty?.let { Text(text = stringResource(R.string.diagnostic_part_qty, it)) }
-                    part.detail.supplier?.let {
-                        Text(text = stringResource(R.string.diagnostic_part_supplier, it))
+                    if (supplierIds.isNotEmpty()) {
+                        Text(text = stringResource(R.string.diagnostic_part_supplier, supplierIds.joinToString(", ")))
                     }
-                    part.detail.technicalContacts?.let {
-                        Text(text = stringResource(R.string.diagnostic_part_contacts, it))
+                    if (technicianIds.isNotEmpty()) {
+                        Text(text = stringResource(R.string.diagnostic_part_contacts, technicianIds.joinToString(", ")))
                     }
+                }
+
+                Spacer(Modifier.height(12.dp))
+                Button(
+                    onClick = { onContactClick(supplierIds, technicianIds) },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = stringResource(R.string.diagnostic_part_contact_support))
                 }
 
                 if (resId != 0) {
                     Spacer(Modifier.height(12.dp))
-                    // Asegúrate de que ZoomablePartImage esté disponible en tu proyecto
-                    // (normalmente en ZoomableImageDialog.kt)
                     ZoomablePartImage(
                         resId = resId,
                         modifier = Modifier

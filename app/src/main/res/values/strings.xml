@@ -54,6 +54,7 @@
     <string name="diagnostic_part_supplier">Fornitore: %1$s</string>
     <string name="diagnostic_part_contacts">Contatti tecnici: %1$s</string>
     <string name="diagnostic_part_code">Codice: %1$s</string>
+    <string name="diagnostic_part_contact_support">Contactar Soporte</string>
 
     <!-- Safety -->
     <string name="safety_protocol_title">PROTOCOLLO DI SICUREZZA RICHIESTO</string>

@@ -5,16 +5,56 @@
       "type": "technician",
       "name": "TL elettrica SRL",
       "company": "TL elettrica SRL",
-      "roles": ["Tecnico"],
-      "specialties": ["Elettrico", "Elettronica"],
-      "phones": ["+3902987654"],
+      "roles": [
+        "Tecnico"
+      ],
+      "specialties": [
+        "Elettrico",
+        "Elettronica"
+      ],
+      "phones": [
+        "+3902987654"
+      ],
       "whatsapp": "+393339876543",
-      "emails": ["info@tlelettrica.it"],
+      "emails": [
+        "info@tlelettrica.it"
+      ],
       "location": "Gran torto, Padova",
-      "coverage": ["Gran torto", "Padova"],
+      "coverage": [
+        "Gran torto",
+        "Padova"
+      ],
       "isEmergency": false,
       "isFavorite": false,
       "notes": ""
+    },
+    {
+      "id": "TEC_MEL_001",
+      "type": "technician",
+      "name": "Meltec Service",
+      "company": "Meltec",
+      "roles": [
+        "Tecnico"
+      ],
+      "specialties": [
+        "Diagnostica impianti",
+        "Sicurezza macchine"
+      ],
+      "phones": [
+        "+39026660303"
+      ],
+      "whatsapp": "+393398887777",
+      "emails": [
+        "supporto@meltecmock.it"
+      ],
+      "location": "Bergamo, Italia",
+      "coverage": [
+        "Italia",
+        "Europa"
+      ],
+      "isEmergency": true,
+      "isFavorite": false,
+      "notes": "Tecnico mock aggiunto per riferimenti parti."
     }
   ]
 }

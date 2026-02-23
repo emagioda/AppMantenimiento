@@ -8,9 +8,13 @@ data class PartDetail(
     val product: String,
     val code: String?,
     val features: String?,
-    val supplier: String?,
-    val technicalContacts: String?,
+    val supplier: List<ContactRef>?,
+    val technicalContacts: List<ContactRef>?,
     val imageResName: String?
+)
+
+data class ContactRef(
+    val id: String
 )
 
 // Part reference inside END node

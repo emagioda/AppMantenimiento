@@ -1,5 +1,6 @@
 package com.emagioda.myapp.presentation.screen.diagnostic
 
+import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
@@ -47,7 +48,8 @@ fun DiagnosticScreen(
     onRestartToHome: () -> Unit,
     onOpenContacts: () -> Unit,
     onOpenTechnicians: () -> Unit = onOpenContacts,
-    onOpenProviders: () -> Unit = onOpenContacts
+    onOpenProviders: () -> Unit = onOpenContacts,
+    onOpenFilteredContacts: (String, String) -> Unit = { _, _ -> }
 ) {
     val vm: DiagnosticViewModel = viewModel(
         factory = DiagnosticViewModel.Factory(
@@ -123,7 +125,8 @@ fun DiagnosticScreen(
                             node = node,
                             vm = vm,
                             onRestartToHome = onRestartToHome,
-                            onOpenTechnicians = onOpenTechnicians
+                            onOpenTechnicians = onOpenTechnicians,
+                            onOpenFilteredContacts = onOpenFilteredContacts
                         )
                     }
                 }
@@ -292,7 +295,8 @@ private fun EndContent(
     node: DiagnosticNode,
     vm: DiagnosticViewModel,
     onRestartToHome: () -> Unit,
-    onOpenTechnicians: () -> Unit
+    onOpenTechnicians: () -> Unit,
+    onOpenFilteredContacts: (String, String) -> Unit
 ) {
     val scrollState = rememberScrollState()
 
@@ -322,7 +326,15 @@ private fun EndContent(
 
         node.parts?.takeIf { it.isNotEmpty() }?.let { parts ->
             Spacer(Modifier.height(24.dp))
-            DiagnosticPartsSection(parts)
+            DiagnosticPartsSection(
+                parts = parts,
+                onContactClick = { providerIds, technicianIds ->
+                    onOpenFilteredContacts(
+                        Uri.encode(providerIds.joinToString(",")),
+                        Uri.encode(technicianIds.joinToString(","))
+                    )
+                }
+            )
         }
 
         Spacer(Modifier.height(40.dp))

@@ -32,13 +32,17 @@ import com.emagioda.myapp.presentation.viewmodel.ContactsViewModel
 @Composable
 fun ContactsScreen(
     onBack: (() -> Unit)? = null,
-    initialTab: Int = 0
+    initialTab: Int = 0,
+    providerIds: String? = null,
+    technicianIds: String? = null
 ) {
     val context = LocalContext.current
 
     val vm: ContactsViewModel = viewModel(
         factory = ContactsViewModel.Factory(
-            getContacts = ServiceLocator.provideGetContacts(context)
+            getContacts = ServiceLocator.provideGetContacts(context),
+            providerIds = providerIds,
+            technicianIds = technicianIds
         )
     )
 

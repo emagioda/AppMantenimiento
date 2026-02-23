@@ -14,9 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.emagioda.myapp.presentation.screen.contacts.ContactsScreen
 import com.emagioda.myapp.presentation.screen.diagnostic.DiagnosticScreen
 import com.emagioda.myapp.presentation.screen.home.HomeScreen
@@ -36,7 +38,13 @@ sealed class Route(val route: String) {
         fun createRoute(machineId: String) = "diagnostic/$machineId"
     }
 
-    data object Contacts : Route("contacts")
+    data object Contacts : Route("contacts?providerIds={providerIds}&technicianIds={technicianIds}") {
+        fun createRoute(providerIds: String? = null, technicianIds: String? = null): String {
+            val safeProviders = providerIds?.takeIf { it.isNotBlank() }.orEmpty()
+            val safeTechnicians = technicianIds?.takeIf { it.isNotBlank() }.orEmpty()
+            return "contacts?providerIds=$safeProviders&technicianIds=$safeTechnicians"
+        }
+    }
     data object ContactsTechnicians : Route("contacts/technicians")
     data object ContactsProviders : Route("contacts/providers")
 }
@@ -128,21 +136,46 @@ fun AppNavHost(
             DiagnosticScreen(
                 machineId = machineId,
                 onRestartToHome = { navController.popBackStack(Route.Home.route, false) },
-                onOpenContacts = { navController.navigate(Route.Contacts.route) },
+                onOpenContacts = { navController.navigate(Route.Contacts.createRoute()) },
                 onOpenTechnicians = { navController.navigate(Route.ContactsTechnicians.route) },
-                onOpenProviders = { navController.navigate(Route.ContactsProviders.route) }
+                onOpenProviders = { navController.navigate(Route.ContactsProviders.route) },
+                onOpenFilteredContacts = { providerIds, technicianIds ->
+                    navController.navigate(
+                        Route.Contacts.createRoute(
+                            providerIds = providerIds,
+                            technicianIds = technicianIds
+                        )
+                    )
+                }
             )
         }
 
         // CONTATTI
         composable(
             route = Route.Contacts.route,
+            arguments = listOf(
+                navArgument("providerIds") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                },
+                navArgument("technicianIds") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            ),
             enterTransition = slideInLeft,
             exitTransition = slideOutLeft,
             popEnterTransition = slideInRight,
             popExitTransition = slideOutRight
-        ) {
-            ContactsScreen(onBack = { navController.popBackStack() }, initialTab = 0)
+        ) { backStackEntry ->
+            ContactsScreen(
+                onBack = { navController.popBackStack() },
+                initialTab = 0,
+                providerIds = backStackEntry.arguments?.getString("providerIds")?.let(Uri::decode),
+                technicianIds = backStackEntry.arguments?.getString("technicianIds")?.let(Uri::decode)
+            )
         }
 
         // CONTATTI → Tecnici

@@ -68,10 +68,14 @@ class AssetsDiagnosticDataSource(
         val product: String,
         val code: String?,
         val features: String?,
-        val supplier: String?,
-        val technicalContacts: String?,
+        val supplier: List<ContactRefRaw>?,
+        val technicalContacts: List<ContactRefRaw>?,
         val imageResName: String?
         // ELIMINADO: val nodeRefs: List<String>
+    )
+
+    data class ContactRefRaw(
+        val id: String
     )
 
 

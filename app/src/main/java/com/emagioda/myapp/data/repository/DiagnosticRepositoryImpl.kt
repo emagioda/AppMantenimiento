@@ -81,8 +81,8 @@ class DiagnosticRepositoryImpl(
             product = product,
             code = code,
             features = features,
-            supplier = supplier,
-            technicalContacts = technicalContacts,
+            supplier = supplier?.map { ContactRef(it.id) },
+            technicalContacts = technicalContacts?.map { ContactRef(it.id) },
             imageResName = imageResName
         )
 
