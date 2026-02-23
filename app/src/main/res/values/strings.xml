@@ -52,7 +52,7 @@
     <string name="diagnostic_parts_title">Pezzi di ricambio</string>
     <string name="diagnostic_part_qty">Quantità: %1$d</string>
     <string name="diagnostic_part_code">Codice: %1$s</string>
-    <string name="diagnostic_part_contact_support">Contactar Soporte</string>
+    <string name="diagnostic_part_contact_support">Contatta tecnici e fornitori</string>
 
     <!-- Safety -->
     <string name="safety_protocol_title">PROTOCOLLO DI SICUREZZA RICHIESTO</string>
