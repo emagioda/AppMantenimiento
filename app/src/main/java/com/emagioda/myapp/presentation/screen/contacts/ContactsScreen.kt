@@ -1,11 +1,13 @@
 package com.emagioda.myapp.presentation.screen.contacts
 
 import android.content.Intent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Chat
@@ -77,7 +79,7 @@ fun ContactsScreen(
                 )
                 TabRow(
                     selectedTabIndex = pagerState.currentPage,
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    containerColor = Color.Transparent,
                     indicator = { tabPositions ->
                         TabRowDefaults.SecondaryIndicator(
                             modifier = Modifier.tabIndicatorOffset(tabPositions[pagerState.currentPage]),
@@ -92,6 +94,16 @@ fun ContactsScreen(
                             onClick = {
                                 scope.launch { pagerState.animateScrollToPage(index) }
                             },
+                            modifier = Modifier
+                                .padding(horizontal = 6.dp, vertical = 4.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(
+                                    if (pagerState.currentPage == index) {
+                                        MaterialTheme.colorScheme.surfaceVariant
+                                    } else {
+                                        Color.Transparent
+                                    }
+                                ),
                             text = {
                                 // Destacar visualmente el tab seleccionado
                                 Text(
