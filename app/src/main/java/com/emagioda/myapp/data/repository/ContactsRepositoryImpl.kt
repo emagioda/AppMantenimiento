@@ -21,7 +21,6 @@ class ContactsRepositoryImpl(
             Contact(
                 id = it.id,
                 type = type,
-                name = it.name,
                 company = it.company,
                 specialties = it.specialties,
                 phones = it.phones,
@@ -30,6 +29,6 @@ class ContactsRepositoryImpl(
                 location = it.location,
                 serviceArea = it.serviceArea,
             )
-        }.sortedBy { it.name.lowercase() }
+        }.sortedBy { it.company?.lowercase() ?: it.id.lowercase() }
     }
 }

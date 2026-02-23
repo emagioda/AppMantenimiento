@@ -14,14 +14,13 @@ class AssetsContactsDataSource(
 
     data class ContactRaw(
         val id: String,
-        val name: String,
         val company: String? = null,
         val specialties: List<String>? = null,
         val phones: List<String>? = null,
         val whatsapp: String? = null,
         val emails: List<String>? = null,
         val location: String? = null,
-        @SerializedName("servicearea")
+        @SerializedName(value = "serviceArea", alternate = ["servicearea", "SeviceArea", "seviceArea"])
         val serviceArea: List<String>? = null,
         val isManufacturer: Boolean = false,
         val isTechnician: Boolean = false
