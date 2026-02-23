@@ -223,6 +223,12 @@ fun ContactCard(
 
             contact.serviceArea?.takeIf { it.isNotEmpty() }?.let { areas ->
                 Spacer(Modifier.height(10.dp))
+                Text(
+                    text = stringResource(R.string.contacts_service_areas_label),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = Color.White,
+                    fontWeight = FontWeight.SemiBold
+                )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
@@ -234,17 +240,11 @@ fun ContactCard(
                         modifier = Modifier.size(16.dp)
                     )
                     Text(
-                        text = stringResource(R.string.contacts_service_areas_label),
-                        style = MaterialTheme.typography.labelLarge,
-                        color = Color.White,
-                        fontWeight = FontWeight.SemiBold
+                        text = areas.joinToString(" · "),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.White
                     )
                 }
-                Text(
-                    text = areas.joinToString(" · "),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.White
-                )
             }
 
             Spacer(Modifier.height(16.dp))
