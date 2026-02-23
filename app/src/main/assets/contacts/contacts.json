@@ -1,16 +1,27 @@
 {
   "contacts": [
     {
-      "id": "PROV_TRIMECSRL_001",
+      "id": "001",
       "name": "TRIMEC SRL",
       "company": "TRIMEC SRL",
-      "roles": ["Fornitore"],
-      "specialties": ["Produzione"],
-      "phones": ["+3902123456"],
+      "roles": [
+        "Fornitore"
+      ],
+      "specialties": [
+        "Produzione"
+      ],
+      "phones": [
+        "+3902123456"
+      ],
       "whatsapp": "+393343167937",
-      "emails": ["vendite@ricambiglobal.com"],
+      "emails": [
+        "vendite@ricambiglobal.com"
+      ],
       "location": "Italia",
-      "coverage": ["Italia", "Europa"],
+      "coverage": [
+        "Italia",
+        "Europa"
+      ],
       "isManufacturer": true,
       "isTechnician": false,
       "isEmergency": false,
@@ -18,16 +29,26 @@
       "notes": ""
     },
     {
-      "id": "PROV_MOT_003",
+      "id": "002",
       "name": "Motori Industriali",
       "company": "Motori Industriali",
-      "roles": ["Fornitore"],
-      "specialties": ["Motori"],
-      "phones": ["+3902234567"],
+      "roles": [
+        "Fornitore"
+      ],
+      "specialties": [
+        "Motori"
+      ],
+      "phones": [
+        "+3902234567"
+      ],
       "whatsapp": "+393456789012",
-      "emails": ["ordini@motoriind.com"],
+      "emails": [
+        "ordini@motoriind.com"
+      ],
       "location": "Italia Nord",
-      "coverage": ["Italia Nord"],
+      "coverage": [
+        "Italia Nord"
+      ],
       "isManufacturer": true,
       "isTechnician": false,
       "isEmergency": false,
@@ -35,33 +56,58 @@
       "notes": ""
     },
     {
-      "id": "PROV_TLE_001",
+      "id": "003",
       "name": "TL Elettrica SRL",
       "company": "TL Elettrica SRL",
-      "roles": ["Fornitore", "Tecnico"],
-      "specialties": ["Quadri elettrici", "Automazione"],
-      "phones": ["+39025550101"],
-      "whatsapp": "+393390001111",
-      "emails": ["commerciale@tlmock.it"],
+      "roles": [
+        "Fornitore",
+        "Tecnico"
+      ],
+      "specialties": [
+        "Elettrico",
+        "Elettronica",
+        "Quadri elettrici",
+        "Automazione"
+      ],
+      "phones": [
+        "+3902987654"
+      ],
+      "whatsapp": "+393339876543",
+      "emails": [
+        "info@tlelettrica.it",
+        "commerciale@tlmock.it"
+      ],
       "location": "Padova, Italia",
-      "coverage": ["Italia Nord"],
+      "coverage": [
+        "Italia Nord"
+      ],
       "isManufacturer": true,
       "isTechnician": true,
       "isEmergency": false,
       "isFavorite": false,
-      "notes": "Contatto unificato mock."
+      "notes": "Contatto unificato TL Elettrica (antes TEC_ELE_002)."
     },
     {
-      "id": "PROV_2G_001",
+      "id": "004",
       "name": "2G Elettrica",
       "company": "2G Elettrica",
-      "roles": ["Fornitore"],
-      "specialties": ["Componenti elettrici"],
-      "phones": ["+39025550202"],
+      "roles": [
+        "Fornitore"
+      ],
+      "specialties": [
+        "Componenti elettrici"
+      ],
+      "phones": [
+        "+39025550202"
+      ],
       "whatsapp": "+393390002222",
-      "emails": ["ordini@2gmock.it"],
+      "emails": [
+        "ordini@2gmock.it"
+      ],
       "location": "Vicenza, Italia",
-      "coverage": ["Italia"],
+      "coverage": [
+        "Italia"
+      ],
       "isManufacturer": true,
       "isTechnician": false,
       "isEmergency": false,
@@ -69,33 +115,28 @@
       "notes": "Contatto mock per ricambi sicurezza."
     },
     {
-      "id": "TEC_ELE_002",
-      "name": "TL elettrica SRL",
-      "company": "TL elettrica SRL",
-      "roles": ["Tecnico"],
-      "specialties": ["Elettrico", "Elettronica"],
-      "phones": ["+3902987654"],
-      "whatsapp": "+393339876543",
-      "emails": ["info@tlelettrica.it"],
-      "location": "Gran torto, Padova",
-      "coverage": ["Gran torto", "Padova"],
-      "isManufacturer": false,
-      "isTechnician": true,
-      "isEmergency": false,
-      "isFavorite": false,
-      "notes": ""
-    },
-    {
-      "id": "TEC_MEL_001",
+      "id": "005",
       "name": "Meltec Service",
       "company": "Meltec",
-      "roles": ["Tecnico"],
-      "specialties": ["Diagnostica impianti", "Sicurezza macchine"],
-      "phones": ["+39026660303"],
+      "roles": [
+        "Tecnico"
+      ],
+      "specialties": [
+        "Diagnostica impianti",
+        "Sicurezza macchine"
+      ],
+      "phones": [
+        "+39026660303"
+      ],
       "whatsapp": "+393398887777",
-      "emails": ["supporto@meltecmock.it"],
+      "emails": [
+        "supporto@meltecmock.it"
+      ],
       "location": "Bergamo, Italia",
-      "coverage": ["Italia", "Europa"],
+      "coverage": [
+        "Italia",
+        "Europa"
+      ],
       "isManufacturer": false,
       "isTechnician": true,
       "isEmergency": true,
