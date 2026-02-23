@@ -14,6 +14,7 @@ import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.Call
 
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.*
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
@@ -200,23 +201,14 @@ fun ContactCard(
                 .padding(16.dp)
                 .fillMaxWidth()
         ) {
-            // CAMBIO 2: Nombre en BLANCO
-            Text(
-                text = contact.name,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-
-            contact.company
-                ?.takeIf { it.isNotBlank() && !it.equals(contact.name, ignoreCase = true) }
-                ?.let {
-                    Text(
-                        text = it,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color.White
-                    )
-                }
+            contact.company?.takeIf { it.isNotBlank() }?.let {
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            }
 
             Spacer(Modifier.height(8.dp))
 
@@ -231,6 +223,32 @@ fun ContactCard(
             contact.location?.let {
                 Text(
                     it,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.White
+                )
+            }
+
+            contact.serviceArea?.takeIf { it.isNotEmpty() }?.let { areas ->
+                Spacer(Modifier.height(10.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.LocationOn,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Text(
+                        text = stringResource(R.string.contacts_service_areas_label),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = Color.White,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+                Text(
+                    text = areas.joinToString(" · "),
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.White
                 )
