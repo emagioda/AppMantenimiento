@@ -1,19 +1,25 @@
 package com.emagioda.myapp.presentation.screen.contacts
 
 import android.content.Intent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.Call
 
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color // Importante para el color blanco
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -21,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
 import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.emagioda.myapp.R
@@ -46,16 +53,14 @@ fun ContactsScreen(
         )
     )
 
-    var selectedTabIndex by rememberSaveable { mutableIntStateOf(initialTab) }
-
     val tabs = listOf(
         stringResource(R.string.contacts_tab_technicians),
         stringResource(R.string.contacts_tab_providers)
     )
 
-    val currentContacts = remember(selectedTabIndex) {
-        if (selectedTabIndex == 0) vm.technicians() else vm.providers()
-    }
+    val safeInitialTab = initialTab.coerceIn(0, tabs.lastIndex)
+    val pagerState = rememberPagerState(initialPage = safeInitialTab, pageCount = { tabs.size })
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -73,19 +78,39 @@ fun ContactsScreen(
                         }
                     }
                 )
-                TabRow(selectedTabIndex = selectedTabIndex) {
+                TabRow(
+                    selectedTabIndex = pagerState.currentPage,
+                    containerColor = Color.Transparent,
+                    indicator = {}
+                ) {
                     tabs.forEachIndexed { index, title ->
                         Tab(
-                            selected = selectedTabIndex == index,
-                            onClick = { selectedTabIndex = index },
+                            selected = pagerState.currentPage == index,
+                            onClick = {
+                                scope.launch { pagerState.animateScrollToPage(index) }
+                            },
+                            modifier = Modifier
+                                .padding(horizontal = 6.dp, vertical = 4.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(
+                                    if (pagerState.currentPage == index) {
+                                        MaterialTheme.colorScheme.surfaceVariant
+                                    } else {
+                                        Color.Transparent
+                                    }
+                                ),
                             text = {
-                                // CAMBIO 1: Títulos de los Tabs en BLANCO
+                                // Destacar visualmente el tab seleccionado
                                 Text(
                                     title,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
-                                    color = Color.White,
-                                    fontWeight = FontWeight.Bold
+                                    color = if (pagerState.currentPage == index) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                    },
+                                    fontWeight = if (pagerState.currentPage == index) FontWeight.ExtraBold else FontWeight.Medium
                                 )
                             }
                         )
@@ -99,39 +124,47 @@ fun ContactsScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            LazyColumn(
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                items(currentContacts) { contact ->
-                    ContactCard(
-                        contact = contact,
-                        onCall = { phone ->
-                            val intent = Intent(Intent.ACTION_DIAL).apply {
-                                data = "tel:$phone".toUri()
-                            }
-                            context.startActivity(intent)
-                        },
-                        onWhatsApp = { number ->
-                            val url = "https://api.whatsapp.com/send?phone=$number"
-                            val intent = Intent(Intent.ACTION_VIEW).apply {
-                                data = url.toUri()
-                            }
-                            try {
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxSize()
+            ) { page ->
+                val pageContacts = if (page == 0) vm.technicians() else vm.providers()
+
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top)
+                ) {
+                    items(pageContacts) { contact ->
+                        ContactCard(
+                            contact = contact,
+                            onCall = { phone ->
+                                val intent = Intent(Intent.ACTION_DIAL).apply {
+                                    data = "tel:$phone".toUri()
+                                }
                                 context.startActivity(intent)
-                            } catch (e: Exception) {
+                            },
+                            onWhatsApp = { number ->
+                                val url = "https://api.whatsapp.com/send?phone=$number"
+                                val intent = Intent(Intent.ACTION_VIEW).apply {
+                                    data = url.toUri()
+                                }
+                                try {
+                                    context.startActivity(intent)
+                                } catch (e: Exception) {
+                                }
+                            },
+                            onEmail = { email ->
+                                val intent = Intent(Intent.ACTION_SENDTO).apply {
+                                    data = "mailto:$email".toUri()
+                                }
+                                try {
+                                    context.startActivity(intent)
+                                } catch (e: Exception) {
+                                }
                             }
-                        },
-                        onEmail = { email ->
-                            val intent = Intent(Intent.ACTION_SENDTO).apply {
-                                data = "mailto:$email".toUri()
-                            }
-                            try {
-                                context.startActivity(intent)
-                            } catch (e: Exception) {
-                            }
-                        }
-                    )
+                        )
+                    }
                 }
             }
         }
@@ -161,18 +194,11 @@ fun ContactCard(
                 .padding(16.dp)
                 .fillMaxWidth()
         ) {
-            // CAMBIO 2: Nombre en BLANCO
-            Text(
-                text = contact.name,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-
-            contact.company?.let {
+            contact.company?.takeIf { it.isNotBlank() }?.let {
                 Text(
                     text = it,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
                     color = Color.White
                 )
             }
@@ -187,12 +213,30 @@ fun ContactCard(
                     color = Color.White
                 )
             }
-            contact.location?.let {
+            contact.serviceArea?.takeIf { it.isNotEmpty() }?.let { areas ->
+                Spacer(Modifier.height(10.dp))
                 Text(
-                    it,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.White
+                    text = stringResource(R.string.contacts_service_areas_label),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = Color.White,
+                    fontWeight = FontWeight.SemiBold
                 )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.LocationOn,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Text(
+                        text = areas.joinToString(" · "),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.White
+                    )
+                }
             }
 
             Spacer(Modifier.height(16.dp))

@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BrokenImage
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
@@ -34,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -175,7 +177,7 @@ private fun TransformablePartCard(
                     )
                 }
 
-                Spacer(Modifier.height(12.dp))
+                Spacer(Modifier.height(20.dp))
                 Button(
                     onClick = { onContactClick(supplierIds, technicianIds) },
                     modifier = Modifier
@@ -183,11 +185,17 @@ private fun TransformablePartCard(
                         .height(52.dp),
                     shape = RoundedCornerShape(14.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.secondary,
-                        contentColor = MaterialTheme.colorScheme.onSecondary
+                        containerColor = Color(0xFFEF9A9A),
+                        contentColor = Color(0xFF7F1D1D)
                     ),
                     elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp)
                 ) {
+                    Icon(
+                        imageVector = Icons.Filled.Phone,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(Modifier.width(8.dp))
                     Text(
                         text = stringResource(R.string.diagnostic_part_contact_support).uppercase(),
                         style = MaterialTheme.typography.titleSmall,

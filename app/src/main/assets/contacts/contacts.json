@@ -2,14 +2,18 @@
   "contacts": [
     {
       "id": "001",
-      "name": "TRIMEC SRL",
       "company": "TRIMEC SRL",
-      "specialties": ["Produzione"],
-      "phones": ["+3902123456"],
+      "specialties": [
+        "Produzione"
+      ],
+      "phones": [
+        "+3902123456"
+      ],
       "whatsapp": "+393343167937",
-      "emails": ["ventas@repuestosglobal.com"],
-      "location": "Italia",
-      "SeviceArea": [
+      "emails": [
+        "ventas@repuestosglobal.com"
+      ],
+      "seviceArea": [
         "Italia",
         "Europa"
       ],
@@ -18,20 +22,25 @@
     },
     {
       "id": "002",
-      "name": "Motori Industriali",
       "company": "Motori Industriali",
-      "specialties": ["Motori"],
-      "phones": ["+3902234567"],
+      "specialties": [
+        "Motori"
+      ],
+      "phones": [
+        "+3902234567"
+      ],
       "whatsapp": "+393456789012",
-      "emails": ["pedidos@motoresind.com"],
-      "location": "Italia Nord",
-      "SeviceArea": ["Italia Nord"],
+      "emails": [
+        "pedidos@motoresind.com"
+      ],
+      "seviceArea": [
+        "Italia Nord"
+      ],
       "isManufacturer": true,
       "isTechnician": false
     },
     {
       "id": "003",
-      "name": "TL Elettrica SRL",
       "company": "TL Elettrica SRL",
       "specialties": [
         "Elettrico",
@@ -39,40 +48,53 @@
         "Quadri elettrici",
         "Automazione"
       ],
-      "phones": ["+3902987654"],
+      "phones": [
+        "+3902987654"
+      ],
       "whatsapp": "+393339876543",
-      "emails": ["info@tlelettrica.it"],
-      "location": "Padova, Italia",
-      "SeviceArea": ["Italia Nord"],
+      "emails": [
+        "info@tlelettrica.it"
+      ],
+      "seviceArea": [
+        "Italia Nord"
+      ],
       "isManufacturer": true,
       "isTechnician": true
     },
     {
       "id": "004",
-      "name": "2G Elettrica",
       "company": "2G Elettrica",
-      "specialties": ["Componenti elettrici"],
-      "phones": ["+39025550202"],
+      "specialties": [
+        "Componenti elettrici"
+      ],
+      "phones": [
+        "+39025550202"
+      ],
       "whatsapp": "+393390002222",
-      "emails": ["ordini@2gmock.it"],
-      "location": "Vicenza, Italia",
-      "seviceArea": ["Italia"],
+      "emails": [
+        "ordini@2gmock.it"
+      ],
+      "seviceArea": [
+        "Italia"
+      ],
       "isManufacturer": true,
       "isTechnician": false
     },
     {
       "id": "005",
-      "name": "Meltec Service",
       "company": "Meltec",
       "specialties": [
         "Diagnostica impianti",
         "Sicurezza macchine"
       ],
-      "phones": ["+39026660303"],
+      "phones": [
+        "+39026660303"
+      ],
       "whatsapp": "+393398887777",
-      "emails": ["supporto@meltecmock.it"],
-      "location": "Bergamo, Italia",
-      "SeviceArea": [
+      "emails": [
+        "supporto@meltecmock.it"
+      ],
+      "seviceArea": [
         "Italia",
         "Europa"
       ],

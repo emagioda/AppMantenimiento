@@ -30,6 +30,7 @@
     <string name="contacts_action_call">Chiama</string>
     <string name="contacts_action_whatsapp">WhatsApp</string>
     <string name="contacts_action_email">Email</string>
+    <string name="contacts_service_areas_label">Aree di servizio</string>
     <string name="contacts_emergency">• 24/7</string>
     <string name="contacts_favorite">★</string>
 

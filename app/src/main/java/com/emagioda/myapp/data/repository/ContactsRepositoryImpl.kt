@@ -21,15 +21,13 @@ class ContactsRepositoryImpl(
             Contact(
                 id = it.id,
                 type = type,
-                name = it.name,
                 company = it.company,
                 specialties = it.specialties,
                 phones = it.phones,
                 whatsapp = it.whatsapp,
                 emails = it.emails,
-                location = it.location,
-                servicearea = it.servicearea,
+                serviceArea = it.seviceArea,
             )
-        }.sortedBy { it.name.lowercase() }
+        }.sortedBy { it.company?.lowercase() ?: it.id.lowercase() }
     }
 }
