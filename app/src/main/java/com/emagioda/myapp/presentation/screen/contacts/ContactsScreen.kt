@@ -4,6 +4,8 @@ import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Chat
@@ -12,7 +14,6 @@ import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color // Importante para el color blanco
 import androidx.compose.ui.platform.LocalContext
@@ -21,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
 import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.emagioda.myapp.R
@@ -46,16 +48,14 @@ fun ContactsScreen(
         )
     )
 
-    var selectedTabIndex by rememberSaveable { mutableIntStateOf(initialTab) }
-
     val tabs = listOf(
         stringResource(R.string.contacts_tab_technicians),
         stringResource(R.string.contacts_tab_providers)
     )
 
-    val currentContacts = remember(selectedTabIndex) {
-        if (selectedTabIndex == 0) vm.technicians() else vm.providers()
-    }
+    val safeInitialTab = initialTab.coerceIn(0, tabs.lastIndex)
+    val pagerState = rememberPagerState(initialPage = safeInitialTab, pageCount = { tabs.size })
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -73,11 +73,13 @@ fun ContactsScreen(
                         }
                     }
                 )
-                TabRow(selectedTabIndex = selectedTabIndex) {
+                TabRow(selectedTabIndex = pagerState.currentPage) {
                     tabs.forEachIndexed { index, title ->
                         Tab(
-                            selected = selectedTabIndex == index,
-                            onClick = { selectedTabIndex = index },
+                            selected = pagerState.currentPage == index,
+                            onClick = {
+                                scope.launch { pagerState.animateScrollToPage(index) }
+                            },
                             text = {
                                 // CAMBIO 1: Títulos de los Tabs en BLANCO
                                 Text(
@@ -99,39 +101,46 @@ fun ContactsScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            LazyColumn(
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                items(currentContacts) { contact ->
-                    ContactCard(
-                        contact = contact,
-                        onCall = { phone ->
-                            val intent = Intent(Intent.ACTION_DIAL).apply {
-                                data = "tel:$phone".toUri()
-                            }
-                            context.startActivity(intent)
-                        },
-                        onWhatsApp = { number ->
-                            val url = "https://api.whatsapp.com/send?phone=$number"
-                            val intent = Intent(Intent.ACTION_VIEW).apply {
-                                data = url.toUri()
-                            }
-                            try {
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxSize()
+            ) { page ->
+                val pageContacts = if (page == 0) vm.technicians() else vm.providers()
+
+                LazyColumn(
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(pageContacts) { contact ->
+                        ContactCard(
+                            contact = contact,
+                            onCall = { phone ->
+                                val intent = Intent(Intent.ACTION_DIAL).apply {
+                                    data = "tel:$phone".toUri()
+                                }
                                 context.startActivity(intent)
-                            } catch (e: Exception) {
+                            },
+                            onWhatsApp = { number ->
+                                val url = "https://api.whatsapp.com/send?phone=$number"
+                                val intent = Intent(Intent.ACTION_VIEW).apply {
+                                    data = url.toUri()
+                                }
+                                try {
+                                    context.startActivity(intent)
+                                } catch (e: Exception) {
+                                }
+                            },
+                            onEmail = { email ->
+                                val intent = Intent(Intent.ACTION_SENDTO).apply {
+                                    data = "mailto:$email".toUri()
+                                }
+                                try {
+                                    context.startActivity(intent)
+                                } catch (e: Exception) {
+                                }
                             }
-                        },
-                        onEmail = { email ->
-                            val intent = Intent(Intent.ACTION_SENDTO).apply {
-                                data = "mailto:$email".toUri()
-                            }
-                            try {
-                                context.startActivity(intent)
-                            } catch (e: Exception) {
-                            }
-                        }
-                    )
+                        )
+                    }
                 }
             }
         }
