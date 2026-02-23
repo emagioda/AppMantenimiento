@@ -14,7 +14,7 @@
         "ventas@repuestosglobal.com"
       ],
       "location": "Italia",
-      "SeviceArea": [
+      "seviceArea": [
         "Italia",
         "Europa"
       ],
@@ -35,7 +35,7 @@
         "pedidos@motoresind.com"
       ],
       "location": "Italia Nord",
-      "SeviceArea": [
+      "seviceArea": [
         "Italia Nord"
       ],
       "isManufacturer": true,
@@ -58,7 +58,7 @@
         "info@tlelettrica.it"
       ],
       "location": "Padova, Italia",
-      "SeviceArea": [
+      "seviceArea": [
         "Italia Nord"
       ],
       "isManufacturer": true,
@@ -99,7 +99,7 @@
         "supporto@meltecmock.it"
       ],
       "location": "Bergamo, Italia",
-      "SeviceArea": [
+      "seviceArea": [
         "Italia",
         "Europa"
       ],

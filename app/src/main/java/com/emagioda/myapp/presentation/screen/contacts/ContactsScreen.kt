@@ -16,7 +16,6 @@ import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.*
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -82,13 +81,7 @@ fun ContactsScreen(
                 TabRow(
                     selectedTabIndex = pagerState.currentPage,
                     containerColor = Color.Transparent,
-                    indicator = { tabPositions ->
-                        TabRowDefaults.SecondaryIndicator(
-                            modifier = Modifier.tabIndicatorOffset(tabPositions[pagerState.currentPage]),
-                            color = MaterialTheme.colorScheme.primary,
-                            height = 4.dp
-                        )
-                    }
+                    indicator = {}
                 ) {
                     tabs.forEachIndexed { index, title ->
                         Tab(
