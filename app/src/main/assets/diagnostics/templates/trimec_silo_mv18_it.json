@@ -168,7 +168,7 @@
       "title":"Il controller della bilancia non funziona correttamente.",
       "description":"• Reimpostare il controller.\n• Tarare nuovamente il controller.\n• Verificare che la bilancia pesi correttamente utilizzando un peso standard.\n• Sostituire il controller della bilancia.",
       "safetyWarning": true,
-      "parts": [{"id": "P_08"},{"id": "P_07"}],
+      "parts": [{"id": "P_08"},{"id": "P_09"}],
       "result":"COMPONENT_FAULT"
     },
 
@@ -303,7 +303,7 @@
       "title":"Problema di tensione della cinghia o problema alla puleggia motrice",
       "description":"• Verificare che le cinghie siano regolate correttamente e non slittino\n• Verificare che le pulegge siano fissate correttamente e non siano rotte",
       "safetyWarning": true,
-      "parts": [{"id": "P_11"},{"id": "P_12"}],
+      "parts": [{"id": "P_12"},{"id": "P_13"}],
       "result":"COMPONENT_FAULT"
     },
 
@@ -328,7 +328,7 @@
       "title": "Motore bloccato.\nCuscinetti usurati\n",
       "description": "• Verificare che il motore giri manualmente.\n• Verificare che le tre fasi arrivino al motore.\n• Verificare eventuali rumori nei cuscinetti.\n• Verificare che la coclea non sia bloccata.",
       "safetyWarning": true,
-      "parts": [{"id": "P_09"},{"id": "P_10"}],
+      "parts": [{"id": "P_10"},{"id": "P_11"}],
       "result":"COMPONENT_FAULT"
     },
 

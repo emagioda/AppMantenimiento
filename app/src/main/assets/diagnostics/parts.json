@@ -5,16 +5,8 @@
       "product": "Modulo di sicurezza Pizzato",
       "code": "CS AR-05V024",
       "features": null,
-      "supplier": [
-        {
-          "id": "003"
-        }
-      ],
-      "technicalContacts": [
-        {
-          "id": "005"
-        }
-      ],
+      "supplier": [{"id": "003"}],
+      "technicalContacts": [{"id": "005"}],
       "imageResName": "img_p_01"
     },
     {
@@ -22,19 +14,8 @@
       "product": "Indicatore di livello a rotazione",
       "code": "PFG05",
       "features": "IP65 / -20...+70°C",
-      "supplier": [
-        {
-          "id": "001"
-        }
-      ],
-      "technicalContacts": [
-        {
-          "id": "003"
-        },
-        {
-          "id": "005"
-        }
-      ],
+      "supplier": [{"id": "001"}],
+      "technicalContacts": [{"id": "003"}, {"id": "005"}],
       "imageResName": "img_p_02"
     },
     {
@@ -42,19 +23,8 @@
       "product": "Motore elettrico",
       "code": null,
       "features": "1,5kW - 400V - B5 - 3000 giri - 50Hz",
-      "supplier": [
-        {
-          "id": "002"
-        }
-      ],
-      "technicalContacts": [
-        {
-          "id": "005"
-        },
-        {
-          "id": "003"
-        }
-      ],
+      "supplier": [{"id": "002"}],
+      "technicalContacts": [{"id": "005"}, {"id": "003"}],
       "imageResName": "img_p_03"
     },
     {
@@ -62,16 +32,8 @@
       "product": "Riduttore",
       "code": "W75 i=7 PAM 90",
       "features": null,
-      "supplier": [
-        {
-          "id": "001"
-        }
-      ],
-      "technicalContacts": [
-        {
-          "id": "003"
-        }
-      ],
+      "supplier": [{"id": "001"}],
+      "technicalContacts": [{"id": "003"}],
       "imageResName": "img_p_04"
     },
     {
@@ -79,19 +41,8 @@
       "product": "Motore elettrico",
       "code": null,
       "features": "30kW - 400V - B3 - 3000 giri - 50Hz",
-      "supplier": [
-        {
-          "id": "002"
-        }
-      ],
-      "technicalContacts": [
-        {
-          "id": "005"
-        },
-        {
-          "id": "003"
-        }
-      ],
+      "supplier": [{"id": "002"}],
+      "technicalContacts": [{"id": "005"}, {"id": "003"}],
       "imageResName": "img_p_05"
     },
     {
@@ -99,16 +50,8 @@
       "product": "Cinghia di trasmissione",
       "code": "SPB 5600",
       "features": "5 pezzi",
-      "supplier": [
-        {
-          "id": "001"
-        }
-      ],
-      "technicalContacts": [
-        {
-          "id": "003"
-        }
-      ],
+      "supplier": [{"id": "001"}],
+      "technicalContacts": [{"id": "003"}],
       "imageResName": "img_p_06"
     },
     {
@@ -116,22 +59,8 @@
       "product": "Interruttore di sicurezza Telemecanique",
       "code": "XCSTA791",
       "features": null,
-      "supplier": [
-        {
-          "id": "003"
-        },
-        {
-          "id": "004"
-        }
-      ],
-      "technicalContacts": [
-        {
-          "id": "005"
-        },
-        {
-          "id": "003"
-        }
-      ],
+      "supplier": [{"id": "003"}, {"id": "004"}],
+      "technicalContacts": [{"id": "005"}, {"id": "003"}],
       "imageResName": "img_p_07"
     },
     {
@@ -139,88 +68,54 @@
       "product": "Celle di carico LAUMAS",
       "code": "CBX50000",
       "features": "Accaio inox 17-4 PH. ERRORE COMBINATO +-0,035%. GRADO DI PROTEZIONE IP68",
-      "supplier": [
-        {
-          "id": "003"
-        }
-      ],
-      "technicalContacts": [
-        {
-          "id": "005"
-        },
-        {
-          "id": "003"
-        }
-      ],
+      "supplier": [{"id": "003"}],
+      "technicalContacts": [{"id": "005"}, {"id": "003"}],
       "imageResName": "img_p_08"
     },
     {
       "id": "P_09",
-      "product": "Cuscinetto superiore miscelatore",
-      "code": "UKF218",
-      "features": null,
-      "supplier": [
-        {
-          "id": "001"
-        }
-      ],
-      "technicalContacts": [
-        {
-          "id": "003"
-        }
-      ],
+      "product": "Bilancia",
+      "code": "WT 60 SCARICO",
+      "features": "BILANCIA SCARICO AUTOMATICO",
+      "supplier": [{"id": "001"}],
+      "technicalContacts": [{"id": "003"}, {"id": "005"}],
       "imageResName": "img_p_09"
     },
     {
       "id": "P_10",
-      "product": "Cuscinetto inferiore miscelatore",
-      "code": "UKF214",
+      "product": "Cuscinetto superiore miscelatore",
+      "code": "UKF218",
       "features": null,
-      "supplier": [
-        {
-          "id": "001"
-        }
-      ],
-      "technicalContacts": [
-        {
-          "id": "003"
-        }
-      ],
+      "supplier": [{"id": "001"}],
+      "technicalContacts": [{"id": "003"}],
       "imageResName": "img_p_10"
     },
     {
       "id": "P_11",
-      "product": "Puleggia coclea",
-      "code": "SPB 5G 800",
+      "product": "Cuscinetto inferiore miscelatore",
+      "code": "UKF214",
       "features": null,
-      "supplier": [
-        {
-          "id": "001"
-        }
-      ],
-      "technicalContacts": [
-        {
-          "id": "003"
-        }
-      ],
+      "supplier": [{"id": "001"}],
+      "technicalContacts": [{"id": "003"}],
       "imageResName": "img_p_11"
     },
     {
       "id": "P_12",
+      "product": "Puleggia coclea",
+      "code": "SPB 5G 800",
+      "features": null,
+      "supplier": [{"id": "001"}],
+      "technicalContacts": [{"id": "003"}],
+      "imageResName": "img_p_12"
+    },
+    {
+      "id": "P_13",
       "product": "Puleggia motore",
       "code": "SPB 5G 132",
       "features": null,
-      "supplier": [
-        {
-          "id": "001"
-        }
-      ],
-      "technicalContacts": [
-        {
-          "id": "003"
-        }
-      ],
-      "imageResName": "img_p_12"
+      "supplier": [{"id": "001"}],
+      "technicalContacts": [{"id": "003"}],
+      "imageResName": "img_p_13"
     }
   ]
 }
