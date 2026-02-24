@@ -3,13 +3,13 @@
     {
       "id": "001",
       "company": "TRIMEC SRL",
-      "specialties": ["Produzione"],
+      "specialties": ["Fabricazione"],
       "phones": ["+3902123456"],
       "whatsapp": "+393343167937",
       "emails": ["ventas@repuestosglobal.com"],
       "seviceArea": ["Italia,Europa"],
       "isManufacturer": true,
-      "isTechnician": false
+      "isTechnician": true
     },
     {
       "id": "002",
@@ -27,14 +27,12 @@
       "company": "TL Elettrica SRL",
       "specialties": [
         "Elettrico",
-        "Elettronica",
-        "Quadri elettrici",
-        "Automazione"
+        "Elettronica"
       ],
       "phones": ["+3902987654"],
       "whatsapp": "+393339876543",
       "emails": ["info@tlelettrica.it"],
-      "seviceArea": ["Italia Nord"],
+      "seviceArea": ["Gran torto, Padova"],
       "isManufacturer": true,
       "isTechnician": true
     },
@@ -60,8 +58,7 @@
       "phones": ["+000000000"],
       "whatsapp": "+000000000",
       "emails": ["@.it"],
-      "seviceArea": ["Italia, Europa"
-      ],
+      "seviceArea": ["Italia, Europa"],
       "isManufacturer": false,
       "isTechnician": true
     }
