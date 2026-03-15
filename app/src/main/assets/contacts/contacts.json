@@ -3,22 +3,22 @@
     {
       "id": "001",
       "company": "TRIMEC SRL",
-      "specialties": ["Fabricazione"],
+      "specialties": ["Fabbricazione"],
       "phones": ["+3902123456"],
-      "whatsapp": "+393343167937",
-      "emails": ["ventas@repuestosglobal.com"],
-      "seviceArea": ["Italia,Europa"],
+      "whatsapp": "393343167937",
+      "emails": ["info@trimecsrl.it"],
+      "seviceArea": ["Tezze Sul Brenta, Vicenza"],
       "isManufacturer": true,
       "isTechnician": true
     },
     {
       "id": "002",
-      "company": "Motori Industriali",
+      "company": "Motori industriali",
       "specialties": ["Motori"],
       "phones": ["+3902234567"],
-      "whatsapp": "+393456789012",
+      "whatsapp": "393456789012",
       "emails": ["pedidos@motoresind.com"],
-      "seviceArea": ["Italia Nord"],
+      "seviceArea": ["Nord Italia"],
       "isManufacturer": true,
       "isTechnician": false
     },
@@ -30,7 +30,7 @@
         "Elettronica"
       ],
       "phones": ["+3902987654"],
-      "whatsapp": "+393339876543",
+      "whatsapp": "393339876543",
       "emails": ["info@tlelettrica.it"],
       "seviceArea": ["Gran torto, Padova"],
       "isManufacturer": true,
@@ -39,28 +39,46 @@
     {
       "id": "004",
       "company": "2G Elettrica",
-      "specialties": ["Componenti elettrici"],
-      "phones": ["+000000000"],
-      "whatsapp": "+000000000",
-      "emails": ["@.it"
-      ],
-      "seviceArea": ["Italia"],
+      "specialties": ["Ricambi elettrici ed elettronici"],
+      "phones": ["+390499620736"],
+      "whatsapp": "393371174718",
+      "emails": ["gianni@2gelettrica.it"],
+      "seviceArea": ["Curtarolo, Padova"],
       "isManufacturer": true,
       "isTechnician": false
     },
     {
       "id": "005",
       "company": "Meltec",
-      "specialties": [
-        "Diagnostica impianti",
-        "Sicurezza macchine"
-      ],
-      "phones": ["+000000000"],
-      "whatsapp": "+000000000",
-      "emails": ["@.it"],
-      "seviceArea": ["Italia, Europa"],
-      "isManufacturer": false,
+      "specialties": ["Professionisti Elettrici ed Elettronici"],
+      "phones": ["+39379254050"],
+      "whatsapp": "39379254050",
+      "emails": ["pastori.marcos@meltec-it.com"],
+      "seviceArea": ["Piazzola Sul Brenta, PD"],
+      "isManufacturer": true,
       "isTechnician": true
+    },
+    {
+      "id": "006",
+      "company": "Aluchem SRL",
+      "specialties": ["Grasso e olio"],
+      "phones": ["+390290119978"],
+      "whatsapp": "393929767944",
+      "emails": ["info@aluchem.it"],
+      "seviceArea": ["Cisliano, Milano"],
+      "isManufacturer": true,
+      "isTechnician": false
+    },
+    {
+      "id": "007",
+      "company": "Epistolio SRL",
+      "specialties": ["Ricambi pneumatici"],
+      "phones": ["+390332212692"],
+      "whatsapp": "393358321989",
+      "emails": ["info@epistolio.com"],
+      "seviceArea": ["Casciago,Varese"],
+      "isManufacturer": true,
+      "isTechnician": false
     }
   ]
 }
