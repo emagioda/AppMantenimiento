@@ -1,5 +1,6 @@
 package com.emagioda.myapp.presentation.screen.diagnostic
 
+import android.content.Context
 import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
@@ -166,6 +167,14 @@ private fun QuestionContent(
         },
         label = "question-transition"
     ) { (targetNode, _) ->
+        val context = LocalContext.current
+        val titleText = remember(targetNode.title, context.packageName) {
+            resolveDisplayText(context, targetNode.title)
+        }
+        val descriptionText = remember(targetNode.description, context.packageName) {
+            targetNode.description?.let { resolveDisplayText(context, it) }
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -201,12 +210,12 @@ private fun QuestionContent(
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         Text(
-                            text = targetNode.title,
+                            text = titleText,
                             style = MaterialTheme.typography.headlineSmall,
                             textAlign = TextAlign.Center,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
-                        targetNode.description?.let {
+                        descriptionText?.let {
                             Text(
                                 text = it,
                                 style = MaterialTheme.typography.bodyLarge,
@@ -299,6 +308,13 @@ private fun EndContent(
     onOpenFilteredContacts: (String, String) -> Unit
 ) {
     val scrollState = rememberScrollState()
+    val context = LocalContext.current
+    val titleText = remember(node.title, context.packageName) {
+        resolveDisplayText(context, node.title)
+    }
+    val descriptionText = remember(node.description, context.packageName) {
+        node.description?.let { resolveDisplayText(context, it) }
+    }
 
     Column(
         modifier = Modifier
@@ -314,12 +330,12 @@ private fun EndContent(
         Spacer(Modifier.height(24.dp))
 
         Text(
-            text = node.title,
+            text = titleText,
             style = MaterialTheme.typography.headlineSmall,
             textAlign = TextAlign.Center
         )
 
-        node.description?.let {
+        descriptionText?.let {
             Spacer(Modifier.height(24.dp))
             SuggestCard(it)
         }
@@ -438,4 +454,9 @@ private fun SuggestCard(text: String) {
             )
         }
     }
+}
+
+private fun resolveDisplayText(context: Context, rawText: String): String {
+    val resId = context.resources.getIdentifier(rawText, "string", context.packageName)
+    return if (resId != 0) context.getString(resId) else rawText
 }

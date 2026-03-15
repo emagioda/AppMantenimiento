@@ -20,7 +20,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color // Importante para el color blanco
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -178,6 +178,8 @@ fun ContactCard(
     onWhatsApp: (String) -> Unit,
     onEmail: (String) -> Unit
 ) {
+    val listSeparator = stringResource(R.string.contacts_list_separator)
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -208,7 +210,7 @@ fun ContactCard(
             // CAMBIO 4: Especialidades y Ubicación en BLANCO
             contact.specialties?.takeIf { it.isNotEmpty() }?.let {
                 Text(
-                    it.joinToString(" · "),
+                    it.joinToString(listSeparator),
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.White
                 )
@@ -232,7 +234,7 @@ fun ContactCard(
                         modifier = Modifier.size(16.dp)
                     )
                     Text(
-                        text = areas.joinToString(" · "),
+                        text = areas.joinToString(listSeparator),
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.White
                     )

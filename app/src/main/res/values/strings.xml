@@ -1,40 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- App -->
+    <!-- Applicazione -->
     <string name="app_name">FixQR</string>
 
-    <!-- Home -->
-    <string name="home_title">Home</string>
-    <string name="home_header">Scansiona il codice QR e ti guideremo passo dopo passo per risolvere il problema!</string>
-    <string name="home_scan_button">Scansiona QR</string>
+    <!-- Schermata iniziale -->
+    <string name="home_title">Inizio</string>
+    <string name="home_header">Scansiona il codice QR e ti guideremo passo dopo passo nella risoluzione del problema.</string>
+    <string name="home_scan_button">Scansiona il QR</string>
     <string name="home_help_title">Hai bisogno di aiuto?</string>
     <string name="home_help_contacts">Contatti</string>
 
     <!-- Scanner -->
-    <string name="scanner_permission_rationale">Abbiamo bisogno della fotocamera per scansionare il QR.</string>
-    <string name="scanner_permission_button">Concedi permesso</string>
+    <string name="scanner_permission_rationale">Per scansionare il QR &#232; necessario consentire l\'accesso alla fotocamera.</string>
+    <string name="scanner_permission_button">Apri impostazioni</string>
     <string name="scanner_hint">Allinea il QR all\'interno del riquadro</string>
-    <string name="scanner_torch_on_cd">Spegni torcia</string>
-    <string name="scanner_torch_off_cd">Accendi torcia</string>
+    <string name="scanner_torch_on_cd">Spegni la torcia</string>
+    <string name="scanner_torch_off_cd">Accendi la torcia</string>
     <string name="scanner_processing_error">Errore durante l\'elaborazione dell\'immagine</string>
-    <string name="scanner_bind_error">Errore nell\'inizializzare la fotocamera</string>
+    <string name="scanner_bind_error">Errore durante l\'inizializzazione della fotocamera</string>
     <string name="scanner_invalid_machine">Macchina non riconosciuta</string>
 
     <!-- Contatti -->
     <string name="contacts_title">Contatti</string>
-    <string name="contacts_tab_technicians">TECNICI</string>
-    <string name="contacts_tab_providers">FORNITORI</string>
+    <string name="contacts_tab_technicians">Tecnici</string>
+    <string name="contacts_tab_providers">Fornitori</string>
     <string name="contacts_empty_title">Nessun contatto in questa categoria</string>
-    <string name="contacts_empty_subtitle">Aggiungi contatti per visualizzarli qui.</string>
+    <string name="contacts_empty_subtitle">Aggiungi dei contatti per visualizzarli qui.</string>
     <string name="contacts_action_call">Chiama</string>
     <string name="contacts_action_whatsapp">WhatsApp</string>
-    <string name="contacts_action_email">Email</string>
+    <string name="contacts_action_email">E-mail</string>
     <string name="contacts_service_areas_label">Aree di servizio</string>
-    <string name="contacts_emergency">• 24/7</string>
-    <string name="contacts_favorite">★</string>
-
-    <!-- Scorciatoie da END -->
+    <string name="contacts_list_separator">&#160;&#183;&#160;</string>
+    <string name="contacts_emergency">&#8226; 24/7</string>
+    <string name="contacts_favorite">&#9733;</string>
     <string name="contacts_tech_shortcut">Tecnici specializzati</string>
     <string name="contacts_providers_shortcut">Fornitori di fiducia</string>
 
@@ -43,26 +42,28 @@
 
     <!-- Diagnostica -->
     <string name="diagnostic_title">Diagnostica</string>
-    <string name="diagnostic_home">Home</string>
-    <string name="diagnostic_yes">Sì</string>
+    <string name="diagnostic_home">Torna all\'inizio</string>
+    <string name="diagnostic_yes">S&#236;</string>
     <string name="diagnostic_no">No</string>
     <string name="diagnostic_continue">Continua</string>
     <string name="diagnostic_error_loading">Errore durante il caricamento del flusso.</string>
     <string name="diagnostic_help">Hai bisogno di aiuto?</string>
     <string name="diagnostic_suggestions_title">Suggerimenti</string>
-    <string name="diagnostic_parts_title">Pezzi di ricambio</string>
-    <string name="diagnostic_part_qty">Quantità: %1$d</string>
+    <string name="diagnostic_parts_title">Ricambi</string>
+    <string name="diagnostic_part_qty">Quantit&#224;: %1$d</string>
     <string name="diagnostic_part_code">Codice: %1$s</string>
     <string name="diagnostic_part_contact_support">Contatta tecnici e fornitori</string>
+    <string name="diagnostic_end_title">Procedura completata</string>
+    <string name="diagnostic_end_description">Torna alla schermata iniziale per avviare una nuova diagnosi.</string>
 
-    <!-- Safety -->
+    <!-- Sicurezza -->
     <string name="safety_protocol_title">PROTOCOLLO DI SICUREZZA RICHIESTO</string>
     <string name="safety_risk_type">RISCHIO ELETTRICO / MECCANICO</string>
     <string name="safety_body_warning">Si sta per accedere a una sezione che richiede un intervento tecnico.\n\nSOLO PERSONALE AUTORIZZATO.\n\nAssicurarsi di applicare la procedura di blocco (LOTO) e verificare l\'assenza di tensione prima di continuare.</string>
-    <string name="safety_btn_confirm">HO CAPITO, CONTINUA</string>
-    <string name="safety_btn_wait">Abilitazione conferma (%1$d)...</string>
+    <string name="safety_btn_confirm">Ho capito, continua</string>
+    <string name="safety_btn_wait">Conferma disponibile tra %1$d s</string>
 
     <!-- Dettaglio macchina -->
-    <string name="machine_detail_start">Inizia diagnostica</string>
+    <string name="machine_detail_start">Avvia diagnosi</string>
 
 </resources>

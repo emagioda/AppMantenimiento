@@ -50,6 +50,8 @@ import android.content.ContextWrapper
 import android.app.Activity
 import android.provider.Settings
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FlashOff
+import androidx.compose.material.icons.filled.FlashOn
 import androidx.compose.material.icons.filled.Settings
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
@@ -389,8 +391,10 @@ private fun CameraPreview(
                 .padding(16.dp)
                 .semantics { contentDescription = torchCd }
         ) {
-            val icon = if (torchEnabled) "💡" else "🔦"
-            Text(icon)
+            Icon(
+                imageVector = if (torchEnabled) Icons.Filled.FlashOn else Icons.Filled.FlashOff,
+                contentDescription = null
+            )
         }
 
         DisposableEffect(Unit) {
