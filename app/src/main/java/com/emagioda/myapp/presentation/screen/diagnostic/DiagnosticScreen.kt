@@ -41,6 +41,9 @@ import com.emagioda.myapp.domain.model.*
 import com.emagioda.myapp.presentation.common.SafetyWarningDialog
 import com.emagioda.myapp.presentation.screen.diagnostic.components.DiagnosticPartsSection
 import com.emagioda.myapp.presentation.viewmodel.DiagnosticViewModel
+import com.emagioda.myapp.ui.theme.ResultFaultRed
+import com.emagioda.myapp.ui.theme.ResultResolvedGreen
+import com.emagioda.myapp.ui.theme.ResultWarningAmber
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -346,8 +349,8 @@ private fun EndContent(
                 parts = parts,
                 onContactClick = { providerIds, technicianIds ->
                     onOpenFilteredContacts(
-                        Uri.encode(providerIds.joinToString(",")),
-                        Uri.encode(technicianIds.joinToString(","))
+                        providerIds.joinToString(","),
+                        technicianIds.joinToString(",")
                     )
                 }
             )
@@ -397,9 +400,9 @@ private fun EndContent(
 @Composable
 private fun EndResultIcon(result: EndResult) {
     val (bg, icon) = when (result) {
-        EndResult.RESOLVED -> Color(0xFF4CAF50) to Icons.Filled.Check
-        EndResult.NO_ISSUE -> Color(0xFFFFC107) to Icons.Filled.Warning
-        EndResult.COMPONENT_FAULT -> Color(0xFFE53935) to Icons.Filled.Build
+        EndResult.RESOLVED -> ResultResolvedGreen to Icons.Filled.Check
+        EndResult.NO_ISSUE -> ResultWarningAmber to Icons.Filled.Warning
+        EndResult.COMPONENT_FAULT -> ResultFaultRed to Icons.Filled.Build
     }
 
     Box(

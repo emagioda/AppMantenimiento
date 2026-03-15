@@ -12,6 +12,7 @@ espressoCore = "3.7.0"
 # Lifecycle + Compose + Navigation
 lifecycleRuntimeKtx = "2.9.3"
 lifecycleRuntimeCompose = "2.8.4"
+lifecycleViewModel = "2.9.3"
 activityCompose = "1.11.0"
 composeBom = "2024.09.00"
 navigation = "2.7.7"
@@ -25,7 +26,6 @@ mlkitBarcode = "17.3.0"       # ML Kit barcode scanning
 gson = "2.11.0"               # JSON parsing (para assets)
 material = "1.12.0"
 foundation = "1.9.4"
-foundationVersion = "1.10.2"   # Tema XML Material/Material3
 
 [libraries]
 # AndroidX core
@@ -39,6 +39,8 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 # Lifecycle
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleRuntimeCompose" }
+androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewModel" }
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewModel" }
 
 # Compose
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
@@ -72,7 +74,6 @@ google-gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
 
 androidx-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
-androidx-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundationVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

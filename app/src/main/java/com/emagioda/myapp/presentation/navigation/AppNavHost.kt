@@ -40,8 +40,14 @@ sealed class Route(val route: String) {
 
     data object Contacts : Route("contacts?providerIds={providerIds}&technicianIds={technicianIds}") {
         fun createRoute(providerIds: String? = null, technicianIds: String? = null): String {
-            val safeProviders = providerIds?.takeIf { it.isNotBlank() }.orEmpty()
-            val safeTechnicians = technicianIds?.takeIf { it.isNotBlank() }.orEmpty()
+            val safeProviders = providerIds
+                ?.takeIf { it.isNotBlank() }
+                ?.let(Uri::encode)
+                .orEmpty()
+            val safeTechnicians = technicianIds
+                ?.takeIf { it.isNotBlank() }
+                ?.let(Uri::encode)
+                .orEmpty()
             return "contacts?providerIds=$safeProviders&technicianIds=$safeTechnicians"
         }
     }
@@ -170,11 +176,14 @@ fun AppNavHost(
             popEnterTransition = slideInRight,
             popExitTransition = slideOutRight
         ) { backStackEntry ->
+            val providerIds = backStackEntry.arguments?.getString("providerIds")?.let(Uri::decode)
+            val technicianIds = backStackEntry.arguments?.getString("technicianIds")?.let(Uri::decode)
+
             ContactsScreen(
                 onBack = { navController.popBackStack() },
-                initialTab = 0,
-                providerIds = backStackEntry.arguments?.getString("providerIds")?.let(Uri::decode),
-                technicianIds = backStackEntry.arguments?.getString("technicianIds")?.let(Uri::decode)
+                initialTab = if (technicianIds.isNullOrBlank() && !providerIds.isNullOrBlank()) 1 else 0,
+                providerIds = providerIds,
+                technicianIds = technicianIds
             )
         }
 

@@ -7,6 +7,7 @@ import com.emagioda.myapp.data.repository.MachineRepositoryImpl
 import com.emagioda.myapp.domain.repository.DiagnosticRepository
 import com.emagioda.myapp.domain.repository.MachineRepository
 import com.emagioda.myapp.domain.usecase.GetDiagnosticTreeForMachine
+import com.emagioda.myapp.domain.usecase.GetMachineDetail
 import com.emagioda.myapp.domain.usecase.GetMachineIds
 import com.google.gson.Gson
 import com.emagioda.myapp.data.datasource.AssetsContactsDataSource
@@ -50,6 +51,10 @@ object ServiceLocator {
 
     fun provideGetMachineIds(context: Context): GetMachineIds {
         return GetMachineIds(provideMachineRepository(context))
+    }
+
+    fun provideGetMachineDetail(context: Context): GetMachineDetail {
+        return GetMachineDetail(provideMachineRepository(context))
     }
 
     fun provideContactsRepository(context: Context): ContactsRepository {

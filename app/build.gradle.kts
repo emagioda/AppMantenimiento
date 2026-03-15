@@ -43,9 +43,6 @@ android {
     buildFeatures {
         compose = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.3"
-    }
 }
 
 dependencies {
@@ -56,6 +53,8 @@ dependencies {
     // Lifecycle
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
 
     // Compose (UI + Material3 + Tooling)
     implementation(platform(libs.androidx.compose.bom))
@@ -69,7 +68,6 @@ dependencies {
     // Tooling / Previews (usados en desarrollo)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.compose.foundation)
-    implementation(libs.androidx.foundation)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 

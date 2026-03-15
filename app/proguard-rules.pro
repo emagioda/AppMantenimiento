@@ -28,5 +28,6 @@
 -keep class com.emagioda.myapp.data.datasource.AssetsDiagnosticDataSource$RawPartRef { *; }
 -keep class com.emagioda.myapp.data.datasource.AssetsDiagnosticDataSource$PartsCatalog { *; }
 -keep class com.emagioda.myapp.data.datasource.AssetsDiagnosticDataSource$PartDetailRaw { *; }
+-keep class com.emagioda.myapp.data.datasource.AssetsDiagnosticDataSource$ContactRefRaw { *; }
 -keep class com.emagioda.myapp.data.datasource.AssetsContactsDataSource$Envelope { *; }
 -keep class com.emagioda.myapp.data.datasource.AssetsContactsDataSource$ContactRaw { *; }

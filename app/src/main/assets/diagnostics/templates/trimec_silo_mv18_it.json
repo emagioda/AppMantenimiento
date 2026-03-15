@@ -27,8 +27,8 @@
 
     { "id":"Q_AC_00", "type":"QUESTION", "title":"Pulsante Emergenza o Sportelli di Ispezione aperti/premuti?", "yes":"Q_AC_001", "no":"Q_AC_000" },
 
-    { "id":"Q_AC_01", "type":"END", "title":"La coclea é bloccato perché uno o più sportelli sono aperti.\nSensore finedicorsa danneggiato.",
-      "description": "• Controllare che tutte gli sportelli siano chiusi.\n• Controllare che i sensori siano funzionanti",
+    { "id":"Q_AC_01", "type":"END", "title":"La coclea è bloccata perché uno o più sportelli sono aperti.\nSensore finecorsa danneggiato.",
+      "description": "• Controllare che tutti gli sportelli siano chiusi.\n• Controllare che i sensori siano funzionanti.",
       "safetyWarning": true,
       "parts": [{"id": "P_07"}],
       "result":"COMPONENT_FAULT"
@@ -50,7 +50,7 @@
     { "id":"Q_AC_0000", "type":"END", "title":"Problemi nel pulsante d'emergenza oppure nei sensori degli sportelli d'ispezione.",
       "description": "• Verificare il corretto funzionamento sia del pulsante di arresto di emergenza, verificando la continuità del contatto, sia dei sensori dello sportello di ispezione, misurando la continuità dall'inizio alla fine del circuito.\n• Chiamare tecnici specializzati",
       "safetyWarning": true,
-      "parts": [{"id": "P_07"}],
+      "parts": [{"id": "P_07"}, {"id": "P_21"}, {"id": "P_22"}],
       "result":"COMPONENT_FAULT"
     },
 
@@ -79,9 +79,11 @@
     { "id":"Q_AE_0", "type":"QUESTION", "title":"La spia \"BloccoTermico\" nel Quadro Elettrico è accesa?", "yes":"Q_AE_01", "no":"Q_AE_00" },
 
     { "id":"Q_AE_00", "type":"END",
-      "title":"Problemi nel circuito controllo",
-      "description":"• Controllare dispositivi accensione e interblocco.",
-      "result":"NO_ISSUE"
+      "title":"Problemi nel circuito di controllo",
+      "description":"• Controllare i dispositivi di accensione e di interblocco.",
+      "safetyWarning": true,
+      "parts": [{"id": "P_15"}, {"id": "P_17"}, {"id": "P_19"}],
+      "result":"COMPONENT_FAULT"
     },
 
     { "id":"Q_AE_01", "type":"QUESTION", "title":"L'interruttore Salvamotore della Tramoggia è scattato (pulsante premuto)?", "yes":"Q_AE_011", "no":"Q_AE_010" },
@@ -90,12 +92,13 @@
       "title":"Guasto complesso relè termico/cablaggio.",
       "description":"• Controllare che i contatti ausiliari d'interblocco funzionano correttamente.\n• Controllare che i dispositivi di avviamento e protezione funzionano correttamente.\n• Contattare \"Tecnici Specializzati\"",
       "safetyWarning": true,
-      "result":"NO_ISSUE"
+      "parts": [{"id": "P_15"}, {"id": "P_17"}, {"id": "P_19"}],
+      "result":"COMPONENT_FAULT"
     },
 
     { "id":"Q_AE_011", "type":"QUESTION",
       "title":"SOLUZIONE SEMPLICE:\nProvare a riarmare il Salvamotore.",
-      "yes":"Q_AE_0111", "no":"END", "mode":"CONTINUE_ONLY"
+      "yes":"Q_AE_0111", "mode":"CONTINUE_ONLY"
     },
 
     { "id":"Q_AE_0111", "type":"QUESTION", "title":"Una volta reinserito, l'interruttore di protezione del motore è scattato di nuovo?", "yes":"Q_AE_01111", "no":"Q_AE_01110" },
@@ -108,7 +111,8 @@
       "title":"Problemi con l'accensione del motore o con il cablaggio.",
       "description":"• Controllare la tensione in uscita dall'accensione.\n• Controllare i terminali di uscita sul quadro elettrico.\n• Verificare che il cablaggio dal quadro elettrico al motore non sia interrotto.",
       "safetyWarning": true,
-      "result":"NO_ISSUE"
+      "parts": [{"id": "P_15"}, {"id": "P_17"}],
+      "result":"COMPONENT_FAULT"
     },
 
     { "id":"Q_AE_0111001", "type":"END",
@@ -124,7 +128,7 @@
       "title":"Problema nel riduttore oppure tra il giunto del motore e il riduttore",
       "description":"• Controllare/sostituire riduttore.\n• Controllare/sostituire giunto tra motore e riduttore.",
       "safetyWarning": true,
-      "parts": [{"id": "P_04"}],
+      "parts": [{"id": "P_04"}, {"id": "P_14"}],
       "result":"COMPONENT_FAULT"
     },
 
@@ -132,7 +136,6 @@
       "title":"• Il bullone che collega il riduttore alla vite senza fine potrebbe essersi rotto.\n• Il cuscinetto/boccola della vite senza fine è rotto o non è lubrificato correttamente.",
       "description":"• Verificare che il bullone tra il cambio e la vite senza fine non sia tranciato.\n• Verificare che il cuscinetto/boccola della vite senza fine sia in buone condizioni.\n• Ingrassare il cuscinetto/boccola della vite senza fine.",
       "safetyWarning": true,
-      "parts": [{"id": "P_04"}],
       "result":"COMPONENT_FAULT"
     },
 
@@ -184,8 +187,9 @@
     { "id":"Q_BC_0", "type":"END",
       "title":"Problemi software o hardware con il sistema di scarico.\n",
       "description":"• Verificare il corretto funzionamento del selettore di scarico.\n• Verificare che la bilancia invii il segnale di apertura all'elettrovalvola.\n• Verificare che la bobina dell'elettrovalvola non sia danneggiata.\n• Verificare che l'aria compressa raggiunga sia l'elettrovalvola che il pistone di apertura.\n• Verificare che il pistone non sia danneggiato (controllare le guarnizioni e le condizioni dell'albero).",
+      "parts": [ {"id":"P_09"}, {"id":"P_23"}, {"id":"P_24"}, {"id":"P_25"} ],
       "safetyWarning": true,
-      "result":"NO_ISSUE"
+      "result":"COMPONENT_FAULT"
     },
 
     { "id":"Q_BC_1", "type":"END",
@@ -224,8 +228,9 @@
     { "id":"Q_CC_0", "type":"QUESTION", "title":"La spia \"porta aperta\" è accesa?", "yes":"Q_CC_01", "no":"Q_CC_00" },
 
     { "id":"Q_CC_01", "type":"END",
-      "title":"Il miscelatore é bloccato perché una o piú sportelli sono aperto.\nSensore finedicorsa danneggiato",
-      "description":"• Controllare che tutte gli sportelli siano chiusi.\n• Controllare che i sensori siano funzionanti",
+      "title":"Il miscelatore è bloccato perché uno o più sportelli sono aperti.\nSensore finecorsa danneggiato.",
+      "description":"• Controllare che tutti gli sportelli siano chiusi.\n• Controllare che i sensori siano funzionanti.",
+      "safetyWarning": true,
       "parts": [{"id": "P_07"}],
       "result":"COMPONENT_FAULT"
     },
@@ -234,10 +239,12 @@
 
     { "id":"Q_CC_001", "type":"END",
       "title":"Disattivare il pulsante di Emergenza e/o chiudere gli sportelli. Verificare il funzionamento.",
-      "result":"NO_ISSUE"
+      "safetyWarning": true,
+      "parts": [{"id": "P_21"}, {"id": "P_22"}],
+      "result":"COMPONENT_FAULT"
     },
 
-    { "id":"Q_CC_000", "type":"QUESTION", "title":"Ha controllato che pulsante d'emergenza e sensori degli sportelli funzionino correttamente?", "yes":"Q_CC_0001", "no":"Q_CC_0000" },
+    { "id":"Q_CC_000", "type":"QUESTION", "title":"Ha controllato che sia il pulsante di arresto di emergenza che i sensori di apertura degli sportelli funzionino correttamente?", "yes":"Q_CC_0001", "no":"Q_CC_0000" },
 
     { "id":"Q_CC_0001", "type":"END",
       "title":"Problemi al dispositivo elettronico o al relè di sicurezza.",
@@ -248,8 +255,9 @@
     },
 
     { "id":"Q_CC_0000", "type":"END",
-      "title":"Problemi nel pulsante d'emergenzia oppure nei sensori degli sportelli d'ispezione.",
+      "title":"Problemi nel pulsante d'emergenza oppure nei sensori degli sportelli d'ispezione.",
       "description":"• Verificare il corretto funzionamento sia del pulsante di arresto di emergenza, verificando la continuità del contatto, sia dei sensori dello sportello di ispezione, misurando la continuità dall'inizio alla fine del circuito.\n• Chiamare tecnici specializzati",
+      "safetyWarning": true,
       "parts": [{"id": "P_07"}],
       "result":"COMPONENT_FAULT"
     },
@@ -257,10 +265,11 @@
     { "id":"Q_CD", "type":"QUESTION", "title":"La spia \"BloccoTermico\" nel Quadro Elettrico è accesa?", "yes":"Q_CE", "no":"Q_CD_0" },
 
     { "id":"Q_CD_0", "type":"END",
-      "title":"Problemi nel circuito controllo",
-      "description":"• Controllare dispositivi accensione e interblocco.",
+      "title":"Problemi nel circuito di controllo",
+      "description":"• Controllare i dispositivi di accensione e di interblocco.",
       "safetyWarning": true,
-      "result":"NO_ISSUE"
+      "parts": [{"id": "P_19"}, {"id": "P_16"}],
+      "result":"COMPONENT_FAULT"
     },
 
     { "id":"Q_CE", "type":"QUESTION", "title":"L'interruttore Salvamotore del miscelatore è scattato (pulsante premuto)?", "yes":"Q_CF", "no":"Q_CE_0" },
@@ -269,12 +278,13 @@
       "title":"Guasto complesso relè termico/cablaggio.",
       "description":"• Controllare che i contatti ausiliari d'interblocco funzionano correttamente.\n• Controllare che i dispositivi di avviamento e protezione funzionano correttamente.\nContattare \"Tecnici Specializzati\"",
       "safetyWarning": true,
-      "result":"NO_ISSUE"
+      "parts": [{"id": "P_16"}, {"id": "P_19"}, {"id": "P_20"}, {"id": "P_18"}],
+      "result":"COMPONENT_FAULT"
     },
 
     { "id":"Q_CF", "type":"QUESTION",
       "title":"SOLUZIONE SEMPLICE: Provare a riarmare il Salvamotore.",
-      "yes":"Q_CF_1", "no":"END", "mode":"CONTINUE_ONLY"
+      "yes":"Q_CF_1", "mode":"CONTINUE_ONLY"
     },
 
     { "id":"Q_CF_1", "type":"QUESTION", "title":"Una volta reinserito, l'interruttore di protezione del motore è scattato di nuovo?", "yes":"Q_CF_11", "no":"Q_CF_10" },
@@ -292,7 +302,9 @@
     { "id":"Q_CF_1001", "type":"END",
       "title":"Problemi interni al motore.\nUna o più bobine sono in cortocircuito.",
       "description":"• Controllare il rumore del motore all'avvio. Se ronza, è probabile che una delle sue bobine interne sia in cortocircuito.\n• Controllare i terminali di collegamento.\n• Controllare la continuità di tutte le bobine interne.\n• Sostituire il motore.\nChiamare un tecnico specializzato.",
-      "result":"NO_ISSUE"
+      "safetyWarning": true,
+      "parts": [{"id": "P_05"}],
+      "result":"COMPONENT_FAULT"
     },
 
     { "id":"Q_CF_101", "type":"QUESTION", "title":"La coclea ruota all'interno del silo?", "yes":"Q_CF_1011", "no":"Q_CF_1010" },
@@ -308,7 +320,7 @@
     },
 
     { "id":"Q_CF_10101", "type":"END",
-      "title":"Problema nella trasmissione tra il motore e i poli del miscelatore",
+      "title":"Problema nella trasmissione tra il motore e le pulegge del miscelatore",
       "description":"• Sostituire le cinghie di trasmissione",
       "safetyWarning": true,
       "parts": [{"id": "P_06"}],
@@ -343,7 +355,7 @@
     {
       "id":"Q_D",
       "type":"END",
-      "title":"Il silo funziona correttamente!\n• Scarica manuale digitale\n• Contatti tecnici meccanico: Trimec SRL\n• Contatti tecnici elettrico: TL elettrica SRL\n• Fornitori ricambi; Trimec SRL",
+      "title":"Il silo funziona correttamente!\n• Scarica manuale digitale\n• Contatti tecnici meccanici: Trimec SRL\n• Contatti tecnici elettrici: TL Elettrica SRL\n• Fornitore ricambi: Trimec SRL",
       "result":"RESOLVED"
     }
   ]

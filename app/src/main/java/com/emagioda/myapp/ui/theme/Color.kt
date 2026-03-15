@@ -7,6 +7,11 @@ val BlueDark = Color(0xFF1D2E44)
 val GrayMid = Color(0xFFCFD5DC)
 val WarningYellow = Color(0xFFFFD600)
 val White = Color(0xFFFFFFFF)
+val ResultResolvedGreen = Color(0xFF2E7D32)
+val ResultWarningAmber = Color(0xFFF9A825)
+val ResultFaultRed = Color(0xFFC62828)
+val SupportButtonContainer = Color(0xFFD8E3F0)
+val SupportButtonContent = Color(0xFF1D2E44)
 
 val DarkColors = darkColorScheme(
     primary = BlueDark,

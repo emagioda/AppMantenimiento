@@ -106,10 +106,6 @@ class DiagnosticViewModel(
     fun goBack() {
         if (path.size <= 1) return
 
-        if (path.lastOrNull() == "END") {
-            path.removeAt(path.lastIndex)
-        }
-
         if (path.size <= 1) {
             val localTree = tree ?: return
             currentNodeId = localTree.root
@@ -126,22 +122,19 @@ class DiagnosticViewModel(
 
     fun canGoBack(): Boolean = path.size > 1
 
-    private fun goTo(nextIdOrEnd: String?) {
-        if (nextIdOrEnd.isNullOrBlank()) return
+    private fun goTo(nextId: String?) {
+        if (nextId.isNullOrBlank()) return
         if (tree == null) return
 
-        val nextNode: DiagnosticNode? = when (nextIdOrEnd) {
-            "END" -> synthEndNode()
-            else -> nodesById[nextIdOrEnd]
+        val nextNode = nodesById[nextId]
+
+        if (nextNode == null) {
+            publish(current = null, isBack = false)
+            return
         }
 
-        if (nextIdOrEnd == "END") {
-            path.add("END")
-        } else {
-            nextNode?.id?.let { path.add(it) }
-            currentNodeId = nextIdOrEnd
-        }
-
+        path.add(nextNode.id)
+        currentNodeId = nextId
         publish(nextNode, isBack = false) // <-- Avanzar: isBack = false
     }
 
@@ -154,16 +147,6 @@ class DiagnosticViewModel(
             isBackNavigation = isBack // <-- Actualizamos el estado
         )
     }
-
-    private fun synthEndNode(): DiagnosticNode =
-        DiagnosticNode(
-            id = "__END__",
-            type = NodeType.END,
-            title = "diagnostic_end_title",
-            description = "diagnostic_end_description",
-            yes = null,
-            no = null,
-        )
 
     class Factory(
         private val getTree: GetDiagnosticTreeForMachine,

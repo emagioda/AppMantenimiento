@@ -44,6 +44,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.emagioda.myapp.R
 import com.emagioda.myapp.domain.model.PartRefResolved
+import com.emagioda.myapp.ui.theme.SupportButtonContainer
+import com.emagioda.myapp.ui.theme.SupportButtonContent
 
 @Composable
 fun DiagnosticPartsSection(
@@ -185,8 +187,8 @@ private fun TransformablePartCard(
                         .height(52.dp),
                     shape = RoundedCornerShape(14.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFEF9A9A),
-                        contentColor = Color(0xFF7F1D1D)
+                        containerColor = SupportButtonContainer,
+                        contentColor = SupportButtonContent
                     ),
                     elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp)
                 ) {

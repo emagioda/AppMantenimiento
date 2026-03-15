@@ -14,12 +14,15 @@
     <!-- Scanner -->
     <string name="scanner_permission_rationale">Per scansionare il QR &#232; necessario consentire l\'accesso alla fotocamera.</string>
     <string name="scanner_permission_button">Apri impostazioni</string>
+    <string name="scanner_permission_retry">Riprova</string>
+    <string name="scanner_permission_settings_message">L\'accesso alla fotocamera &#232; stato negato in modo permanente. Apri le impostazioni dell\'app per abilitarlo.</string>
     <string name="scanner_hint">Allinea il QR all\'interno del riquadro</string>
     <string name="scanner_torch_on_cd">Spegni la torcia</string>
     <string name="scanner_torch_off_cd">Accendi la torcia</string>
     <string name="scanner_processing_error">Errore durante l\'elaborazione dell\'immagine</string>
     <string name="scanner_bind_error">Errore durante l\'inizializzazione della fotocamera</string>
     <string name="scanner_invalid_machine">Macchina non riconosciuta</string>
+    <string name="scanner_catalog_error">Impossibile caricare il catalogo delle macchine. Riprova.</string>
 
     <!-- Contatti -->
     <string name="contacts_title">Contatti</string>
@@ -30,6 +33,8 @@
     <string name="contacts_action_call">Chiama</string>
     <string name="contacts_action_whatsapp">WhatsApp</string>
     <string name="contacts_action_email">E-mail</string>
+    <string name="contacts_error_loading">Errore durante il caricamento dei contatti.</string>
+    <string name="contacts_external_action_error">Impossibile aprire l\'app richiesta su questo dispositivo.</string>
     <string name="contacts_service_areas_label">Aree di servizio</string>
     <string name="contacts_list_separator">&#160;&#183;&#160;</string>
     <string name="contacts_emergency">&#8226; 24/7</string>
@@ -39,6 +44,7 @@
 
     <!-- Comuni -->
     <string name="cd_back">Indietro</string>
+    <string name="common_retry">Riprova</string>
 
     <!-- Diagnostica -->
     <string name="diagnostic_title">Diagnostica</string>
@@ -64,6 +70,8 @@
     <string name="safety_btn_wait">Conferma disponibile tra %1$d s</string>
 
     <!-- Dettaglio macchina -->
+    <string name="machine_detail_title">Macchina</string>
     <string name="machine_detail_start">Avvia diagnosi</string>
+    <string name="machine_detail_error_loading">Errore durante il caricamento del dettaglio macchina.</string>
 
 </resources>

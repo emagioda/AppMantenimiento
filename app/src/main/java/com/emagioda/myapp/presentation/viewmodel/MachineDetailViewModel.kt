@@ -7,58 +7,52 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.emagioda.myapp.R
-import com.emagioda.myapp.domain.usecase.GetMachineIds
+import com.emagioda.myapp.domain.model.MachineDetail
+import com.emagioda.myapp.domain.usecase.GetMachineDetail
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-data class ScannerUiState(
-    val machineIds: Set<String> = emptySet(),
+data class MachineDetailUiState(
+    val machine: MachineDetail? = null,
     val isLoading: Boolean = true,
     val errorResId: Int? = null
 )
 
-class ScannerViewModel(
-    private val getMachineIds: GetMachineIds
+class MachineDetailViewModel(
+    private val getMachineDetail: GetMachineDetail,
+    private val machineId: String
 ) : ViewModel() {
 
-    var uiState by mutableStateOf(ScannerUiState())
+    var uiState by mutableStateOf(MachineDetailUiState())
         private set
 
     init {
         load()
     }
 
-    fun retry() {
-        load()
-    }
-
     private fun load() {
-        uiState = ScannerUiState(isLoading = true)
-
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val ids = getMachineIds()
+                val machine = getMachineDetail(machineId)
                 withContext(Dispatchers.Main) {
-                    uiState = if (ids.isEmpty()) {
-                        ScannerUiState(
-                            machineIds = emptySet(),
-                            isLoading = false,
-                            errorResId = R.string.scanner_catalog_error
+                    uiState = if (machine != null) {
+                        MachineDetailUiState(
+                            machine = machine,
+                            isLoading = false
                         )
                     } else {
-                        ScannerUiState(
-                            machineIds = ids,
-                            isLoading = false
+                        MachineDetailUiState(
+                            isLoading = false,
+                            errorResId = R.string.machine_detail_error_loading
                         )
                     }
                 }
             } catch (_: Exception) {
                 withContext(Dispatchers.Main) {
-                    uiState = ScannerUiState(
-                        machineIds = emptySet(),
+                    uiState = MachineDetailUiState(
                         isLoading = false,
-                        errorResId = R.string.scanner_catalog_error
+                        errorResId = R.string.machine_detail_error_loading
                     )
                 }
             }
@@ -66,11 +60,12 @@ class ScannerViewModel(
     }
 
     class Factory(
-        private val getMachineIds: GetMachineIds
+        private val getMachineDetail: GetMachineDetail,
+        private val machineId: String
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return ScannerViewModel(getMachineIds) as T
+            return MachineDetailViewModel(getMachineDetail, machineId) as T
         }
     }
 }

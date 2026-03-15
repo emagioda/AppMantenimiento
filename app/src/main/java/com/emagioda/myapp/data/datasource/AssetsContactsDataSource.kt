@@ -5,6 +5,7 @@ import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.nio.charset.StandardCharsets
 
 class AssetsContactsDataSource(
     private val context: Context,
@@ -25,7 +26,11 @@ class AssetsContactsDataSource(
         val isTechnician: Boolean = false
     )
 
-    fun loadContacts(): List<ContactRaw> = load("contacts/contacts.json")
+    private val contactsCache by lazy {
+        load("contacts/contacts.json")
+    }
+
+    fun loadContacts(): List<ContactRaw> = contactsCache
 
     private fun load(path: String): List<ContactRaw> {
         val json = readAsset(path)
@@ -33,7 +38,7 @@ class AssetsContactsDataSource(
     }
     private fun readAsset(path: String): String {
         context.assets.open(path).use { input ->
-            BufferedReader(InputStreamReader(input)).use { br ->
+            BufferedReader(InputStreamReader(input, StandardCharsets.UTF_8)).use { br ->
                 return br.readText()
             }
         }

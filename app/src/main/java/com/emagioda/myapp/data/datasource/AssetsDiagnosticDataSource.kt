@@ -5,6 +5,8 @@ import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.nio.charset.StandardCharsets
+import java.util.concurrent.ConcurrentHashMap
 
 class AssetsDiagnosticDataSource(
     private val context: Context,
@@ -21,7 +23,9 @@ class AssetsDiagnosticDataSource(
     data class MachineMap(
         @SerializedName("id") val id: String,
         @SerializedName("templateId") val templateId: String,
-        @SerializedName("name") val name: String?
+        @SerializedName("name") val name: String?,
+        @SerializedName("description") val description: String? = null,
+        @SerializedName("imageName") val imageName: String? = null
     )
 
 
@@ -78,23 +82,32 @@ class AssetsDiagnosticDataSource(
         val id: String
     )
 
+    private val machinesIndexCache by lazy {
+        gson.fromJson(readAsset("machines.json"), MachinesIndex::class.java)
+    }
+
+    private val partsCatalogCache by lazy {
+        gson.fromJson(readAsset("diagnostics/parts.json"), PartsCatalog::class.java)
+    }
+
+    private val templateCache = ConcurrentHashMap<String, RawTree>()
+
 
     // --------------------------
     // Public read functions
     // --------------------------
     fun readMachinesIndex(): MachinesIndex =
-        gson.fromJson(readAsset("machines.json"), MachinesIndex::class.java)
+        machinesIndexCache
 
     fun readTemplateRaw(templateId: String): RawTree {
         // L'app è solo in italiano: usiamo sempre il template italiano.
-        val path = "diagnostics/templates/${templateId}_it.json"
-        return gson.fromJson(readAsset(path), RawTree::class.java)
+        return templateCache.getOrPut(templateId) {
+            val path = "diagnostics/templates/${templateId}_it.json"
+            gson.fromJson(readAsset(path), RawTree::class.java)
+        }
     }
 
-    fun readPartsCatalog(): PartsCatalog {
-        val json = readAsset("diagnostics/parts.json")
-        return gson.fromJson(json, PartsCatalog::class.java)
-    }
+    fun readPartsCatalog(): PartsCatalog = partsCatalogCache
 
 
     // --------------------------
@@ -102,7 +115,7 @@ class AssetsDiagnosticDataSource(
     // --------------------------
     private fun readAsset(path: String): String {
         context.assets.open(path).use { input ->
-            BufferedReader(InputStreamReader(input)).use { br ->
+            BufferedReader(InputStreamReader(input, StandardCharsets.UTF_8)).use { br ->
                 return br.readText()
             }
         }
