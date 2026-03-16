@@ -51,6 +51,7 @@ class AssetsDiagnosticDataSource(
         val safetyWarning: Boolean? = null,
         val result: String? = null,
         val parts: List<RawPartRef>? = null,
+        val schematicIds: List<String>? = null,
         val mode: String? = null
     )
 
@@ -82,12 +83,29 @@ class AssetsDiagnosticDataSource(
         val id: String
     )
 
+    data class SchematicsCatalog(
+        @SerializedName("schematics") val schematics: List<SchematicRaw>
+    )
+
+    data class SchematicRaw(
+        @SerializedName("id") val id: String,
+        @SerializedName("title") val title: String,
+        @SerializedName("assetPath") val assetPath: String
+    )
+
     private val machinesIndexCache by lazy {
         gson.fromJson(readAsset("machines.json"), MachinesIndex::class.java)
     }
 
     private val partsCatalogCache by lazy {
         gson.fromJson(readAsset("diagnostics/parts.json"), PartsCatalog::class.java)
+    }
+
+    private val schematicsCatalogCache by lazy {
+        gson.fromJson(
+            readAsset("diagnostics/schematics/catalog.json"),
+            SchematicsCatalog::class.java
+        )
     }
 
     private val templateCache = ConcurrentHashMap<String, RawTree>()
@@ -108,6 +126,8 @@ class AssetsDiagnosticDataSource(
     }
 
     fun readPartsCatalog(): PartsCatalog = partsCatalogCache
+
+    fun readSchematicsCatalog(): SchematicsCatalog = schematicsCatalogCache
 
 
     // --------------------------

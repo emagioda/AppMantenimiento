@@ -493,7 +493,7 @@ private fun CameraPreview(
             }
         )
 
-        QRScannerOverlay()
+        QRScannerOverlay(showScanLine = false)
 
         val torchCd = if (torchEnabled) {
             stringResource(R.string.scanner_torch_on_cd)

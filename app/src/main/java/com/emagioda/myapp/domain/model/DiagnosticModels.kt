@@ -23,6 +23,12 @@ data class PartRefResolved(
     val qty: Int?
 )
 
+data class SchematicDocument(
+    val id: String,
+    val title: String,
+    val assetPath: String
+)
+
 // ------------------------------------
 // Diagnostic tree
 // ------------------------------------
@@ -45,6 +51,7 @@ data class DiagnosticNode(
     val safetyWarning: Boolean = false,
     val result: EndResult? = null,
     val parts: List<PartRefResolved>? = null,
+    val schematics: List<SchematicDocument>? = null,
     val mode: QuestionMode = QuestionMode.YES_NO
 )
 

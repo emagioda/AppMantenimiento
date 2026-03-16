@@ -10,6 +10,7 @@ import com.emagioda.myapp.domain.model.NodeType
 import com.emagioda.myapp.domain.model.PartDetail
 import com.emagioda.myapp.domain.model.PartRefResolved
 import com.emagioda.myapp.domain.model.QuestionMode
+import com.emagioda.myapp.domain.model.SchematicDocument
 import com.emagioda.myapp.domain.repository.DiagnosticRepository
 
 class DiagnosticRepositoryImpl(
@@ -35,10 +36,18 @@ class DiagnosticRepositoryImpl(
             throw AssetContentException("Unable to load parts catalog", e)
         }
 
+        val schematicsCatalog = try {
+            ds.readSchematicsCatalog()
+        } catch (e: Exception) {
+            throw AssetContentException("Unable to load schematics catalog", e)
+        }
+
         validatePartsCatalog(partsCatalog)
-        validateTree(rawTree)
+        validateSchematicsCatalog(schematicsCatalog)
+        validateTree(rawTree, schematicsCatalog)
 
         val partsMap = partsCatalog.parts.associateBy { it.id }
+        val schematicsMap = schematicsCatalog.schematics.associateBy { it.id }
 
         val nodes = rawTree.nodes.map { raw ->
             val type = raw.type.toNodeType(raw.id)
@@ -57,6 +66,15 @@ class DiagnosticRepositoryImpl(
                 )
             }
 
+            val nodeSchematics = raw.schematicIds.orEmpty().map { schematicId ->
+                val schematicRaw = schematicsMap[schematicId]
+                    ?: throw AssetContentException(
+                        "Node ${raw.id} references unknown schematic $schematicId"
+                    )
+
+                schematicRaw.toDomain()
+            }
+
             DiagnosticNode(
                 id = raw.id,
                 type = type,
@@ -68,6 +86,7 @@ class DiagnosticRepositoryImpl(
                 safetyWarning = raw.safetyWarning ?: false,
                 result = result,
                 parts = nodeParts.takeIf { it.isNotEmpty() },
+                schematics = nodeSchematics.takeIf { it.isNotEmpty() },
                 mode = mode
             )
         }
@@ -112,7 +131,41 @@ class DiagnosticRepositoryImpl(
         }
     }
 
+    private fun validateSchematicsCatalog(
+        schematicsCatalog: AssetsDiagnosticDataSource.SchematicsCatalog
+    ) {
+        val duplicateIds = schematicsCatalog.schematics
+            .groupBy { it.id }
+            .filterValues { it.size > 1 }
+            .keys
+
+        if (duplicateIds.isNotEmpty()) {
+            throw AssetContentException(
+                "Duplicate schematic ids: ${duplicateIds.joinToString()}"
+            )
+        }
+
+        schematicsCatalog.schematics.forEach { schematic ->
+            if (schematic.id.isBlank()) {
+                throw AssetContentException("Schematic id cannot be blank")
+            }
+            if (schematic.title.isBlank()) {
+                throw AssetContentException("Schematic ${schematic.id} must define a title")
+            }
+            if (schematic.assetPath.isBlank()) {
+                throw AssetContentException("Schematic ${schematic.id} must define an assetPath")
+            }
+        }
+    }
+
     private fun validateTree(rawTree: AssetsDiagnosticDataSource.RawTree) {
+        validateTree(rawTree, null)
+    }
+
+    private fun validateTree(
+        rawTree: AssetsDiagnosticDataSource.RawTree,
+        schematicsCatalog: AssetsDiagnosticDataSource.SchematicsCatalog?
+    ) {
         if (rawTree.root.isBlank()) {
             throw AssetContentException("Diagnostic root cannot be blank")
         }
@@ -129,6 +182,7 @@ class DiagnosticRepositoryImpl(
         }
 
         val nodeIds = rawTree.nodes.map { it.id }.toSet()
+        val schematicIds = schematicsCatalog?.schematics.orEmpty().map { it.id }.toSet()
         if (rawTree.root !in nodeIds) {
             throw AssetContentException("Diagnostic root ${rawTree.root} not found in template")
         }
@@ -173,6 +227,17 @@ class DiagnosticRepositoryImpl(
                     throw AssetContentException("Node ${raw.id} contains a blank part reference")
                 }
             }
+
+            raw.schematicIds.orEmpty().forEach { schematicId ->
+                if (schematicId.isBlank()) {
+                    throw AssetContentException("Node ${raw.id} contains a blank schematic id")
+                }
+                if (schematicIds.isNotEmpty() && schematicId !in schematicIds) {
+                    throw AssetContentException(
+                        "Node ${raw.id} references unknown schematic $schematicId"
+                    )
+                }
+            }
         }
     }
 
@@ -201,6 +266,13 @@ class DiagnosticRepositoryImpl(
             supplier = supplier?.map { ContactRef(it.id) },
             technicalContacts = technicalContacts?.map { ContactRef(it.id) },
             imageResName = imageResName
+        )
+
+    private fun AssetsDiagnosticDataSource.SchematicRaw.toDomain(): SchematicDocument =
+        SchematicDocument(
+            id = id,
+            title = title,
+            assetPath = assetPath
         )
 
     private fun String.toNodeType(nodeId: String): NodeType =

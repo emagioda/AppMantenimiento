@@ -21,6 +21,7 @@ class DiagnosticJsonTest {
         val mode: String? = null,
         val result: String? = null,
         val parts: List<RawPartRef>? = null,
+        val schematicIds: List<String>? = null,
         val yes: String? = null,
         val no: String? = null
     )
@@ -62,6 +63,15 @@ class DiagnosticJsonTest {
         val id: String
     )
 
+    data class RawSchematicsEnvelope(
+        val schematics: List<RawSchematic>
+    )
+
+    data class RawSchematic(
+        val id: String,
+        val assetPath: String
+    )
+
     @Test
     fun diagnosticAssetsAreConsistent() {
         val assetsDir = assetsRoot()
@@ -79,14 +89,20 @@ class DiagnosticJsonTest {
         val contactsFile = File(assetsDir, "contacts/contacts.json")
         val partsFile = File(assetsDir, "diagnostics/parts.json")
         val machinesFile = File(assetsDir, "machines.json")
+        val schematicsFile = File(assetsDir, "diagnostics/schematics/catalog.json")
 
         assertTrue("Contacts file not found: ${contactsFile.path}", contactsFile.exists())
         assertTrue("Parts file not found: ${partsFile.path}", partsFile.exists())
         assertTrue("Machines file not found: ${machinesFile.path}", machinesFile.exists())
+        assertTrue("Schematics file not found: ${schematicsFile.path}", schematicsFile.exists())
 
         val contacts = gson.fromJson(contactsFile.readText(), RawContactsEnvelope::class.java).contacts
         val parts = gson.fromJson(partsFile.readText(), RawPartsEnvelope::class.java).parts
         val machines = gson.fromJson(machinesFile.readText(), RawMachinesEnvelope::class.java).machines
+        val schematics = gson.fromJson(
+            schematicsFile.readText(),
+            RawSchematicsEnvelope::class.java
+        ).schematics
 
         val contactIds = contacts.map { it.id }
         val contactIdSet = contactIds.toSet()
@@ -100,6 +116,10 @@ class DiagnosticJsonTest {
         val machineIdSet = machineIds.toSet()
         assertEquals("Duplicate machine ids", machineIds.size, machineIdSet.size)
 
+        val schematicIds = schematics.map { it.id }
+        val schematicIdSet = schematicIds.toSet()
+        assertEquals("Duplicate schematic ids", schematicIds.size, schematicIdSet.size)
+
         machines.forEach { machine ->
             val templateFile = File(templatesDir, "${machine.templateId}_it.json")
             assertTrue(
@@ -112,6 +132,13 @@ class DiagnosticJsonTest {
                     drawableExists(drawableDir, imageName)
                 )
             }
+        }
+
+        schematics.forEach { schematic ->
+            assertTrue(
+                "Schematic asset ${schematic.assetPath} not found",
+                File(assetsDir, schematic.assetPath).exists()
+            )
         }
 
         parts.forEach { part ->
@@ -164,6 +191,12 @@ class DiagnosticJsonTest {
                     assertTrue(
                         "Part ${ref.id} referenced by node ${node.id} not found in ${file.name}",
                         partIdSet.contains(ref.id)
+                    )
+                }
+                node.schematicIds.orEmpty().forEach { schematicId ->
+                    assertTrue(
+                        "Schematic $schematicId referenced by node ${node.id} not found in ${file.name}",
+                        schematicIdSet.contains(schematicId)
                     )
                 }
                 listOf(node.yes, node.no).filterNotNull().forEach { ref ->

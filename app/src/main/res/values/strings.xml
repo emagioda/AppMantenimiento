@@ -48,13 +48,16 @@
 
     <!-- Diagnostica -->
     <string name="diagnostic_title">Diagnostica</string>
-    <string name="diagnostic_home">Torna all\'inizio</string>
+    <string name="diagnostic_home">Inizio</string>
     <string name="diagnostic_yes">S&#236;</string>
     <string name="diagnostic_no">No</string>
     <string name="diagnostic_continue">Continua</string>
     <string name="diagnostic_error_loading">Errore durante il caricamento del flusso.</string>
     <string name="diagnostic_help">Hai bisogno di aiuto?</string>
     <string name="diagnostic_suggestions_title">Suggerimenti</string>
+    <string name="diagnostic_schematics_title">Schemi elettrici</string>
+    <string name="diagnostic_schematics_subtitle">Apri il PDF per consultarlo o stamparlo.</string>
+    <string name="diagnostic_schematic_open_error">Impossibile aprire il PDF su questo dispositivo.</string>
     <string name="diagnostic_parts_title">Ricambi</string>
     <string name="diagnostic_part_qty">Quantit&#224;: %1$d</string>
     <string name="diagnostic_part_code">Codice: %1$s</string>

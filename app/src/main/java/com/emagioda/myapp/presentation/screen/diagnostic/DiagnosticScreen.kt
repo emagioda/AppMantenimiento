@@ -1,7 +1,6 @@
 package com.emagioda.myapp.presentation.screen.diagnostic
 
 import android.content.Context
-import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
@@ -13,9 +12,19 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -23,9 +32,30 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,13 +67,19 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.emagioda.myapp.R
 import com.emagioda.myapp.di.ServiceLocator
-import com.emagioda.myapp.domain.model.*
+import com.emagioda.myapp.domain.model.DiagnosticNode
+import com.emagioda.myapp.domain.model.EndResult
+import com.emagioda.myapp.domain.model.NodeType
+import com.emagioda.myapp.domain.model.QuestionMode
+import com.emagioda.myapp.domain.model.SchematicDocument
 import com.emagioda.myapp.presentation.common.SafetyWarningDialog
+import com.emagioda.myapp.presentation.common.SchematicPdfOpener
 import com.emagioda.myapp.presentation.screen.diagnostic.components.DiagnosticPartsSection
 import com.emagioda.myapp.presentation.viewmodel.DiagnosticViewModel
 import com.emagioda.myapp.ui.theme.ResultFaultRed
 import com.emagioda.myapp.ui.theme.ResultResolvedGreen
 import com.emagioda.myapp.ui.theme.ResultWarningAmber
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,8 +99,22 @@ fun DiagnosticScreen(
     )
     val uiState = vm.uiState
     val node = uiState.current
+    val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
     val showSafetyDialog = (node?.safetyWarning == true) && !uiState.safetyWarningDismissed
+
+    fun openSchematic(document: SchematicDocument) {
+        val didOpen = SchematicPdfOpener.open(context, document)
+        if (!didOpen) {
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar(
+                    context.getString(R.string.diagnostic_schematic_open_error)
+                )
+            }
+        }
+    }
 
     BackHandler(enabled = vm.canGoBack()) { vm.goBack() }
 
@@ -84,9 +134,9 @@ fun DiagnosticScreen(
                 }
             )
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         contentWindowInsets = WindowInsets(0)
     ) { innerPadding ->
-
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -99,6 +149,7 @@ fun DiagnosticScreen(
                         CircularProgressIndicator()
                     }
                 }
+
                 uiState.errorResId != null -> {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Text(
@@ -108,6 +159,7 @@ fun DiagnosticScreen(
                         )
                     }
                 }
+
                 node == null -> {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Text(
@@ -117,20 +169,22 @@ fun DiagnosticScreen(
                         )
                     }
                 }
+
                 else -> {
-                    // Pasamos uiState.isBackNavigation al contenido
                     when (node.type) {
                         NodeType.QUESTION -> QuestionContent(
                             node = node,
                             isBack = uiState.isBackNavigation,
                             vm = vm
                         )
+
                         NodeType.END -> EndContent(
                             node = node,
                             vm = vm,
                             onRestartToHome = onRestartToHome,
                             onOpenTechnicians = onOpenTechnicians,
-                            onOpenFilteredContacts = onOpenFilteredContacts
+                            onOpenFilteredContacts = onOpenFilteredContacts,
+                            onOpenSchematic = ::openSchematic
                         )
                     }
                 }
@@ -151,18 +205,15 @@ private fun QuestionContent(
     isBack: Boolean,
     vm: DiagnosticViewModel
 ) {
-    // Usamos (node, isBack) como clave para detectar cambios y dirección
     AnimatedContent(
         targetState = node to isBack,
         transitionSpec = {
             val (_, back) = targetState
             if (back) {
-                // VOLVER: Entra desde Izquierda (negativo), sale a Derecha (positivo)
                 (slideInHorizontally { -it } + fadeIn(tween(300))).togetherWith(
                     slideOutHorizontally { it } + fadeOut(tween(300))
                 )
             } else {
-                // AVANZAR: Entra desde Derecha (positivo), sale a Izquierda (negativo)
                 (slideInHorizontally { it } + fadeIn(tween(300))).togetherWith(
                     slideOutHorizontally { -it } + fadeOut(tween(300))
                 )
@@ -184,8 +235,6 @@ private fun QuestionContent(
                 .padding(bottom = 40.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-            // --- ZONA SUPERIOR: LA TARJETA CON LA PREGUNTA ---
             Box(
                 modifier = Modifier
                     .weight(1f)
@@ -232,7 +281,6 @@ private fun QuestionContent(
 
             Spacer(Modifier.height(24.dp))
 
-            // --- ZONA INFERIOR: LOS BOTONES GRANDES ---
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -265,7 +313,6 @@ private fun QuestionContent(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            // Botón NO
                             FilledTonalButton(
                                 onClick = vm::answerNo,
                                 modifier = Modifier
@@ -280,7 +327,6 @@ private fun QuestionContent(
                                 )
                             }
 
-                            // Botón SÍ
                             Button(
                                 onClick = vm::answerYes,
                                 modifier = Modifier
@@ -308,7 +354,8 @@ private fun EndContent(
     vm: DiagnosticViewModel,
     onRestartToHome: () -> Unit,
     onOpenTechnicians: () -> Unit,
-    onOpenFilteredContacts: (String, String) -> Unit
+    onOpenFilteredContacts: (String, String) -> Unit,
+    onOpenSchematic: (SchematicDocument) -> Unit
 ) {
     val scrollState = rememberScrollState()
     val context = LocalContext.current
@@ -318,81 +365,165 @@ private fun EndContent(
     val descriptionText = remember(node.description, context.packageName) {
         node.description?.let { resolveDisplayText(context, it) }
     }
+    val showTechniciansButton = remember(node.parts) {
+        node.parts.orEmpty().none { part ->
+            part.detail.supplier.orEmpty().isNotEmpty() ||
+                part.detail.technicalContacts.orEmpty().isNotEmpty()
+        }
+    }
+
+    LaunchedEffect(node.id) {
+        scrollState.scrollTo(0)
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(scrollState)
             .padding(horizontal = 20.dp)
-            // Aumentamos el padding superior e inferior para darle aire
-            .padding(top = 32.dp, bottom = 40.dp),
+            .padding(top = 16.dp, bottom = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        EndResultIcon(node.result ?: EndResult.NO_ISSUE)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .verticalScroll(scrollState),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            EndResultIcon(node.result ?: EndResult.NO_ISSUE)
 
-        Spacer(Modifier.height(24.dp))
-
-        Text(
-            text = titleText,
-            style = MaterialTheme.typography.headlineSmall,
-            textAlign = TextAlign.Center
-        )
-
-        descriptionText?.let {
             Spacer(Modifier.height(24.dp))
-            SuggestCard(it)
-        }
 
-        node.parts?.takeIf { it.isNotEmpty() }?.let { parts ->
+            Text(
+                text = titleText,
+                style = MaterialTheme.typography.headlineSmall,
+                textAlign = TextAlign.Center
+            )
+
+            descriptionText?.let {
+                Spacer(Modifier.height(24.dp))
+                SuggestCard(it)
+            }
+
+            node.schematics?.takeIf { it.isNotEmpty() }?.let { schematics ->
+                Spacer(Modifier.height(24.dp))
+                SchematicsSection(
+                    schematics = schematics,
+                    onOpenSchematic = onOpenSchematic
+                )
+            }
+
+            node.parts?.takeIf { it.isNotEmpty() }?.let { parts ->
+                Spacer(Modifier.height(24.dp))
+                DiagnosticPartsSection(
+                    parts = parts,
+                    onContactClick = { providerIds, technicianIds ->
+                        onOpenFilteredContacts(
+                            providerIds.joinToString(","),
+                            technicianIds.joinToString(",")
+                        )
+                    }
+                )
+            }
+
             Spacer(Modifier.height(24.dp))
-            DiagnosticPartsSection(
-                parts = parts,
-                onContactClick = { providerIds, technicianIds ->
-                    onOpenFilteredContacts(
-                        providerIds.joinToString(","),
-                        technicianIds.joinToString(",")
+
+            if (showTechniciansButton) {
+                FilledTonalButton(
+                    onClick = onOpenTechnicians,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    shape = MaterialTheme.shapes.medium
+                ) {
+                    Text(
+                        text = stringResource(R.string.contacts_tech_shortcut).uppercase(),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
                     )
                 }
-            )
+
+                Spacer(Modifier.height(16.dp))
+            }
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                FilledIconButton(
+                    onClick = {
+                        vm.restart()
+                        onRestartToHome()
+                    },
+                    modifier = Modifier.size(72.dp),
+                    shape = CircleShape,
+                    colors = IconButtonDefaults.filledIconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Home,
+                        contentDescription = stringResource(R.string.diagnostic_home),
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+
+                Spacer(Modifier.height(10.dp))
+
+                Text(
+                    text = stringResource(R.string.diagnostic_home),
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            Spacer(Modifier.height(24.dp))
         }
+    }
+}
 
-        Spacer(Modifier.height(40.dp))
-
-        // --- BOTONES UNIFICADOS Y VISIBLES ---
-
-        // 1. Botón Técnicos: CAMBIADO a FilledTonalButton para mejor visibilidad
-        FilledTonalButton(
-            onClick = onOpenTechnicians,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
-            shape = MaterialTheme.shapes.medium
-        ) {
-            Text(
-                text = stringResource(R.string.contacts_tech_shortcut).uppercase(),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-        }
-
+@Composable
+private fun SchematicsSection(
+    schematics: List<SchematicDocument>,
+    onOpenSchematic: (SchematicDocument) -> Unit
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = stringResource(R.string.diagnostic_schematics_title),
+            style = MaterialTheme.typography.titleMedium
+        )
+        Spacer(Modifier.height(8.dp))
+        Text(
+            text = stringResource(R.string.diagnostic_schematics_subtitle),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
         Spacer(Modifier.height(16.dp))
 
-        // 2. Botón Home (Acción Principal)
-        Button(
-            onClick = {
-                vm.restart()
-                onRestartToHome()
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
-            shape = MaterialTheme.shapes.medium
-        ) {
-            Text(
-                text = stringResource(R.string.diagnostic_home).uppercase(),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
+        schematics.forEachIndexed { index, schematic ->
+            FilledTonalButton(
+                onClick = { onOpenSchematic(schematic) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                shape = MaterialTheme.shapes.medium
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Description,
+                    contentDescription = null
+                )
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    text = schematic.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            if (index < schematics.lastIndex) {
+                Spacer(Modifier.height(12.dp))
+            }
         }
     }
 }
@@ -406,7 +537,7 @@ private fun EndResultIcon(result: EndResult) {
     }
 
     Box(
-        modifier = Modifier.size(120.dp), // Icono final un poco más grande
+        modifier = Modifier.size(120.dp),
         contentAlignment = Alignment.Center
     ) {
         Box(
@@ -427,7 +558,6 @@ private fun EndResultIcon(result: EndResult) {
 
 @Composable
 private fun SuggestCard(text: String) {
-    // Usamos el mismo estilo de tarjeta industrial para las sugerencias
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()

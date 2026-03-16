@@ -1,0 +1,9 @@
+{
+  "schematics": [
+    {
+      "id": "schema_elettrico_c2353",
+      "title": "Schema elettrico",
+      "assetPath": "diagnostics/schematics/schema_elettrico_c2353.pdf"
+    }
+  ]
+}

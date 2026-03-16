@@ -83,6 +83,7 @@
       "description":"• Controllare i dispositivi di accensione e di interblocco.",
       "safetyWarning": true,
       "parts": [{"id": "P_15"}, {"id": "P_17"}, {"id": "P_19"}],
+      "schematicIds": ["schema_elettrico_c2353"],
       "result":"COMPONENT_FAULT"
     },
 
@@ -93,6 +94,7 @@
       "description":"• Controllare che i contatti ausiliari d'interblocco funzionano correttamente.\n• Controllare che i dispositivi di avviamento e protezione funzionano correttamente.\n• Contattare \"Tecnici Specializzati\"",
       "safetyWarning": true,
       "parts": [{"id": "P_15"}, {"id": "P_17"}, {"id": "P_19"}],
+      "schematicIds": ["schema_elettrico_c2353"],
       "result":"COMPONENT_FAULT"
     },
 
@@ -112,6 +114,7 @@
       "description":"• Controllare la tensione in uscita dall'accensione.\n• Controllare i terminali di uscita sul quadro elettrico.\n• Verificare che il cablaggio dal quadro elettrico al motore non sia interrotto.",
       "safetyWarning": true,
       "parts": [{"id": "P_15"}, {"id": "P_17"}],
+      "schematicIds": ["schema_elettrico_c2353"],
       "result":"COMPONENT_FAULT"
     },
 
@@ -145,6 +148,7 @@
       "title":"Motore bloccato.",
       "description":"• Verificare che il motore giri manualmente.\n• Verificare che tutte e tre le fasi raggiungano il motore.\n• Verificare che il riduttore non sia danneggiato.\n• Verificare che la vite senza fine non sia bloccata.\n• Verificare che la boccola della vite senza fine non sia usurata.",
       "safetyWarning": true,
+      "schematicIds": ["schema_elettrico_c2353"],
       "result":"NO_ISSUE"
     },
 
@@ -189,6 +193,7 @@
       "description":"• Verificare il corretto funzionamento del selettore di scarico.\n• Verificare che la bilancia invii il segnale di apertura all'elettrovalvola.\n• Verificare che la bobina dell'elettrovalvola non sia danneggiata.\n• Verificare che l'aria compressa raggiunga sia l'elettrovalvola che il pistone di apertura.\n• Verificare che il pistone non sia danneggiato (controllare le guarnizioni e le condizioni dell'albero).",
       "parts": [ {"id":"P_09"}, {"id":"P_23"}, {"id":"P_24"}, {"id":"P_25"} ],
       "safetyWarning": true,
+      "schematicIds": ["schema_elettrico_c2353"],
       "result":"COMPONENT_FAULT"
     },
 
@@ -213,6 +218,7 @@
     { "id":"Q_CA_01", "type":"END",
       "title":"Guasto nell'alimentazione principale.",
       "description":"• Controllare che l'alimentazione principale non sia scattata\n• Contattare tecnici specializzati",
+      "schematicIds": ["schema_elettrico_c2353"],
       "result":"NO_ISSUE"
     },
 
@@ -232,6 +238,7 @@
       "description":"• Controllare che tutti gli sportelli siano chiusi.\n• Controllare che i sensori siano funzionanti.",
       "safetyWarning": true,
       "parts": [{"id": "P_07"}],
+      "schematicIds": ["schema_elettrico_c2353"],
       "result":"COMPONENT_FAULT"
     },
 
@@ -241,6 +248,7 @@
       "title":"Disattivare il pulsante di Emergenza e/o chiudere gli sportelli. Verificare il funzionamento.",
       "safetyWarning": true,
       "parts": [{"id": "P_21"}, {"id": "P_22"}],
+      "schematicIds": ["schema_elettrico_c2353"],
       "result":"COMPONENT_FAULT"
     },
 
@@ -259,6 +267,7 @@
       "description":"• Verificare il corretto funzionamento sia del pulsante di arresto di emergenza, verificando la continuità del contatto, sia dei sensori dello sportello di ispezione, misurando la continuità dall'inizio alla fine del circuito.\n• Chiamare tecnici specializzati",
       "safetyWarning": true,
       "parts": [{"id": "P_07"}],
+      "schematicIds": ["schema_elettrico_c2353"],
       "result":"COMPONENT_FAULT"
     },
 
@@ -269,6 +278,7 @@
       "description":"• Controllare i dispositivi di accensione e di interblocco.",
       "safetyWarning": true,
       "parts": [{"id": "P_19"}, {"id": "P_16"}],
+      "schematicIds": ["schema_elettrico_c2353"],
       "result":"COMPONENT_FAULT"
     },
 
@@ -279,6 +289,7 @@
       "description":"• Controllare che i contatti ausiliari d'interblocco funzionano correttamente.\n• Controllare che i dispositivi di avviamento e protezione funzionano correttamente.\nContattare \"Tecnici Specializzati\"",
       "safetyWarning": true,
       "parts": [{"id": "P_16"}, {"id": "P_19"}, {"id": "P_20"}, {"id": "P_18"}],
+      "schematicIds": ["schema_elettrico_c2353"],
       "result":"COMPONENT_FAULT"
     },
 
@@ -296,6 +307,7 @@
     { "id":"Q_CF_1000", "type":"END",
       "title":"Problemi con l'accensione del motore o con il cablaggio.",
       "description":"• Controllare la tensione in uscita dall'accensione.\n• Controllare i terminali di uscita sul quadro elettrico.\n• Verificare che il cablaggio dal quadro elettrico al motore non sia interrotto.\nChiamare tecnico specializzato",
+      "schematicIds": ["schema_elettrico_c2353"],
       "result":"NO_ISSUE"
     },
 
@@ -304,6 +316,7 @@
       "description":"• Controllare il rumore del motore all'avvio. Se ronza, è probabile che una delle sue bobine interne sia in cortocircuito.\n• Controllare i terminali di collegamento.\n• Controllare la continuità di tutte le bobine interne.\n• Sostituire il motore.\nChiamare un tecnico specializzato.",
       "safetyWarning": true,
       "parts": [{"id": "P_05"}],
+      "schematicIds": ["schema_elettrico_c2353"],
       "result":"COMPONENT_FAULT"
     },
 
@@ -349,6 +362,7 @@
       "description":"• Eseguire test di resistenza di isolamento sul motore.\n• Controllare il cablaggio del motore.\n• Verificare che il dispositivo di accensione non sia difettoso.",
       "safetyWarning": true,
       "parts": [{"id": "P_05"}],
+      "schematicIds": ["schema_elettrico_c2353"],
       "result":"COMPONENT_FAULT"
     },
 
