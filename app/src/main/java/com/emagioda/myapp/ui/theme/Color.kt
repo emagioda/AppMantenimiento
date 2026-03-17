@@ -12,6 +12,10 @@ val ResultWarningAmber = Color(0xFFF9A825)
 val ResultFaultRed = Color(0xFFC62828)
 val SupportButtonContainer = Color(0xFFD8E3F0)
 val SupportButtonContent = Color(0xFF1D2E44)
+val HistoryPendingAmber = Color(0xFFF0B54D)
+val HistoryInProgressBlue = Color(0xFF6EA8C6)
+val HistoryFinalizedGreen = Color(0xFF5BB37D)
+val HistoryTimelineLine = Color(0xFF3A4653)
 
 val DarkColors = darkColorScheme(
     primary = BlueDark,

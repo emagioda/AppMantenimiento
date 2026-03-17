@@ -4,6 +4,8 @@ import android.net.Uri
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -21,6 +23,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.emagioda.myapp.presentation.screen.contacts.ContactsScreen
 import com.emagioda.myapp.presentation.screen.diagnostic.DiagnosticScreen
+import com.emagioda.myapp.presentation.screen.history.HistoryScreen
+import com.emagioda.myapp.presentation.screen.history.MaintenanceCaseDetailScreen
+import com.emagioda.myapp.presentation.screen.history.MachineHistoryScreen
 import com.emagioda.myapp.presentation.screen.home.HomeScreen
 import com.emagioda.myapp.presentation.screen.machine.MachineDetailScreen
 import com.emagioda.myapp.presentation.screen.scanner.ScannerScreen
@@ -28,16 +33,21 @@ import com.emagioda.myapp.presentation.screen.scanner.ScannerScreen
 sealed class Route(val route: String) {
     data object Home : Route("home")
     data object Scanner : Route("scanner")
-
-    // NUOVA ROTTA: dettaglio macchina
     data object MachineDetail : Route("machineDetail/{machineId}") {
         fun createRoute(machineId: String) = "machineDetail/$machineId"
     }
-
     data object Diagnostic : Route("diagnostic/{machineId}") {
         fun createRoute(machineId: String) = "diagnostic/$machineId"
     }
-
+    data object MachineHistory : Route("machineHistory/{machineId}") {
+        fun createRoute(machineId: String) = "machineHistory/$machineId"
+    }
+    data object History : Route("history") {
+        fun createRoute() = route
+    }
+    data object HistoryDetail : Route("history/{caseId}") {
+        fun createRoute(caseId: Long) = "history/$caseId"
+    }
     data object Contacts : Route("contacts?providerIds={providerIds}&technicianIds={technicianIds}") {
         fun createRoute(providerIds: String? = null, technicianIds: String? = null): String {
             val safeProviders = providerIds
@@ -60,19 +70,33 @@ fun AppNavHost(
     navController: NavHostController = rememberNavController(),
     startDestination: String = Route.Home.route
 ) {
-    val slideSpec: TweenSpec<IntOffset> = tween(durationMillis = 240)
+    val slideSpec: TweenSpec<IntOffset> = tween(durationMillis = 280)
+    val fadeInSpec = tween<Float>(durationMillis = 280)
+    val fadeOutSpec = tween<Float>(durationMillis = 180)
 
     val slideInLeft: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
-        slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = slideSpec)
+        slideIntoContainer(
+            AnimatedContentTransitionScope.SlideDirection.Left,
+            animationSpec = slideSpec
+        ) + fadeIn(animationSpec = fadeInSpec)
     }
     val slideOutLeft: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
-        slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = slideSpec)
+        slideOutOfContainer(
+            AnimatedContentTransitionScope.SlideDirection.Left,
+            animationSpec = slideSpec
+        ) + fadeOut(animationSpec = fadeOutSpec)
     }
     val slideInRight: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
-        slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = slideSpec)
+        slideIntoContainer(
+            AnimatedContentTransitionScope.SlideDirection.Right,
+            animationSpec = slideSpec
+        ) + fadeIn(animationSpec = fadeInSpec)
     }
     val slideOutRight: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
-        slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = slideSpec)
+        slideOutOfContainer(
+            AnimatedContentTransitionScope.SlideDirection.Right,
+            animationSpec = slideSpec
+        ) + fadeOut(animationSpec = fadeOutSpec)
     }
 
     NavHost(
@@ -82,7 +106,6 @@ fun AppNavHost(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        // HOME
         composable(
             route = Route.Home.route,
             enterTransition = slideInRight,
@@ -91,11 +114,11 @@ fun AppNavHost(
             popExitTransition = slideOutRight
         ) {
             HomeScreen(
-                onNavigateToScanner = { navController.navigate(Route.Scanner.route) }
+                onNavigateToScanner = { navController.navigate(Route.Scanner.route) },
+                onNavigateToHistory = { navController.navigate(Route.History.createRoute()) }
             )
         }
 
-        // SCANNER → ora naviga a MachineDetail
         composable(
             route = Route.Scanner.route,
             enterTransition = slideInLeft,
@@ -105,13 +128,11 @@ fun AppNavHost(
         ) {
             ScannerScreen(
                 onScanned = { machineId ->
-                    val safe = Uri.encode(machineId)
-                    navController.navigate(Route.MachineDetail.createRoute(safe))
+                    navController.navigate(Route.MachineDetail.createRoute(Uri.encode(machineId)))
                 }
             )
         }
 
-        // NUOVO: DETTAGLIO MACCHINA
         composable(
             route = Route.MachineDetail.route,
             enterTransition = slideInLeft,
@@ -124,13 +145,14 @@ fun AppNavHost(
                 machineId = machineId,
                 onBack = { navController.popBackStack() },
                 onStartDiagnostic = { id ->
-                    val safe = Uri.encode(id)
-                    navController.navigate(Route.Diagnostic.createRoute(safe))
+                    navController.navigate(Route.Diagnostic.createRoute(Uri.encode(id)))
+                },
+                onOpenHistory = { id ->
+                    navController.navigate(Route.MachineHistory.createRoute(Uri.encode(id)))
                 }
             )
         }
 
-        // DIAGNOSTICA (come prima)
         composable(
             route = Route.Diagnostic.route,
             enterTransition = slideInLeft,
@@ -152,11 +174,62 @@ fun AppNavHost(
                             technicianIds = technicianIds
                         )
                     )
+                },
+                onOpenHistoryCase = { caseId ->
+                    navController.navigate(Route.HistoryDetail.createRoute(caseId))
                 }
             )
         }
 
-        // CONTATTI
+        composable(
+            route = Route.MachineHistory.route,
+            enterTransition = slideInLeft,
+            exitTransition = slideOutLeft,
+            popEnterTransition = slideInRight,
+            popExitTransition = slideOutRight
+        ) { backStackEntry ->
+            val machineId = Uri.decode(backStackEntry.arguments?.getString("machineId") ?: "N/A")
+            MachineHistoryScreen(
+                machineId = machineId,
+                onBack = { navController.popBackStack() },
+                onOpenCase = { caseId ->
+                    navController.navigate(Route.HistoryDetail.createRoute(caseId))
+                }
+            )
+        }
+
+        composable(
+            route = Route.History.route,
+            enterTransition = slideInLeft,
+            exitTransition = slideOutLeft,
+            popEnterTransition = slideInRight,
+            popExitTransition = slideOutRight
+        ) {
+            HistoryScreen(
+                onBack = { navController.popBackStack() },
+                onOpenMachine = { machineId ->
+                    navController.navigate(Route.MachineHistory.createRoute(Uri.encode(machineId)))
+                }
+            )
+        }
+
+        composable(
+            route = Route.HistoryDetail.route,
+            arguments = listOf(
+                navArgument("caseId") { type = NavType.LongType }
+            ),
+            enterTransition = slideInLeft,
+            exitTransition = slideOutLeft,
+            popEnterTransition = slideInRight,
+            popExitTransition = slideOutRight
+        ) { backStackEntry ->
+            val caseId = backStackEntry.arguments?.getLong("caseId") ?: 0L
+            MaintenanceCaseDetailScreen(
+                caseId = caseId,
+                onBack = { navController.popBackStack() }
+            )
+        }
+
         composable(
             route = Route.Contacts.route,
             arguments = listOf(
@@ -187,7 +260,6 @@ fun AppNavHost(
             )
         }
 
-        // CONTATTI → Tecnici
         composable(
             route = Route.ContactsTechnicians.route,
             enterTransition = slideInLeft,
@@ -198,7 +270,6 @@ fun AppNavHost(
             ContactsScreen(onBack = { navController.popBackStack() }, initialTab = 0)
         }
 
-        // CONTATTI → Fornitori
         composable(
             route = Route.ContactsProviders.route,
             enterTransition = slideInLeft,
@@ -208,6 +279,5 @@ fun AppNavHost(
         ) {
             ContactsScreen(onBack = { navController.popBackStack() }, initialTab = 1)
         }
-
     }
 }

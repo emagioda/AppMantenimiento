@@ -1,10 +1,31 @@
 package com.emagioda.myapp.presentation.screen.home
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.QrCodeScanner
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -17,12 +38,43 @@ import com.emagioda.myapp.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    onNavigateToScanner: () -> Unit = {}
+    onNavigateToScanner: () -> Unit = {},
+    onNavigateToHistory: () -> Unit = {}
 ) {
+    var showMenu by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(stringResource(R.string.home_title)) }
+                title = { Text(stringResource(R.string.home_title)) },
+                actions = {
+                    IconButton(
+                        onClick = { showMenu = true }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Description,
+                            contentDescription = stringResource(R.string.home_history_menu_cd)
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = showMenu,
+                        onDismissRequest = { showMenu = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.home_history_button)) },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.Description,
+                                    contentDescription = null
+                                )
+                            },
+                            onClick = {
+                                showMenu = false
+                                onNavigateToHistory()
+                            }
+                        )
+                    }
+                }
             )
         }
     ) { inner ->
@@ -34,19 +86,14 @@ fun HomeScreen(
                     .padding(horizontal = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // 1. Spacer elástico superior para empujar el texto hacia abajo
                 Spacer(Modifier.weight(1f))
 
-                // Texto del encabezado (sin icono)
                 HomeHeader()
 
-                // 2. Spacer elástico inferior para equilibrar y centrar el texto verticalmente
                 Spacer(Modifier.weight(1f))
 
-                // El botón queda anclado en la parte inferior
                 PrimaryScanButton(onClick = onNavigateToScanner)
 
-                // Espacio ergonómico inferior
                 Spacer(Modifier.height(40.dp))
             }
         }
@@ -55,7 +102,6 @@ fun HomeScreen(
 
 @Composable
 private fun HomeHeader() {
-    // Se eliminó el icono grande para limpiar la vista
     Text(
         text = stringResource(R.string.home_header),
         color = MaterialTheme.colorScheme.onSurface,
@@ -77,8 +123,7 @@ private fun PrimaryScanButton(onClick: () -> Unit) {
     ) {
         Icon(
             imageVector = Icons.Default.QrCodeScanner,
-            contentDescription = null,
-            modifier = Modifier.size(20.dp)
+            contentDescription = null
         )
         Spacer(Modifier.width(12.dp))
         Text(

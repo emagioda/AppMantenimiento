@@ -124,7 +124,7 @@
       "features": null,
       "supplier": [{"id": "001"}],
       "technicalContacts": [],
-      "imageResName": null
+      "imageResName": "img_p_14"
     },
     {
       "id": "P_15",
@@ -133,7 +133,7 @@
       "features": null,
       "supplier": [{"id": "003"}, {"id": "004"}],
       "technicalContacts": [],
-      "imageResName": null
+      "imageResName": "img_p_15"
     },
     {
       "id": "P_16",
@@ -142,7 +142,7 @@
       "features": null,
       "supplier": [{"id": "003"}, {"id": "004"}],
       "technicalContacts": [],
-      "imageResName": null
+      "imageResName": "img_p_16"
     },
     {
       "id": "P_17",
@@ -151,7 +151,7 @@
       "features": null,
       "supplier": [{"id": "003"}, {"id": "004"}],
       "technicalContacts": [],
-      "imageResName": null
+      "imageResName": "img_p_17"
     },
     {
       "id": "P_18",
@@ -160,7 +160,7 @@
       "features": null,
       "supplier": [{"id": "003"}, {"id": "004"}],
       "technicalContacts": [],
-      "imageResName": null
+      "imageResName": "img_p_18"
     },
     {
       "id": "P_19",
@@ -169,7 +169,7 @@
       "features": null,
       "supplier": [{"id": "003"}, {"id": "004"}],
       "technicalContacts": [],
-      "imageResName": null
+      "imageResName": "img_p_19"
     },
     {
       "id": "P_20",
@@ -178,7 +178,7 @@
       "features": null,
       "supplier": [{"id": "003"}, {"id": "004"}],
       "technicalContacts": [],
-      "imageResName": null
+      "imageResName": "img_p_20"
     },
     {
       "id": "P_21",
@@ -187,7 +187,7 @@
       "features": null,
       "supplier": [{"id": "003"}, {"id": "004"}],
       "technicalContacts": [],
-      "imageResName": null
+      "imageResName": "img_p_21"
     },
     {
       "id": "P_22",
@@ -196,7 +196,7 @@
       "features": "1 NC - Harmony",
       "supplier": [{"id": "003"}, {"id": "004"}],
       "technicalContacts": [],
-      "imageResName": null
+      "imageResName": "img_p_22"
     },
     {
       "id": "P_23",
@@ -205,7 +205,7 @@
       "features": "Elettrovalvole per pneumatica Metal Work, G 1/4, funzioni 5/2, azionamento Pilota/Molla",
       "supplier": [{"id": "007"}],
       "technicalContacts": [{"id": "005"}],
-      "imageResName": null
+      "imageResName": "img_p_23"
     },
     {
       "id": "P_24",
@@ -214,7 +214,7 @@
       "features": "ISO 15552 SERIE 3",
       "supplier": [{"id": "001"}, {"id": "007"}],
       "technicalContacts": [{"id": "001"}, {"id": "005"}],
-      "imageResName": null
+      "imageResName": "img_p_24"
     },
     {
       "id": "P_25",
@@ -223,7 +223,7 @@
       "features": "Elemento di contatto singolo",
       "supplier": [{"id": "003"}],
       "technicalContacts": [{"id": "005"}, {"id": "003"}],
-      "imageResName": null
+      "imageResName": "img_p_25"
     }
   ]
 }

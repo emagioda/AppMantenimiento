@@ -1,5 +1,6 @@
 package com.emagioda.myapp.presentation.viewmodel
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -7,27 +8,40 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.emagioda.myapp.R
+import com.emagioda.myapp.domain.model.CreateMaintenanceCaseRequest
 import com.emagioda.myapp.domain.model.DiagnosticNode
 import com.emagioda.myapp.domain.model.DiagnosticTree
+import com.emagioda.myapp.domain.model.EndResult
+import com.emagioda.myapp.domain.model.InitialMaintenanceAction
+import com.emagioda.myapp.domain.model.MaintenanceStatus
 import com.emagioda.myapp.domain.model.NodeType
+import com.emagioda.myapp.domain.usecase.CreateMaintenanceCase
 import com.emagioda.myapp.domain.usecase.GetDiagnosticTreeForMachine
+import com.emagioda.myapp.domain.usecase.GetMachineDetail
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 data class DiagnosticUiState(
     val machineId: String,
+    val machineName: String? = null,
     val tree: DiagnosticTree? = null,
-    val current: DiagnosticNode?,
+    val current: DiagnosticNode? = null,
     val path: List<String> = emptyList(),
     val isLoading: Boolean = true,
     val errorResId: Int? = null,
     val safetyWarningDismissed: Boolean = false,
-    val isBackNavigation: Boolean = false // <-- NUEVO: Bandera de dirección
+    val isBackNavigation: Boolean = false,
+    val isSavingCase: Boolean = false,
+    val saveCaseErrorResId: Int? = null,
+    val savedCaseId: Long? = null
 )
 
 class DiagnosticViewModel(
     private val getTree: GetDiagnosticTreeForMachine,
+    private val getMachineDetail: GetMachineDetail,
+    private val createMaintenanceCase: CreateMaintenanceCase,
+    private val context: Context,
     private val machineId: String
 ) : ViewModel() {
 
@@ -37,62 +51,34 @@ class DiagnosticViewModel(
     private val path = mutableListOf<String>()
 
     var uiState by mutableStateOf(
-        DiagnosticUiState(
-            machineId = machineId,
-            current = null
-        )
+        DiagnosticUiState(machineId = machineId)
     )
         private set
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val loadedTree = getTree(machineId)
-                val loadedNodes = loadedTree.nodes.associateBy { it.id }
-                val rootId = loadedTree.root
-                val rootNode = loadedNodes[rootId]
-                withContext(Dispatchers.Main) {
-                    tree = loadedTree
-                    nodesById = loadedNodes
-                    currentNodeId = rootId
-                    path.clear()
-                    path.add(rootId)
-                    uiState = uiState.copy(
-                        tree = loadedTree,
-                        current = rootNode,
-                        path = path.toList(),
-                        isLoading = false,
-                        errorResId = null,
-                        isBackNavigation = false
-                    )
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    uiState = uiState.copy(
-                        isLoading = false,
-                        errorResId = R.string.diagnostic_error_loading
-                    )
-                }
-            }
-        }
+        load()
     }
 
     fun dismissSafetyWarning() {
         uiState = uiState.copy(safetyWarningDismissed = true)
     }
 
+    fun dismissSaveError() {
+        uiState = uiState.copy(saveCaseErrorResId = null)
+    }
+
     fun answerYes() {
         val currentId = currentNodeId ?: return
-        val n = nodesById[currentId] ?: return
-        if (n.type != NodeType.QUESTION) return
-        goTo(n.yes)
+        val node = nodesById[currentId] ?: return
+        if (node.type != NodeType.QUESTION) return
+        goTo(node.yes)
     }
 
     fun answerNo() {
         val currentId = currentNodeId ?: return
-        val n = nodesById[currentId] ?: return
-        if (n.type != NodeType.QUESTION) return
-        goTo(n.no)
+        val node = nodesById[currentId] ?: return
+        if (node.type != NodeType.QUESTION) return
+        goTo(node.no)
     }
 
     fun restart() {
@@ -106,21 +92,102 @@ class DiagnosticViewModel(
     fun goBack() {
         if (path.size <= 1) return
 
-        if (path.size <= 1) {
-            val localTree = tree ?: return
-            currentNodeId = localTree.root
-            publish(nodesById[currentNodeId], isBack = true)
-            return
-        }
-
         path.removeAt(path.lastIndex)
         val localTree = tree ?: return
         val previousId = path.lastOrNull() ?: localTree.root
         currentNodeId = previousId
-        publish(nodesById[previousId], isBack = true) // <-- IMPORTANTE: isBack = true
+        publish(nodesById[previousId], isBack = true)
     }
 
     fun canGoBack(): Boolean = path.size > 1
+
+    fun saveCurrentDiagnosis(
+        status: MaintenanceStatus,
+        problemNote: String,
+        initialAction: InitialMaintenanceAction,
+        initialActionNote: String
+    ) {
+        val node = uiState.current ?: return
+        if (node.type != NodeType.END || uiState.savedCaseId != null) return
+
+        uiState = uiState.copy(
+            isSavingCase = true,
+            saveCaseErrorResId = null
+        )
+
+        viewModelScope.launch {
+            runCatching {
+                createMaintenanceCase(
+                    CreateMaintenanceCaseRequest(
+                        machineId = machineId,
+                        machineNameSnapshot = uiState.machineName ?: machineId,
+                        endNodeId = node.id,
+                        diagnosisTitle = node.title,
+                        diagnosisDescription = node.description,
+                        endResult = node.result ?: EndResult.NO_ISSUE,
+                        status = status,
+                        problemTitle = context.getString(R.string.history_event_problem),
+                        problemNote = problemNote.trim().takeIf { it.isNotBlank() },
+                        initialAction = initialAction,
+                        initialActionTitle = initialAction.label(),
+                        initialActionNote = initialActionNote.trim().takeIf { it.isNotBlank() },
+                        autoResolutionTitle = if (status == MaintenanceStatus.FINALIZED) {
+                            context.getString(R.string.history_event_resolution)
+                        } else {
+                            null
+                        }
+                    )
+                )
+            }.onSuccess { caseId ->
+                uiState = uiState.copy(
+                    isSavingCase = false,
+                    saveCaseErrorResId = null,
+                    savedCaseId = caseId
+                )
+            }.onFailure {
+                uiState = uiState.copy(
+                    isSavingCase = false,
+                    saveCaseErrorResId = R.string.history_action_error
+                )
+            }
+        }
+    }
+
+    private fun load() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val loadedTree = getTree(machineId)
+                val loadedMachine = getMachineDetail(machineId)
+                val loadedNodes = loadedTree.nodes.associateBy { it.id }
+                val rootId = loadedTree.root
+                val rootNode = loadedNodes[rootId]
+
+                withContext(Dispatchers.Main) {
+                    tree = loadedTree
+                    nodesById = loadedNodes
+                    currentNodeId = rootId
+                    path.clear()
+                    path.add(rootId)
+                    uiState = uiState.copy(
+                        machineName = loadedMachine?.name ?: machineId,
+                        tree = loadedTree,
+                        current = rootNode,
+                        path = path.toList(),
+                        isLoading = false,
+                        errorResId = null,
+                        isBackNavigation = false
+                    )
+                }
+            } catch (_: Exception) {
+                withContext(Dispatchers.Main) {
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        errorResId = R.string.diagnostic_error_loading
+                    )
+                }
+            }
+        }
+    }
 
     private fun goTo(nextId: String?) {
         if (nextId.isNullOrBlank()) return
@@ -135,7 +202,7 @@ class DiagnosticViewModel(
 
         path.add(nextNode.id)
         currentNodeId = nextId
-        publish(nextNode, isBack = false) // <-- Avanzar: isBack = false
+        publish(nextNode, isBack = false)
     }
 
     private fun publish(current: DiagnosticNode?, isBack: Boolean) {
@@ -144,17 +211,42 @@ class DiagnosticViewModel(
             path = path.toList(),
             safetyWarningDismissed = false,
             errorResId = if (current == null) R.string.diagnostic_error_loading else null,
-            isBackNavigation = isBack // <-- Actualizamos el estado
+            isBackNavigation = isBack,
+            isSavingCase = false,
+            saveCaseErrorResId = null,
+            savedCaseId = null
         )
     }
 
+    private fun InitialMaintenanceAction.label(): String? =
+        when (this) {
+            InitialMaintenanceAction.NONE -> null
+            InitialMaintenanceAction.TECHNICIAN_CONTACTED ->
+                context.getString(R.string.history_event_technician)
+            InitialMaintenanceAction.COMPONENT_REPLACED ->
+                context.getString(R.string.history_event_component)
+            InitialMaintenanceAction.TEST_PERFORMED ->
+                context.getString(R.string.history_event_test)
+            InitialMaintenanceAction.OTHER ->
+                context.getString(R.string.history_event_other)
+        }
+
     class Factory(
         private val getTree: GetDiagnosticTreeForMachine,
+        private val getMachineDetail: GetMachineDetail,
+        private val createMaintenanceCase: CreateMaintenanceCase,
+        private val context: Context,
         private val machineId: String
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return DiagnosticViewModel(getTree, machineId) as T
+            return DiagnosticViewModel(
+                getTree = getTree,
+                getMachineDetail = getMachineDetail,
+                createMaintenanceCase = createMaintenanceCase,
+                context = context.applicationContext,
+                machineId = machineId
+            ) as T
         }
     }
 }
