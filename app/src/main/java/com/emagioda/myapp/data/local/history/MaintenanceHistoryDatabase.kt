@@ -11,7 +11,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         MaintenanceCaseEntity::class,
         MaintenanceEventEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 @TypeConverters(MaintenanceHistoryConverters::class)
@@ -31,6 +31,25 @@ val MAINTENANCE_HISTORY_MIGRATION_1_2 = object : Migration(1, 2) {
             """
             ALTER TABLE maintenance_cases
             ADD COLUMN cancellationReason TEXT
+            """.trimIndent()
+        )
+    }
+}
+
+val MAINTENANCE_HISTORY_MIGRATION_2_3 = object : Migration(2, 3) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL(
+            """
+            ALTER TABLE maintenance_cases
+            ADD COLUMN caseCode TEXT NOT NULL DEFAULT ''
+            """.trimIndent()
+        )
+        database.execSQL(
+            """
+            UPDATE maintenance_cases
+            SET caseCode = UPPER(machineId) || '-' ||
+                strftime('%d%m%Y%H%M', openedAt / 1000, 'unixepoch', 'localtime')
+            WHERE TRIM(caseCode) = ''
             """.trimIndent()
         )
     }

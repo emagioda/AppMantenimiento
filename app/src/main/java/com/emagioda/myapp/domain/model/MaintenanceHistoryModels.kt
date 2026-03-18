@@ -2,6 +2,7 @@ package com.emagioda.myapp.domain.model
 
 data class MaintenanceCaseSummary(
     val id: Long,
+    val caseCode: String,
     val machineId: String,
     val machineNameSnapshot: String,
     val problemSummary: String?,
@@ -20,6 +21,7 @@ data class MaintenanceCaseSummary(
 
 data class MaintenanceCaseDetail(
     val id: Long,
+    val caseCode: String,
     val machineId: String,
     val machineNameSnapshot: String,
     val endNodeId: String,

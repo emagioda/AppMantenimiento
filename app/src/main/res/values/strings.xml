@@ -66,6 +66,7 @@
     <string name="diagnostic_part_contact_support">Contatta tecnici e fornitori</string>
     <string name="diagnostic_end_title">Procedura completata</string>
     <string name="diagnostic_end_description">Torna alla schermata iniziale per avviare una nuova diagnosi.</string>
+    <string name="diagnostic_reference_title">Riferimento diagnostico</string>
 
     <!-- Sicurezza -->
     <string name="safety_protocol_title">PROTOCOLLO DI SICUREZZA RICHIESTO</string>
@@ -108,6 +109,7 @@
     <string name="history_status_finalized">Finalizzato</string>
     <string name="history_status_canceled">Annullato</string>
     <string name="history_detected_at">Rilevato</string>
+    <string name="history_case_code">Codice intervento</string>
     <string name="history_last_activity_at">Ultima attivit&#224;</string>
     <string name="history_last_action">Ultima azione</string>
     <string name="history_updated_at">Ultimo aggiornamento</string>
@@ -128,6 +130,10 @@
     <string name="history_print_case">Stampa o salva PDF</string>
     <string name="history_print_error">Impossibile avviare la stampa su questo dispositivo.</string>
     <string name="history_print_page">Pagina %1$d</string>
+    <string name="history_print_page_of">Pagina %1$d/%2$d</string>
+    <string name="history_print_report_title">Rapporto di intervento</string>
+    <string name="history_print_issue_date">Data emissione</string>
+    <string name="history_open_diagnostic_reference">Apri riferimento diagnostico</string>
     <string name="history_edit_case">Modifica intervento</string>
     <string name="history_reopen_case">Riapri intervento</string>
     <string name="history_cancel_case">Annulla intervento</string>

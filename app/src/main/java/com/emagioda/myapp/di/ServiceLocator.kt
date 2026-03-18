@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.emagioda.myapp.data.datasource.AssetsDiagnosticDataSource
 import com.emagioda.myapp.data.local.history.MAINTENANCE_HISTORY_MIGRATION_1_2
+import com.emagioda.myapp.data.local.history.MAINTENANCE_HISTORY_MIGRATION_2_3
 import com.emagioda.myapp.data.local.history.MaintenanceHistoryDatabase
 import com.emagioda.myapp.data.repository.DiagnosticRepositoryImpl
 import com.emagioda.myapp.data.repository.MaintenanceHistoryRepositoryImpl
@@ -45,6 +46,7 @@ object ServiceLocator {
             "maintenance_history.db"
         )
             .addMigrations(MAINTENANCE_HISTORY_MIGRATION_1_2)
+            .addMigrations(MAINTENANCE_HISTORY_MIGRATION_2_3)
             .build()
     }
     private val maintenanceHistoryRepository by lazy {

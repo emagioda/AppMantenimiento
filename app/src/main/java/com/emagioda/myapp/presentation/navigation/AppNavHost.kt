@@ -22,6 +22,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.emagioda.myapp.presentation.screen.contacts.ContactsScreen
+import com.emagioda.myapp.presentation.screen.diagnostic.DiagnosticEndReferenceScreen
 import com.emagioda.myapp.presentation.screen.diagnostic.DiagnosticScreen
 import com.emagioda.myapp.presentation.screen.history.HistoryScreen
 import com.emagioda.myapp.presentation.screen.history.MaintenanceCaseDetailScreen
@@ -38,6 +39,9 @@ sealed class Route(val route: String) {
     }
     data object Diagnostic : Route("diagnostic/{machineId}") {
         fun createRoute(machineId: String) = "diagnostic/$machineId"
+    }
+    data object DiagnosticReference : Route("diagnosticReference/{machineId}/{nodeId}") {
+        fun createRoute(machineId: String, nodeId: String) = "diagnosticReference/$machineId/$nodeId"
     }
     data object MachineHistory : Route("machineHistory/{machineId}") {
         fun createRoute(machineId: String) = "machineHistory/$machineId"
@@ -199,6 +203,31 @@ fun AppNavHost(
         }
 
         composable(
+            route = Route.DiagnosticReference.route,
+            enterTransition = slideInLeft,
+            exitTransition = slideOutLeft,
+            popEnterTransition = slideInRight,
+            popExitTransition = slideOutRight
+        ) { backStackEntry ->
+            val machineId = Uri.decode(backStackEntry.arguments?.getString("machineId") ?: "N/A")
+            val nodeId = Uri.decode(backStackEntry.arguments?.getString("nodeId") ?: "N/A")
+            DiagnosticEndReferenceScreen(
+                machineId = machineId,
+                nodeId = nodeId,
+                onBack = { navController.popBackStack() },
+                onOpenTechnicians = { navController.navigate(Route.ContactsTechnicians.route) },
+                onOpenFilteredContacts = { providerIds, technicianIds ->
+                    navController.navigate(
+                        Route.Contacts.createRoute(
+                            providerIds = providerIds,
+                            technicianIds = technicianIds
+                        )
+                    )
+                }
+            )
+        }
+
+        composable(
             route = Route.History.route,
             enterTransition = slideInLeft,
             exitTransition = slideOutLeft,
@@ -226,7 +255,15 @@ fun AppNavHost(
             val caseId = backStackEntry.arguments?.getLong("caseId") ?: 0L
             MaintenanceCaseDetailScreen(
                 caseId = caseId,
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                onOpenDiagnosticReference = { machineId, nodeId ->
+                    navController.navigate(
+                        Route.DiagnosticReference.createRoute(
+                            Uri.encode(machineId),
+                            Uri.encode(nodeId)
+                        )
+                    )
+                }
             )
         }
 

@@ -65,8 +65,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -98,7 +98,9 @@ import com.emagioda.myapp.presentation.viewmodel.DiagnosticViewModel
 import com.emagioda.myapp.ui.theme.ResultFaultRed
 import com.emagioda.myapp.ui.theme.ResultResolvedGreen
 import com.emagioda.myapp.ui.theme.ResultWarningAmber
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -225,6 +227,136 @@ fun DiagnosticScreen(
             if (showSafetyDialog) {
                 SafetyWarningDialog(
                     onConfirm = { vm.dismissSafetyWarning() }
+                )
+            }
+        }
+    }
+}
+
+private data class DiagnosticReferenceUiState(
+    val machineName: String? = null,
+    val node: DiagnosticNode? = null,
+    val isLoading: Boolean = true,
+    val errorResId: Int? = null
+)
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DiagnosticEndReferenceScreen(
+    machineId: String,
+    nodeId: String,
+    onBack: () -> Unit,
+    onOpenTechnicians: () -> Unit,
+    onOpenFilteredContacts: (String, String) -> Unit = { _, _ -> }
+) {
+    val context = LocalContext.current
+    var uiState by remember(machineId, nodeId) {
+        mutableStateOf(DiagnosticReferenceUiState())
+    }
+    var safetyWarningDismissed by remember(nodeId) { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+    val node = uiState.node
+    val showSafetyDialog = (node?.safetyWarning == true) && !safetyWarningDismissed
+
+    fun openSchematic(document: SchematicDocument) {
+        val didOpen = SchematicPdfOpener.open(context, document)
+        if (!didOpen) {
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar(
+                    context.getString(R.string.diagnostic_schematic_open_error)
+                )
+            }
+        }
+    }
+
+    LaunchedEffect(machineId, nodeId) {
+        uiState = DiagnosticReferenceUiState(isLoading = true)
+        safetyWarningDismissed = false
+
+        val loadedState = withContext(Dispatchers.IO) {
+            runCatching {
+                val tree = ServiceLocator.provideGetTreeUseCase(context)(machineId)
+                val machine = ServiceLocator.provideGetMachineDetail(context)(machineId)
+                val endNode = tree.nodes.firstOrNull { it.id == nodeId && it.type == NodeType.END }
+
+                if (endNode == null) {
+                    DiagnosticReferenceUiState(
+                        isLoading = false,
+                        errorResId = R.string.diagnostic_error_loading
+                    )
+                } else {
+                    DiagnosticReferenceUiState(
+                        machineName = machine?.name ?: machineId,
+                        node = endNode,
+                        isLoading = false,
+                        errorResId = null
+                    )
+                }
+            }.getOrElse {
+                DiagnosticReferenceUiState(
+                    isLoading = false,
+                    errorResId = R.string.diagnostic_error_loading
+                )
+            }
+        }
+
+        uiState = loadedState
+    }
+
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text(stringResource(R.string.diagnostic_reference_title)) },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.cd_back)
+                        )
+                    }
+                }
+            )
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        contentWindowInsets = WindowInsets(0)
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .navigationBarsPadding()
+        ) {
+            when {
+                uiState.isLoading -> {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                }
+
+                uiState.errorResId != null || node == null -> {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text(
+                            text = stringResource(uiState.errorResId ?: R.string.diagnostic_error_loading),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(20.dp)
+                        )
+                    }
+                }
+
+                else -> {
+                    DiagnosticEndReferenceContent(
+                        node = node,
+                        onOpenTechnicians = onOpenTechnicians,
+                        onOpenFilteredContacts = onOpenFilteredContacts,
+                        onOpenSchematic = ::openSchematic
+                    )
+                }
+            }
+
+            if (showSafetyDialog) {
+                SafetyWarningDialog(
+                    onConfirm = { safetyWarningDismissed = true }
                 )
             }
         }
@@ -376,6 +508,104 @@ private fun QuestionContent(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun DiagnosticEndReferenceContent(
+    node: DiagnosticNode,
+    onOpenTechnicians: () -> Unit,
+    onOpenFilteredContacts: (String, String) -> Unit,
+    onOpenSchematic: (SchematicDocument) -> Unit
+) {
+    val scrollState = rememberScrollState()
+    val context = LocalContext.current
+    val titleText = remember(node.title, context.packageName) {
+        resolveDisplayText(context, node.title)
+    }
+    val descriptionText = remember(node.description, context.packageName) {
+        node.description?.let { resolveDisplayText(context, it) }
+    }
+    val showTechniciansButton = remember(node.parts) {
+        node.parts.orEmpty().none { part ->
+            part.detail.supplier.orEmpty().isNotEmpty() ||
+                part.detail.technicalContacts.orEmpty().isNotEmpty()
+        }
+    }
+
+    LaunchedEffect(node.id) {
+        scrollState.scrollTo(0)
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 20.dp)
+            .padding(top = 16.dp, bottom = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .verticalScroll(scrollState),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            EndResultIcon(node.result ?: EndResult.NO_ISSUE)
+
+            Spacer(Modifier.height(24.dp))
+
+            Text(
+                text = titleText,
+                style = MaterialTheme.typography.headlineSmall,
+                textAlign = TextAlign.Center
+            )
+
+            descriptionText?.let {
+                Spacer(Modifier.height(24.dp))
+                SuggestCard(it)
+            }
+
+            node.schematics?.takeIf { it.isNotEmpty() }?.let { schematics ->
+                Spacer(Modifier.height(24.dp))
+                SchematicsSection(
+                    schematics = schematics,
+                    onOpenSchematic = onOpenSchematic
+                )
+            }
+
+            node.parts?.takeIf { it.isNotEmpty() }?.let { parts ->
+                Spacer(Modifier.height(24.dp))
+                DiagnosticPartsSection(
+                    parts = parts,
+                    onContactClick = { providerIds, technicianIds ->
+                        onOpenFilteredContacts(
+                            providerIds.joinToString(","),
+                            technicianIds.joinToString(",")
+                        )
+                    }
+                )
+            }
+
+            Spacer(Modifier.height(24.dp))
+
+            if (showTechniciansButton) {
+                FilledTonalButton(
+                    onClick = onOpenTechnicians,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    shape = MaterialTheme.shapes.medium
+                ) {
+                    Text(
+                        text = stringResource(R.string.contacts_tech_shortcut).uppercase(),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(24.dp))
         }
     }
 }

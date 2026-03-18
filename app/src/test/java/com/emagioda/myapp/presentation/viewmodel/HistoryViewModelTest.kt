@@ -47,6 +47,7 @@ class HistoryViewModelTest {
     ): MaintenanceCaseSummary =
         MaintenanceCaseSummary(
             id = id,
+            caseCode = "MACHINE_$id-180320262300",
             machineId = "MACHINE_$id",
             machineNameSnapshot = "Macchina $id",
             problemSummary = "Problema $id",

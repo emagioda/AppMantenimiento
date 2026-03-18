@@ -15,6 +15,7 @@ interface MaintenanceHistoryDao {
         """
         SELECT
             c.id,
+            c.caseCode,
             c.machineId,
             c.machineNameSnapshot,
             COALESCE(

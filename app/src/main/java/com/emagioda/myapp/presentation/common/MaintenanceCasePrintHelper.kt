@@ -1,6 +1,8 @@
 package com.emagioda.myapp.presentation.common
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -34,7 +36,7 @@ object MaintenanceCasePrintHelper {
     fun printCase(context: Context, detail: MaintenanceCaseDetail): Boolean {
         val printManager = context.getSystemService(Context.PRINT_SERVICE) as? PrintManager
             ?: return false
-        val jobName = "${context.getString(R.string.history_case_detail_title)} - ${detail.machineId}"
+        val jobName = "${context.getString(R.string.history_case_detail_title)} - ${detail.caseCode}"
 
         printManager.print(
             jobName,
@@ -126,158 +128,198 @@ private class MaintenanceCasePdfRenderer(
     private val detail: MaintenanceCaseDetail,
     private val pdfDocument: PrintedPdfDocument
 ) {
-    private val contentRect = pdfDocument.pageContentRect
-    private val left = contentRect.left.toFloat() + 36f
-    private val right = contentRect.right.toFloat() - 36f
-    private val top = contentRect.top.toFloat() + 34f
-    private val bottom = contentRect.bottom.toFloat() - 28f
-    private val footerHeight = 24f
-    private val contentBottom = bottom - footerHeight
-    private val contentWidth = right - left
+    private val issueTimestamp = System.currentTimeMillis()
+    private val issueDateText = formatPrintDateTime(issueTimestamp)
+    private val logoBitmap: Bitmap? = BitmapFactory.decodeResource(
+        context.resources,
+        R.drawable.splash_logo
+    )
 
-    private val titlePaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#18202B")
-        textSize = 22f
-        typeface = android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
-    }
-    private val machinePaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#243244")
-        textSize = 15f
-        typeface = android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
-    }
-    private val captionPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#6B7280")
-        textSize = 10f
-    }
-    private val bodyPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#243244")
-        textSize = 12f
-    }
-    private val valuePaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#18202B")
-        textSize = 12f
-        typeface = android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
-    }
-    private val sectionPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#18202B")
-        textSize = 16f
-        typeface = android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
-    }
-    private val timelineTitlePaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#18202B")
+    private val contentRect = pdfDocument.pageContentRect
+    private val pageLeft = contentRect.left.toFloat() + 20f
+    private val pageRight = contentRect.right.toFloat() - 20f
+    private val pageTop = contentRect.top.toFloat() + 16f
+    private val pageBottom = contentRect.bottom.toFloat() - 12f
+    private val pageWidth = pageRight - pageLeft
+    private val headerHeight = 54f
+    private val footerHeight = 20f
+    private val contentTop = pageTop + headerHeight + 10f
+    private val contentBottom = pageBottom - footerHeight
+
+    private val brandPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#16202C")
         textSize = 13f
         typeface = android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
     }
-    private val timelineDatePaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#5C6470")
-        textSize = 10f
+    private val headerTitlePaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#4B5563")
+        textSize = 9.5f
+    }
+    private val headerMetaPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#374151")
+        textSize = 8.8f
         textAlign = Paint.Align.RIGHT
     }
-    private val timelineBodyPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+    private val machinePaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#16202C")
+        textSize = 13.5f
+        typeface = android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
+    }
+    private val machineCodePaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#6B7280")
+        textSize = 9f
+    }
+    private val sectionLabelPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#6B7280")
+        textSize = 8.8f
+        typeface = android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
+    }
+    private val problemPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#16202C")
+        textSize = 17f
+        typeface = android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
+    }
+    private val sectionPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#16202C")
+        textSize = 13.2f
+        typeface = android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
+    }
+    private val summaryLabelPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#6B7280")
+        textSize = 9.2f
+    }
+    private val summaryValuePaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#1F2937")
+        textSize = 9.8f
+        typeface = android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
+    }
+    private val timelineTypePaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#16202C")
+        textSize = 10.6f
+        typeface = android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
+    }
+    private val timelineDatePaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#6B7280")
+        textSize = 8.8f
+        textAlign = Paint.Align.RIGHT
+    }
+    private val timelineDescriptionPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#243244")
-        textSize = 11.5f
+        textSize = 9.8f
     }
     private val chipTextPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.WHITE
-        textSize = 10f
+        textSize = 8.4f
         typeface = android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
     }
-    private val chipPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private val linePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#E3E7EB")
-        strokeWidth = 1f
-    }
-    private val timelineCardPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#F6F7F9")
-        style = Paint.Style.FILL
-    }
-    private val timelineCardStrokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#E3E7EB")
-        style = Paint.Style.STROKE
-        strokeWidth = 1f
-    }
     private val footerPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#7B8190")
-        textSize = 10f
+        color = Color.parseColor("#6B7280")
+        textSize = 8.5f
         textAlign = Paint.Align.CENTER
     }
+    private val linePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#E4E7EC")
+        strokeWidth = 1f
+    }
+    private val chipPaint = Paint(Paint.ANTI_ALIAS_FLAG)
 
     private val problemTitle = resolveDisplayText(
         context,
         detail.problemSummary?.takeIf { it.isNotBlank() } ?: detail.diagnosisTitle
     )
-    private val diagnosisDescription = detail.diagnosisDescription
-        ?.takeIf { it.isNotBlank() }
-        ?.let { resolveDisplayText(context, it) }
 
+    private var countingOnly = false
+    private var totalPages = 0
     private var currentPageNumber = 0
     private var currentPage: android.graphics.pdf.PdfDocument.Page? = null
     private var canvas: Canvas? = null
-    private var y = top
+    private var y = contentTop
 
     fun render(cancellationSignal: CancellationSignal) {
+        totalPages = countPages(cancellationSignal)
+        if (cancellationSignal.isCanceled) return
+
+        countingOnly = false
+        resetState()
         startNewPage()
-
-        drawDocumentHeader(cancellationSignal)
-        drawSummarySection(cancellationSignal)
-        drawTimelineSectionHeader(cancellationSignal)
-        detail.events.forEach { event ->
-            if (cancellationSignal.isCanceled) return
-            drawTimelineItem(event)
-        }
-
+        renderContent(cancellationSignal)
         finishCurrentPage()
     }
 
-    private fun drawDocumentHeader(cancellationSignal: CancellationSignal) {
+    private fun countPages(cancellationSignal: CancellationSignal): Int {
+        countingOnly = true
+        resetState()
+        startNewPage()
+        renderContent(cancellationSignal)
+        finishCurrentPage()
+        return currentPageNumber
+    }
+
+    private fun renderContent(cancellationSignal: CancellationSignal) {
+        drawMachineBlock(cancellationSignal)
+        drawSummarySection(cancellationSignal)
+        drawTimelineSectionHeader(cancellationSignal)
+
+        detail.events.forEach { event ->
+            if (cancellationSignal.isCanceled) return
+            drawTimelineRow(event)
+        }
+    }
+
+    private fun drawMachineBlock(cancellationSignal: CancellationSignal) {
+        val chipSpecs = listOf(
+            statusLabel(detail.status) to statusChipColors(detail.status),
+            resultLabel(detail.endResult) to resultChipColors(detail.endResult)
+        )
+        val chipMetrics = measureChipRow(chipSpecs)
+        val leftColumnWidth = (pageWidth - chipMetrics.first - 18f).coerceAtLeast(pageWidth * 0.52f)
+        val machineLayout = createLayout(detail.machineNameSnapshot, machinePaint, leftColumnWidth.toInt())
+        val machineCodeLayout = createLayout(detail.machineId, machineCodePaint, leftColumnWidth.toInt())
+        val infoBlockHeight = machineLayout.height + 2f + machineCodeLayout.height
+        val headerBandHeight = max(infoBlockHeight.toFloat(), chipMetrics.second)
+
+        ensureSpace(headerBandHeight + 8f)
+
+        if (!countingOnly) {
+            val canvas = requireCanvas()
+            canvas.save()
+            canvas.translate(pageLeft, y)
+            machineLayout.draw(canvas)
+            canvas.restore()
+
+            canvas.save()
+            canvas.translate(pageLeft, y + machineLayout.height + 2f)
+            machineCodeLayout.draw(canvas)
+            canvas.restore()
+
+            drawChipRowAt(
+                startX = pageRight - chipMetrics.first,
+                startY = y,
+                values = chipSpecs
+            )
+        }
+
+        y += headerBandHeight + 8f
+        drawSingleLine(context.getString(R.string.history_event_problem), sectionLabelPaint, spacingAfter = 4f)
         drawMultilineText(
-            text = context.getString(R.string.history_case_detail_title),
-            paint = captionPaint,
+            text = problemTitle,
+            paint = problemPaint,
             spacingAfter = 8f,
             cancellationSignal = cancellationSignal
         )
-        drawMultilineText(
-            text = problemTitle,
-            paint = titlePaint,
-            spacingAfter = 10f,
-            cancellationSignal = cancellationSignal
-        )
-        drawSingleLine(detail.machineNameSnapshot, machinePaint, spacingAfter = 4f)
-        drawSingleLine(detail.machineId, captionPaint, spacingAfter = 12f)
-        drawChipRow(
-            values = listOf(
-                statusLabel(detail.status) to statusChipColors(detail.status),
-                resultLabel(detail.endResult) to resultChipColors(detail.endResult)
-            )
-        )
-        diagnosisDescription?.let {
-            y += 12f
-            drawMultilineText(
-                text = it,
-                paint = bodyPaint,
-                spacingAfter = 16f,
-                cancellationSignal = cancellationSignal
-            )
-        } ?: run {
-            y += 16f
-        }
+        y += 6f
     }
 
     private fun drawSummarySection(cancellationSignal: CancellationSignal) {
         drawSingleLine(
-            context.getString(R.string.history_summary_title),
-            sectionPaint,
-            spacingAfter = 10f
+            text = context.getString(R.string.history_summary_title),
+            paint = sectionPaint,
+            spacingAfter = 4f
         )
 
         drawSummaryRow(
-            label = context.getString(R.string.history_sheet_status),
-            value = statusLabel(detail.status),
-            cancellationSignal = cancellationSignal
-        )
-        drawSummaryRow(
-            label = context.getString(R.string.history_result_label),
-            value = resultLabel(detail.endResult),
+            label = context.getString(R.string.history_case_code),
+            value = detail.caseCode,
             cancellationSignal = cancellationSignal
         )
         drawSummaryRow(
@@ -311,95 +353,82 @@ private class MaintenanceCasePdfRenderer(
                 cancellationSignal = cancellationSignal
             )
         }
-        y += 16f
+        y += 8f
     }
 
     private fun drawTimelineSectionHeader(cancellationSignal: CancellationSignal) {
         drawSingleLine(
-            context.getString(R.string.history_timeline_title),
-            sectionPaint,
-            spacingAfter = 6f
+            text = context.getString(R.string.history_timeline_title),
+            paint = sectionPaint,
+            spacingAfter = 2f
         )
         drawMultilineText(
             text = context.getString(R.string.history_timeline_subtitle),
-            paint = captionPaint,
-            spacingAfter = 12f,
+            paint = summaryLabelPaint,
+            spacingAfter = 8f,
             cancellationSignal = cancellationSignal
         )
+        ensureSpace(1f)
+        if (!countingOnly) {
+            requireCanvas().drawLine(pageLeft, y, pageRight, y, linePaint)
+        }
+        y += 6f
     }
 
-    private fun drawTimelineItem(item: MaintenanceTimelineEvent) {
-        val resolvedTitle = resolveDisplayText(context, item.title)
-        val resolvedNote = item.note
+    private fun drawTimelineRow(item: MaintenanceTimelineEvent) {
+        val eventTitle = resolveDisplayText(context, item.title)
+        val eventDate = formatPrintDateTime(item.createdAt)
+        val description = item.note
             ?.takeIf { it.isNotBlank() }
             ?.let { resolveDisplayText(context, it) }
             .orEmpty()
-        val dateText = formatPrintDateTime(item.createdAt)
-        val innerPadding = 14f
-        val dateWidth = max(150f, timelineDatePaint.measureText(dateText))
-        val titleWidth = max(80f, contentWidth - innerPadding * 2f - dateWidth - 12f)
-        val headerHeight = max(
-            timelineTitlePaint.fontMetrics.run { bottom - top },
-            timelineDatePaint.fontMetrics.run { bottom - top }
-        )
-        val noteLayout = createLayout(
-            text = resolvedNote.ifBlank { "-" },
-            paint = timelineBodyPaint,
-            width = (contentWidth - innerPadding * 2f).toInt()
-        )
-        val blockHeight = innerPadding * 2f + headerHeight + 10f + noteLayout.height
-
-        ensureSpace(blockHeight)
-
-        val canvas = requireCanvas()
-        val top = y
-        val rect = RectF(left, top, right, top + blockHeight)
-        canvas.drawRoundRect(rect, 16f, 16f, timelineCardPaint)
-        canvas.drawRoundRect(rect, 16f, 16f, timelineCardStrokePaint)
-
-        val titleBaseline = top + innerPadding - timelineTitlePaint.fontMetrics.top
-        val dateBaseline = top + innerPadding - timelineDatePaint.fontMetrics.top
-        val titleText = TextUtils.ellipsize(
-            resolvedTitle,
-            timelineTitlePaint,
-            titleWidth,
+        val dateWidth = max(128f, timelineDatePaint.measureText(eventDate))
+        val typeWidth = max(120f, pageWidth * 0.34f)
+        val descriptionWidth = (pageWidth - typeWidth - dateWidth - 16f).coerceAtLeast(110f)
+        val typeText = TextUtils.ellipsize(
+            eventTitle,
+            timelineTypePaint,
+            typeWidth,
             TextUtils.TruncateAt.END
         ).toString()
-        canvas.drawText(titleText, left + innerPadding, titleBaseline, timelineTitlePaint)
-        canvas.drawText(dateText, right - innerPadding, dateBaseline, timelineDatePaint)
+        val descriptionLayout = createLayout(
+            text = description.ifBlank { "-" },
+            paint = timelineDescriptionPaint,
+            width = descriptionWidth.toInt()
+        )
+        val topLineHeight = max(
+            timelineTypePaint.fontMetrics.run { bottom - top },
+            timelineDatePaint.fontMetrics.run { bottom - top }
+        )
+        val rowHeight = max(topLineHeight + 4f + descriptionLayout.height, 28f) + 8f
 
-        canvas.save()
-        canvas.translate(left + innerPadding, top + innerPadding + headerHeight + 10f)
-        noteLayout.draw(canvas)
-        canvas.restore()
+        ensureSpace(rowHeight)
 
-        y = rect.bottom + 12f
-    }
+        if (!countingOnly) {
+            val canvas = requireCanvas()
+            val rowTop = y
+            val typeBaseline = rowTop - timelineTypePaint.fontMetrics.top
+            val dateBaseline = rowTop - timelineDatePaint.fontMetrics.top
+            val descriptionX = pageLeft + typeWidth + 12f
 
-    private fun drawChipRow(values: List<Pair<String, Pair<Int, Int>>>) {
-        var chipX = left
-        var chipY = y
-        val maxRowWidth = right
-        val chipHeight = 22f
+            canvas.drawText(typeText, pageLeft, typeBaseline, timelineTypePaint)
+            canvas.drawText(eventDate, pageRight, dateBaseline, timelineDatePaint)
 
-        values.forEach { (label, colors) ->
-            val textWidth = chipTextPaint.measureText(label)
-            val chipWidth = textWidth + 24f
-            if (chipX + chipWidth > maxRowWidth) {
-                chipX = left
-                chipY += chipHeight + 8f
-            }
-            ensureSpace((chipY - y) + chipHeight)
-            chipPaint.color = colors.first
-            val rect = RectF(chipX, chipY, chipX + chipWidth, chipY + chipHeight)
-            requireCanvas().drawRoundRect(rect, 999f, 999f, chipPaint)
-            chipTextPaint.color = colors.second
-            val textBaseline = chipY + (chipHeight / 2f) - ((chipTextPaint.descent() + chipTextPaint.ascent()) / 2f)
-            requireCanvas().drawText(label, chipX + 12f, textBaseline, chipTextPaint)
-            chipX += chipWidth + 8f
+            canvas.save()
+            canvas.translate(descriptionX, rowTop + topLineHeight + 4f)
+            descriptionLayout.draw(canvas)
+            canvas.restore()
+
+            canvas.drawLine(
+                pageLeft,
+                rowTop + rowHeight,
+                pageRight,
+                rowTop + rowHeight,
+                linePaint
+            )
         }
 
-        y = chipY + chipHeight
+        y += rowHeight + 4f
     }
 
     private fun drawSummaryRow(
@@ -407,32 +436,30 @@ private class MaintenanceCasePdfRenderer(
         value: String,
         cancellationSignal: CancellationSignal
     ) {
-        val labelWidth = contentWidth * 0.34f
-        val valueWidth = contentWidth - labelWidth - 14f
-        val labelLayout = createLayout(label, captionPaint, labelWidth.toInt())
-        val valueLayout = createLayout(value, valuePaint, valueWidth.toInt())
-        val rowHeight = max(labelLayout.height, valueLayout.height).toFloat() + 14f
+        val labelWidth = pageWidth * 0.28f
+        val valueWidth = (pageWidth - labelWidth - 12f).coerceAtLeast(140f)
+        val labelLayout = createLayout(label, summaryLabelPaint, labelWidth.toInt())
+        val valueLayout = createLayout(value, summaryValuePaint, valueWidth.toInt())
+        val rowHeight = max(labelLayout.height, valueLayout.height).toFloat() + 6f
 
         ensureSpace(rowHeight)
 
-        val canvas = requireCanvas()
-        val rowTop = y
-        canvas.drawLine(left, rowTop + rowHeight - 1f, right, rowTop + rowHeight - 1f, linePaint)
+        if (!countingOnly) {
+            val canvas = requireCanvas()
+            canvas.save()
+            canvas.translate(pageLeft, y)
+            labelLayout.draw(canvas)
+            canvas.restore()
 
-        canvas.save()
-        canvas.translate(left, rowTop + 2f)
-        labelLayout.draw(canvas)
-        canvas.restore()
+            canvas.save()
+            canvas.translate(pageLeft + labelWidth + 12f, y)
+            valueLayout.draw(canvas)
+            canvas.restore()
 
-        canvas.save()
-        canvas.translate(left + labelWidth + 14f, rowTop + 2f)
-        valueLayout.draw(canvas)
-        canvas.restore()
-
-        y += rowHeight
-        if (!cancellationSignal.isCanceled) {
-            y += 2f
+            canvas.drawLine(pageLeft, y + rowHeight, pageRight, y + rowHeight, linePaint)
         }
+
+        y += rowHeight + if (cancellationSignal.isCanceled) 0f else 2f
     }
 
     private fun drawSingleLine(
@@ -440,13 +467,15 @@ private class MaintenanceCasePdfRenderer(
         paint: TextPaint,
         spacingAfter: Float = 0f
     ) {
-        val layout = createLayout(text, paint, contentWidth.toInt())
+        val layout = createLayout(text, paint, pageWidth.toInt())
         ensureSpace(layout.height.toFloat())
-        val canvas = requireCanvas()
-        canvas.save()
-        canvas.translate(left, y)
-        layout.draw(canvas)
-        canvas.restore()
+        if (!countingOnly) {
+            val canvas = requireCanvas()
+            canvas.save()
+            canvas.translate(pageLeft, y)
+            layout.draw(canvas)
+            canvas.restore()
+        }
         y += layout.height + spacingAfter
     }
 
@@ -459,13 +488,15 @@ private class MaintenanceCasePdfRenderer(
         var remaining = text.trim()
         while (remaining.isNotEmpty() && !cancellationSignal.isCanceled) {
             val availableHeight = (contentBottom - y).toInt().coerceAtLeast(1)
-            val layout = createLayout(remaining, paint, contentWidth.toInt())
+            val layout = createLayout(remaining, paint, pageWidth.toInt())
             if (layout.height <= availableHeight) {
-                val canvas = requireCanvas()
-                canvas.save()
-                canvas.translate(left, y)
-                layout.draw(canvas)
-                canvas.restore()
+                if (!countingOnly) {
+                    val canvas = requireCanvas()
+                    canvas.save()
+                    canvas.translate(pageLeft, y)
+                    layout.draw(canvas)
+                    canvas.restore()
+                }
                 y += layout.height + spacingAfter
                 break
             }
@@ -478,16 +509,166 @@ private class MaintenanceCasePdfRenderer(
 
             val endIndex = layout.getLineEnd(fittingLines - 1)
             val segment = remaining.substring(0, endIndex).trimEnd()
-            val segmentLayout = createLayout(segment, paint, contentWidth.toInt())
-            val canvas = requireCanvas()
-            canvas.save()
-            canvas.translate(left, y)
-            segmentLayout.draw(canvas)
-            canvas.restore()
-            y += segmentLayout.height + 4f
+            val segmentLayout = createLayout(segment, paint, pageWidth.toInt())
+            if (!countingOnly) {
+                val canvas = requireCanvas()
+                canvas.save()
+                canvas.translate(pageLeft, y)
+                segmentLayout.draw(canvas)
+                canvas.restore()
+            }
+            y += segmentLayout.height + 2f
             remaining = remaining.substring(endIndex).trimStart()
             startNewPage()
         }
+    }
+
+    private fun drawChipRow(values: List<Pair<String, Pair<Int, Int>>>) {
+        var chipX = pageLeft
+        var chipY = y
+        val chipHeight = 18f
+
+        values.forEach { (label, colors) ->
+            val chipWidth = chipTextPaint.measureText(label) + 18f
+            if (chipX + chipWidth > pageRight) {
+                chipX = pageLeft
+                chipY += chipHeight + 6f
+            }
+            ensureSpace((chipY - y) + chipHeight)
+
+            if (!countingOnly) {
+                chipPaint.color = colors.first
+                val rect = RectF(chipX, chipY, chipX + chipWidth, chipY + chipHeight)
+                requireCanvas().drawRoundRect(rect, 999f, 999f, chipPaint)
+                chipTextPaint.color = colors.second
+                val textBaseline = chipY + (chipHeight / 2f) -
+                    ((chipTextPaint.descent() + chipTextPaint.ascent()) / 2f)
+                requireCanvas().drawText(label, chipX + 9f, textBaseline, chipTextPaint)
+            }
+
+            chipX += chipWidth + 6f
+        }
+
+        y = chipY + chipHeight
+    }
+
+    private fun drawChipRowAt(
+        startX: Float,
+        startY: Float,
+        values: List<Pair<String, Pair<Int, Int>>>
+    ) {
+        var chipX = startX
+        val chipHeight = 18f
+
+        values.forEach { (label, colors) ->
+            val chipWidth = chipTextPaint.measureText(label) + 18f
+            if (!countingOnly) {
+                chipPaint.color = colors.first
+                val rect = RectF(chipX, startY, chipX + chipWidth, startY + chipHeight)
+                requireCanvas().drawRoundRect(rect, 999f, 999f, chipPaint)
+                chipTextPaint.color = colors.second
+                val textBaseline = startY + (chipHeight / 2f) -
+                    ((chipTextPaint.descent() + chipTextPaint.ascent()) / 2f)
+                requireCanvas().drawText(label, chipX + 9f, textBaseline, chipTextPaint)
+            }
+            chipX += chipWidth + 6f
+        }
+    }
+
+    private fun measureChipRow(values: List<Pair<String, Pair<Int, Int>>>): Pair<Float, Float> {
+        if (values.isEmpty()) return 0f to 0f
+        val totalWidth = values.sumOf { (label, _) ->
+            (chipTextPaint.measureText(label) + 18f).toDouble()
+        }.toFloat() + (6f * (values.size - 1))
+        return totalWidth to 18f
+    }
+
+    private fun startNewPage() {
+        finishCurrentPage()
+        currentPageNumber += 1
+        if (!countingOnly) {
+            currentPage = pdfDocument.startPage(currentPageNumber)
+            canvas = currentPage?.canvas
+            drawPageHeader()
+        }
+        y = contentTop
+    }
+
+    private fun finishCurrentPage() {
+        if (currentPageNumber == 0) return
+
+        if (!countingOnly) {
+            val page = currentPage ?: return
+            val canvas = canvas ?: return
+            canvas.drawText(
+                context.getString(
+                    R.string.history_print_page_of,
+                    currentPageNumber,
+                    totalPages
+                ),
+                contentRect.exactCenterX(),
+                pageBottom,
+                footerPaint
+            )
+            pdfDocument.finishPage(page)
+            currentPage = null
+            this.canvas = null
+        }
+    }
+
+    private fun drawPageHeader() {
+        val canvas = requireCanvas()
+        val logoLeft = pageLeft
+        val logoTop = pageTop
+        val logoSize = 28f
+        logoBitmap?.let { bitmap ->
+            canvas.drawBitmap(
+                bitmap,
+                null,
+                RectF(logoLeft, logoTop, logoLeft + logoSize, logoTop + logoSize),
+                null
+            )
+        }
+
+        val textStart = if (logoBitmap != null) logoLeft + logoSize + 10f else logoLeft
+        val brandBaseline = logoTop - brandPaint.fontMetrics.top
+        val subtitleBaseline = brandBaseline + 13f
+        canvas.drawText(
+            context.getString(R.string.app_name),
+            textStart,
+            brandBaseline,
+            brandPaint
+        )
+        canvas.drawText(
+            context.getString(R.string.history_print_report_title),
+            textStart,
+            subtitleBaseline,
+            headerTitlePaint
+        )
+
+        val issueLine = "${context.getString(R.string.history_print_issue_date)}: $issueDateText"
+        val codeLine = "${context.getString(R.string.history_case_code)}: ${detail.caseCode}"
+        val issueBaseline = logoTop - headerMetaPaint.fontMetrics.top
+        val codeBaseline = issueBaseline + 13f
+        val maxMetaWidth = (pageWidth * 0.48f).toFloat()
+
+        canvas.drawText(
+            TextUtils.ellipsize(issueLine, headerMetaPaint, maxMetaWidth, TextUtils.TruncateAt.END)
+                .toString(),
+            pageRight,
+            issueBaseline,
+            headerMetaPaint
+        )
+        canvas.drawText(
+            TextUtils.ellipsize(codeLine, headerMetaPaint, maxMetaWidth, TextUtils.TruncateAt.END)
+                .toString(),
+            pageRight,
+            codeBaseline,
+            headerMetaPaint
+        )
+
+        val dividerY = pageTop + headerHeight
+        canvas.drawLine(pageLeft, dividerY, pageRight, dividerY, linePaint)
     }
 
     private fun fittingLineCount(layout: StaticLayout, availableHeight: Int): Int {
@@ -515,26 +696,11 @@ private class MaintenanceCasePdfRenderer(
         }
     }
 
-    private fun startNewPage() {
-        finishCurrentPage()
-        currentPageNumber += 1
-        currentPage = pdfDocument.startPage(currentPageNumber)
-        canvas = currentPage?.canvas
-        y = top
-    }
-
-    private fun finishCurrentPage() {
-        val page = currentPage ?: return
-        val canvas = canvas ?: return
-        canvas.drawText(
-            context.getString(R.string.history_print_page, currentPageNumber),
-            contentRect.exactCenterX(),
-            bottom,
-            footerPaint
-        )
-        pdfDocument.finishPage(page)
+    private fun resetState() {
+        currentPageNumber = 0
         currentPage = null
-        this.canvas = null
+        canvas = null
+        y = contentTop
     }
 
     private fun requireCanvas(): Canvas = checkNotNull(canvas)

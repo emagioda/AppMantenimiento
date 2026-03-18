@@ -11,6 +11,7 @@ import com.emagioda.myapp.domain.model.MaintenanceStatus
 @Entity(tableName = "maintenance_cases")
 data class MaintenanceCaseEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val caseCode: String,
     val machineId: String,
     val machineNameSnapshot: String,
     val endNodeId: String,
@@ -37,6 +38,7 @@ data class MaintenanceEventEntity(
 
 data class MaintenanceCaseSummaryRow(
     val id: Long,
+    val caseCode: String,
     val machineId: String,
     val machineNameSnapshot: String,
     val problemSummary: String?,

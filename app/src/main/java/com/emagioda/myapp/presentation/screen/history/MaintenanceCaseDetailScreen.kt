@@ -89,7 +89,8 @@ private enum class HistoryDetailSheetMode {
 @Composable
 fun MaintenanceCaseDetailScreen(
     caseId: Long,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onOpenDiagnosticReference: (String, String) -> Unit
 ) {
     val context = LocalContext.current
     val vm: MaintenanceCaseDetailViewModel = viewModel(
@@ -215,6 +216,19 @@ fun MaintenanceCaseDetailScreen(
                 ) {
                     item { HistoryCaseHeader(detail = detail) }
                     item { HistoryCaseSummary(detail = detail) }
+                    item {
+                        FilledTonalButton(
+                            onClick = {
+                                onOpenDiagnosticReference(
+                                    detail.machineId,
+                                    detail.endNodeId
+                                )
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(stringResource(R.string.history_open_diagnostic_reference))
+                        }
+                    }
 
                     if (detail.status != MaintenanceStatus.FINALIZED &&
                         detail.status != MaintenanceStatus.CANCELED
@@ -380,9 +394,6 @@ private fun HistoryCaseHeader(
         context,
         detail.problemSummary?.takeIf { it.isNotBlank() } ?: detail.diagnosisTitle
     )
-    val diagnosisDescription = detail.diagnosisDescription?.let {
-        resolveDisplayText(context, it)
-    }
 
     Card(
         colors = CardDefaults.cardColors(
@@ -408,12 +419,12 @@ private fun HistoryCaseHeader(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = detail.machineId,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.weight(1f)
-                )
+            Text(
+                text = detail.machineId,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.weight(1f)
+            )
                 MaintenanceStatusChip(status = detail.status)
             }
 
@@ -421,14 +432,6 @@ private fun HistoryCaseHeader(
                 text = problemTitle,
                 style = MaterialTheme.typography.headlineSmall
             )
-
-            diagnosisDescription?.takeIf { it.isNotBlank() }?.let {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
 
             MaintenanceResultChip(result = detail.endResult)
         }
@@ -457,6 +460,10 @@ private fun HistoryCaseSummary(
                 fontWeight = FontWeight.SemiBold
             )
 
+            SummaryLine(
+                label = stringResource(R.string.history_case_code),
+                value = detail.caseCode
+            )
             SummaryLine(
                 label = stringResource(R.string.history_detected_at),
                 value = formatHistoryDateTime(detail.openedAt)

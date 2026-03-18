@@ -21,6 +21,9 @@ import com.emagioda.myapp.domain.model.UpdateMaintenanceCaseRequest
 import com.emagioda.myapp.domain.repository.MaintenanceHistoryRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class MaintenanceHistoryRepositoryImpl(
     private val database: MaintenanceHistoryDatabase,
@@ -49,6 +52,7 @@ class MaintenanceHistoryRepositoryImpl(
 
                 MaintenanceCaseDetail(
                     id = it.maintenanceCase.id,
+                    caseCode = it.maintenanceCase.caseCode,
                     machineId = it.maintenanceCase.machineId,
                     machineNameSnapshot = it.maintenanceCase.machineNameSnapshot,
                     endNodeId = it.maintenanceCase.endNodeId,
@@ -81,8 +85,10 @@ class MaintenanceHistoryRepositoryImpl(
         database.withTransaction {
             val now = System.currentTimeMillis()
             val resolvedAt = if (request.status == MaintenanceStatus.FINALIZED) now else null
+            val caseCode = generateCaseCode(request.machineId, now)
             val caseId = dao.insertCase(
                 MaintenanceCaseEntity(
+                    caseCode = caseCode,
                     machineId = request.machineId,
                     machineNameSnapshot = request.machineNameSnapshot,
                     endNodeId = request.endNodeId,
@@ -286,6 +292,7 @@ class MaintenanceHistoryRepositoryImpl(
     private fun MaintenanceCaseSummaryRow.toDomain(): MaintenanceCaseSummary =
         MaintenanceCaseSummary(
             id = id,
+            caseCode = caseCode,
             machineId = machineId,
             machineNameSnapshot = machineNameSnapshot,
             problemSummary = problemSummary,
@@ -310,4 +317,15 @@ class MaintenanceHistoryRepositoryImpl(
             InitialMaintenanceAction.TEST_PERFORMED -> MaintenanceEventType.TEST_PERFORMED
             InitialMaintenanceAction.OTHER -> MaintenanceEventType.OTHER
         }
+
+    private fun generateCaseCode(machineId: String, createdAt: Long): String {
+        val machineCode = machineId
+            .trim()
+            .uppercase(Locale.ROOT)
+            .replace("\\s+".toRegex(), "_")
+            .replace("[^A-Z0-9_-]".toRegex(), "")
+        val timestamp = SimpleDateFormat("ddMMyyyyHHmm", Locale.getDefault())
+            .format(Date(createdAt))
+        return "$machineCode-$timestamp"
+    }
 }
