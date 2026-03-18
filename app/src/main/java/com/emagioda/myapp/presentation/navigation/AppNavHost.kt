@@ -66,7 +66,6 @@ sealed class Route(val route: String) {
         }
     }
     data object ContactsTechnicians : Route("contacts/technicians")
-    data object ContactsProviders : Route("contacts/providers")
 }
 
 @Composable
@@ -168,9 +167,7 @@ fun AppNavHost(
             DiagnosticScreen(
                 machineId = machineId,
                 onRestartToHome = { navController.popBackStack(Route.Home.route, false) },
-                onOpenContacts = { navController.navigate(Route.Contacts.createRoute()) },
                 onOpenTechnicians = { navController.navigate(Route.ContactsTechnicians.route) },
-                onOpenProviders = { navController.navigate(Route.ContactsProviders.route) },
                 onOpenFilteredContacts = { providerIds, technicianIds ->
                     navController.navigate(
                         Route.Contacts.createRoute(
@@ -305,16 +302,6 @@ fun AppNavHost(
             popExitTransition = slideOutRight
         ) {
             ContactsScreen(onBack = { navController.popBackStack() }, initialTab = 0)
-        }
-
-        composable(
-            route = Route.ContactsProviders.route,
-            enterTransition = slideInLeft,
-            exitTransition = slideOutLeft,
-            popEnterTransition = slideInRight,
-            popExitTransition = slideOutRight
-        ) {
-            ContactsScreen(onBack = { navController.popBackStack() }, initialTab = 1)
         }
     }
 }

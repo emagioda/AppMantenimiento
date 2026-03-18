@@ -20,6 +20,8 @@ import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
 import android.text.TextUtils
+import androidx.core.graphics.toColorInt
+import androidx.core.graphics.withTranslation
 import com.emagioda.myapp.R
 import com.emagioda.myapp.domain.model.EndResult
 import com.emagioda.myapp.domain.model.MaintenanceCaseDetail
@@ -30,6 +32,18 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import kotlin.math.max
+
+private val PrintInk = "#16202C".toColorInt()
+private val PrintMuted = "#6B7280".toColorInt()
+private val PrintDivider = "#E4E7EC".toColorInt()
+private val PrintSubtitle = "#4B5563".toColorInt()
+private val PrintHeaderMeta = "#374151".toColorInt()
+private val PrintBody = "#243244".toColorInt()
+private val PrintStrong = "#1F2937".toColorInt()
+private val PrintPending = "#A76B00".toColorInt()
+private val PrintProgress = "#1D5FA7".toColorInt()
+private val PrintSuccess = "#2C8B57".toColorInt()
+private val PrintDanger = "#B23A3A".toColorInt()
 
 object MaintenanceCasePrintHelper {
 
@@ -147,64 +161,64 @@ private class MaintenanceCasePdfRenderer(
     private val contentBottom = pageBottom - footerHeight
 
     private val brandPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#16202C")
+        color = PrintInk
         textSize = 13f
         typeface = android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
     }
     private val headerTitlePaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#4B5563")
+        color = PrintSubtitle
         textSize = 9.5f
     }
     private val headerMetaPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#374151")
+        color = PrintHeaderMeta
         textSize = 8.8f
         textAlign = Paint.Align.RIGHT
     }
     private val machinePaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#16202C")
+        color = PrintInk
         textSize = 13.5f
         typeface = android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
     }
     private val machineCodePaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#6B7280")
+        color = PrintMuted
         textSize = 9f
     }
     private val sectionLabelPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#6B7280")
+        color = PrintMuted
         textSize = 8.8f
         typeface = android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
     }
     private val problemPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#16202C")
+        color = PrintInk
         textSize = 17f
         typeface = android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
     }
     private val sectionPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#16202C")
+        color = PrintInk
         textSize = 13.2f
         typeface = android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
     }
     private val summaryLabelPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#6B7280")
+        color = PrintMuted
         textSize = 9.2f
     }
     private val summaryValuePaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#1F2937")
+        color = PrintStrong
         textSize = 9.8f
         typeface = android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
     }
     private val timelineTypePaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#16202C")
+        color = PrintInk
         textSize = 10.6f
         typeface = android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
     }
     private val timelineDatePaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#6B7280")
+        color = PrintMuted
         textSize = 8.8f
         textAlign = Paint.Align.RIGHT
     }
     private val timelineDescriptionPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#243244")
+        color = PrintBody
         textSize = 9.8f
     }
     private val chipTextPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -213,12 +227,12 @@ private class MaintenanceCasePdfRenderer(
         typeface = android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
     }
     private val footerPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#6B7280")
+        color = PrintMuted
         textSize = 8.5f
         textAlign = Paint.Align.CENTER
     }
     private val linePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#E4E7EC")
+        color = PrintDivider
         strokeWidth = 1f
     }
     private val chipPaint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -282,15 +296,12 @@ private class MaintenanceCasePdfRenderer(
 
         if (!countingOnly) {
             val canvas = requireCanvas()
-            canvas.save()
-            canvas.translate(pageLeft, y)
-            machineLayout.draw(canvas)
-            canvas.restore()
-
-            canvas.save()
-            canvas.translate(pageLeft, y + machineLayout.height + 2f)
-            machineCodeLayout.draw(canvas)
-            canvas.restore()
+            canvas.withTranslation(pageLeft, y) {
+                machineLayout.draw(this)
+            }
+            canvas.withTranslation(pageLeft, y + machineLayout.height + 2f) {
+                machineCodeLayout.draw(this)
+            }
 
             drawChipRowAt(
                 startX = pageRight - chipMetrics.first,
@@ -414,10 +425,9 @@ private class MaintenanceCasePdfRenderer(
             canvas.drawText(typeText, pageLeft, typeBaseline, timelineTypePaint)
             canvas.drawText(eventDate, pageRight, dateBaseline, timelineDatePaint)
 
-            canvas.save()
-            canvas.translate(descriptionX, rowTop + topLineHeight + 4f)
-            descriptionLayout.draw(canvas)
-            canvas.restore()
+            canvas.withTranslation(descriptionX, rowTop + topLineHeight + 4f) {
+                descriptionLayout.draw(this)
+            }
 
             canvas.drawLine(
                 pageLeft,
@@ -446,15 +456,12 @@ private class MaintenanceCasePdfRenderer(
 
         if (!countingOnly) {
             val canvas = requireCanvas()
-            canvas.save()
-            canvas.translate(pageLeft, y)
-            labelLayout.draw(canvas)
-            canvas.restore()
-
-            canvas.save()
-            canvas.translate(pageLeft + labelWidth + 12f, y)
-            valueLayout.draw(canvas)
-            canvas.restore()
+            canvas.withTranslation(pageLeft, y) {
+                labelLayout.draw(this)
+            }
+            canvas.withTranslation(pageLeft + labelWidth + 12f, y) {
+                valueLayout.draw(this)
+            }
 
             canvas.drawLine(pageLeft, y + rowHeight, pageRight, y + rowHeight, linePaint)
         }
@@ -470,11 +477,9 @@ private class MaintenanceCasePdfRenderer(
         val layout = createLayout(text, paint, pageWidth.toInt())
         ensureSpace(layout.height.toFloat())
         if (!countingOnly) {
-            val canvas = requireCanvas()
-            canvas.save()
-            canvas.translate(pageLeft, y)
-            layout.draw(canvas)
-            canvas.restore()
+            requireCanvas().withTranslation(pageLeft, y) {
+                layout.draw(this)
+            }
         }
         y += layout.height + spacingAfter
     }
@@ -491,11 +496,9 @@ private class MaintenanceCasePdfRenderer(
             val layout = createLayout(remaining, paint, pageWidth.toInt())
             if (layout.height <= availableHeight) {
                 if (!countingOnly) {
-                    val canvas = requireCanvas()
-                    canvas.save()
-                    canvas.translate(pageLeft, y)
-                    layout.draw(canvas)
-                    canvas.restore()
+                    requireCanvas().withTranslation(pageLeft, y) {
+                        layout.draw(this)
+                    }
                 }
                 y += layout.height + spacingAfter
                 break
@@ -511,45 +514,14 @@ private class MaintenanceCasePdfRenderer(
             val segment = remaining.substring(0, endIndex).trimEnd()
             val segmentLayout = createLayout(segment, paint, pageWidth.toInt())
             if (!countingOnly) {
-                val canvas = requireCanvas()
-                canvas.save()
-                canvas.translate(pageLeft, y)
-                segmentLayout.draw(canvas)
-                canvas.restore()
+                requireCanvas().withTranslation(pageLeft, y) {
+                    segmentLayout.draw(this)
+                }
             }
             y += segmentLayout.height + 2f
             remaining = remaining.substring(endIndex).trimStart()
             startNewPage()
         }
-    }
-
-    private fun drawChipRow(values: List<Pair<String, Pair<Int, Int>>>) {
-        var chipX = pageLeft
-        var chipY = y
-        val chipHeight = 18f
-
-        values.forEach { (label, colors) ->
-            val chipWidth = chipTextPaint.measureText(label) + 18f
-            if (chipX + chipWidth > pageRight) {
-                chipX = pageLeft
-                chipY += chipHeight + 6f
-            }
-            ensureSpace((chipY - y) + chipHeight)
-
-            if (!countingOnly) {
-                chipPaint.color = colors.first
-                val rect = RectF(chipX, chipY, chipX + chipWidth, chipY + chipHeight)
-                requireCanvas().drawRoundRect(rect, 999f, 999f, chipPaint)
-                chipTextPaint.color = colors.second
-                val textBaseline = chipY + (chipHeight / 2f) -
-                    ((chipTextPaint.descent() + chipTextPaint.ascent()) / 2f)
-                requireCanvas().drawText(label, chipX + 9f, textBaseline, chipTextPaint)
-            }
-
-            chipX += chipWidth + 6f
-        }
-
-        y = chipY + chipHeight
     }
 
     private fun drawChipRowAt(
@@ -722,17 +694,17 @@ private class MaintenanceCasePdfRenderer(
 
     private fun statusChipColors(status: MaintenanceStatus): Pair<Int, Int> =
         when (status) {
-            MaintenanceStatus.PENDING -> Color.parseColor("#A76B00") to Color.WHITE
-            MaintenanceStatus.IN_PROGRESS -> Color.parseColor("#1D5FA7") to Color.WHITE
-            MaintenanceStatus.FINALIZED -> Color.parseColor("#2C8B57") to Color.WHITE
-            MaintenanceStatus.CANCELED -> Color.parseColor("#B23A3A") to Color.WHITE
+            MaintenanceStatus.PENDING -> PrintPending to Color.WHITE
+            MaintenanceStatus.IN_PROGRESS -> PrintProgress to Color.WHITE
+            MaintenanceStatus.FINALIZED -> PrintSuccess to Color.WHITE
+            MaintenanceStatus.CANCELED -> PrintDanger to Color.WHITE
         }
 
     private fun resultChipColors(result: EndResult): Pair<Int, Int> =
         when (result) {
-            EndResult.RESOLVED -> Color.parseColor("#2C8B57") to Color.WHITE
-            EndResult.NO_ISSUE -> Color.parseColor("#A76B00") to Color.WHITE
-            EndResult.COMPONENT_FAULT -> Color.parseColor("#B23A3A") to Color.WHITE
+            EndResult.RESOLVED -> PrintSuccess to Color.WHITE
+            EndResult.NO_ISSUE -> PrintPending to Color.WHITE
+            EndResult.COMPONENT_FAULT -> PrintDanger to Color.WHITE
         }
 }
 

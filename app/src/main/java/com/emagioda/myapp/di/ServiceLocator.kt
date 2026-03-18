@@ -9,9 +9,6 @@ import com.emagioda.myapp.data.local.history.MaintenanceHistoryDatabase
 import com.emagioda.myapp.data.repository.DiagnosticRepositoryImpl
 import com.emagioda.myapp.data.repository.MaintenanceHistoryRepositoryImpl
 import com.emagioda.myapp.data.repository.MachineRepositoryImpl
-import com.emagioda.myapp.domain.repository.MaintenanceHistoryRepository
-import com.emagioda.myapp.domain.repository.DiagnosticRepository
-import com.emagioda.myapp.domain.repository.MachineRepository
 import com.emagioda.myapp.domain.usecase.AddMaintenanceEvent
 import com.emagioda.myapp.domain.usecase.CreateMaintenanceCase
 import com.emagioda.myapp.domain.usecase.CancelMaintenanceCase
@@ -26,7 +23,6 @@ import com.emagioda.myapp.domain.usecase.GetMachineIds
 import com.google.gson.Gson
 import com.emagioda.myapp.data.datasource.AssetsContactsDataSource
 import com.emagioda.myapp.data.repository.ContactsRepositoryImpl
-import com.emagioda.myapp.domain.repository.ContactsRepository
 import com.emagioda.myapp.domain.usecase.GetContacts
 
 object ServiceLocator {
@@ -62,7 +58,7 @@ object ServiceLocator {
         }
     }
 
-    fun provideDiagnosticRepository(context: Context): DiagnosticRepository {
+    private fun provideDiagnosticRepository(context: Context): DiagnosticRepositoryImpl {
         init(context)
         return diagnosticRepository
     }
@@ -71,7 +67,7 @@ object ServiceLocator {
         return GetDiagnosticTreeForMachine(provideDiagnosticRepository(context))
     }
 
-    fun provideMachineRepository(context: Context): MachineRepository {
+    private fun provideMachineRepository(context: Context): MachineRepositoryImpl {
         init(context)
         return machineRepository
     }
@@ -84,7 +80,9 @@ object ServiceLocator {
         return GetMachineDetail(provideMachineRepository(context))
     }
 
-    fun provideMaintenanceHistoryRepository(context: Context): MaintenanceHistoryRepository {
+    private fun provideMaintenanceHistoryRepository(
+        context: Context
+    ): MaintenanceHistoryRepositoryImpl {
         init(context)
         return maintenanceHistoryRepository
     }
@@ -121,7 +119,7 @@ object ServiceLocator {
         return CancelMaintenanceCase(provideMaintenanceHistoryRepository(context))
     }
 
-    fun provideContactsRepository(context: Context): ContactsRepository {
+    private fun provideContactsRepository(context: Context): ContactsRepositoryImpl {
         init(context)
         return contactsRepository
     }

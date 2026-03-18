@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.emagioda.myapp.R
 import com.emagioda.myapp.di.ServiceLocator
+import com.emagioda.myapp.presentation.common.resolveDrawableResId
 import com.emagioda.myapp.presentation.viewmodel.HistoryMachineListItemUiState
 import com.emagioda.myapp.presentation.viewmodel.HistoryMachinesViewModel
 
@@ -145,17 +146,9 @@ private fun HistoryMachineCard(
     item: HistoryMachineListItemUiState,
     onClick: () -> Unit
 ) {
-    val context = LocalContext.current
     val imageResId = item.imageName
         ?.takeIf { it.isNotBlank() }
-        ?.let { imageName ->
-            context.resources.getIdentifier(
-                imageName,
-                "drawable",
-                context.packageName
-            )
-        }
-        ?.takeIf { it != 0 }
+        ?.let(::resolveDrawableResId)
 
     Card(
         modifier = Modifier

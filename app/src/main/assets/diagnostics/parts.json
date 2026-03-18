@@ -124,7 +124,7 @@
       "features": null,
       "supplier": [{"id": "001"}],
       "technicalContacts": [],
-      "imageResName": "img_p_14"
+      "imageResName": null
     },
     {
       "id": "P_15",
@@ -191,20 +191,20 @@
     },
     {
       "id": "P_22",
+      "product": "Contatto Selettore di scarico",
+      "code": "ZBE-101",
+      "features": "Elemento di contatto singolo",
+      "supplier": [{"id": "003"}],
+      "technicalContacts": [{"id": "005"}, {"id": "003"}],
+      "imageResName": "img_p_22"
+    },
+    {
+      "id": "P_23",
       "product": "Elemento di contatto singolo - Schneider",
       "code": "ZBE-102",
       "features": "1 NC - Harmony",
       "supplier": [{"id": "003"}, {"id": "004"}],
       "technicalContacts": [],
-      "imageResName": "img_p_22"
-    },
-    {
-      "id": "P_23",
-      "product": "Elettrovalvola METAL WORK",
-      "code": "7020021100",
-      "features": "Elettrovalvole per pneumatica Metal Work, G 1/4, funzioni 5/2, azionamento Pilota/Molla",
-      "supplier": [{"id": "007"}],
-      "technicalContacts": [{"id": "005"}],
       "imageResName": "img_p_23"
     },
     {
@@ -218,11 +218,11 @@
     },
     {
       "id": "P_25",
-      "product": "Contatto Selettore di scarico",
-      "code": "ZEB-101",
-      "features": "Elemento di contatto singolo",
-      "supplier": [{"id": "003"}],
-      "technicalContacts": [{"id": "005"}, {"id": "003"}],
+      "product": "Elettrovalvola METAL WORK",
+      "code": "7020021100",
+      "features": "Elettrovalvole per pneumatica Metal Work, G 1/4, funzioni 5/2, azionamento Pilota/Molla",
+      "supplier": [{"id": "007"}],
+      "technicalContacts": [{"id": "005"}],
       "imageResName": "img_p_25"
     }
   ]

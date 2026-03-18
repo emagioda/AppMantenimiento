@@ -4,7 +4,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.darkColorScheme
 
 val BlueDark = Color(0xFF1D2E44)
-val GrayMid = Color(0xFFCFD5DC)
 val WarningYellow = Color(0xFFFFD600)
 val White = Color(0xFFFFFFFF)
 val ResultResolvedGreen = Color(0xFF2E7D32)

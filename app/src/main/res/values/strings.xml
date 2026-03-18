@@ -10,9 +10,6 @@
     <string name="home_scan_button">Scansiona il QR</string>
     <string name="home_history_button">Storico manutenzione</string>
     <string name="home_history_menu_cd">Apri il menu dello storico manutenzione</string>
-    <string name="home_help_title">Hai bisogno di aiuto?</string>
-    <string name="home_help_contacts">Contatti</string>
-
     <!-- Scanner -->
     <string name="scanner_permission_rationale">Per scansionare il QR &#232; necessario consentire l\'accesso alla fotocamera.</string>
     <string name="scanner_permission_button">Apri impostazioni</string>
@@ -38,11 +35,7 @@
     <string name="contacts_error_loading">Errore durante il caricamento dei contatti.</string>
     <string name="contacts_external_action_error">Impossibile aprire l\'app richiesta su questo dispositivo.</string>
     <string name="contacts_service_areas_label">Aree di servizio</string>
-    <string name="contacts_list_separator">&#160;&#183;&#160;</string>
-    <string name="contacts_emergency">&#8226; 24/7</string>
-    <string name="contacts_favorite">&#9733;</string>
     <string name="contacts_tech_shortcut">Tecnici specializzati</string>
-    <string name="contacts_providers_shortcut">Fornitori di fiducia</string>
 
     <!-- Comuni -->
     <string name="cd_back">Indietro</string>
@@ -55,7 +48,6 @@
     <string name="diagnostic_no">No</string>
     <string name="diagnostic_continue">Continua</string>
     <string name="diagnostic_error_loading">Errore durante il caricamento del flusso.</string>
-    <string name="diagnostic_help">Hai bisogno di aiuto?</string>
     <string name="diagnostic_suggestions_title">Suggerimenti</string>
     <string name="diagnostic_schematics_title">Schemi elettrici</string>
     <string name="diagnostic_schematics_subtitle">Apri il PDF per consultarlo o stamparlo.</string>
@@ -64,8 +56,6 @@
     <string name="diagnostic_part_qty">Quantit&#224;: %1$d</string>
     <string name="diagnostic_part_code">Codice: %1$s</string>
     <string name="diagnostic_part_contact_support">Contatta tecnici e fornitori</string>
-    <string name="diagnostic_end_title">Procedura completata</string>
-    <string name="diagnostic_end_description">Torna alla schermata iniziale per avviare una nuova diagnosi.</string>
     <string name="diagnostic_reference_title">Riferimento diagnostico</string>
 
     <!-- Sicurezza -->
@@ -79,12 +69,6 @@
     <string name="machine_detail_title">Macchina</string>
     <string name="machine_detail_start">Avvia diagnosi</string>
     <string name="machine_detail_error_loading">Errore durante il caricamento del dettaglio macchina.</string>
-    <string name="machine_detail_history_title">Storico manutenzione</string>
-    <string name="machine_detail_history_empty">Nessun intervento registrato per questa macchina.</string>
-    <string name="machine_detail_open_cases">%1$d aperti</string>
-    <string name="machine_detail_latest_case">Ultimo intervento</string>
-    <string name="machine_detail_view_history">Apri storico</string>
-    <string name="machine_detail_history_handle_text">Storico</string>
     <string name="machine_detail_history_handle_cd">Apri lo storico della macchina</string>
     <string name="machine_detail_open_cases_alert_body">Controlla i casi ancora da risolvere prima di chiudere l\'intervento.</string>
 
@@ -95,15 +79,10 @@
 
     <!-- Historial -->
     <string name="history_title">Storico manutenzione</string>
-    <string name="history_machine_title">Storico di %1$s</string>
     <string name="history_search_placeholder">Cerca per problema o diagnosi</string>
     <string name="history_machine_selector_title">Seleziona una macchina</string>
     <string name="history_machines_empty_title">Nessuna macchina disponibile</string>
     <string name="history_machines_empty_subtitle">Quando il catalogo sar&#224; disponibile, qui vedrai tutte le macchine registrate.</string>
-    <string name="history_empty_title">Nessun intervento registrato</string>
-    <string name="history_empty_subtitle">Salva una diagnosi al termine del flusso per visualizzarne lo storico qui.</string>
-    <string name="history_empty_machine_title">Questa macchina non ha ancora uno storico</string>
-    <string name="history_empty_machine_subtitle">Quando salverai una diagnosi, potrai seguirla da qui.</string>
     <string name="history_status_pending">In attesa</string>
     <string name="history_status_in_progress">In lavorazione</string>
     <string name="history_status_finalized">Finalizzato</string>
@@ -116,7 +95,6 @@
     <string name="history_resolved_at">Data chiusura</string>
     <string name="history_canceled_at">Data annullamento</string>
     <string name="history_cancellation_reason">Motivo annullamento</string>
-    <string name="history_result_label">Esito della diagnosi</string>
     <string name="history_result_resolved">Risolto</string>
     <string name="history_result_no_issue">Nessun guasto attivo</string>
     <string name="history_result_component_fault">Guasto componente</string>
@@ -129,7 +107,6 @@
     <string name="history_finalize_case">Chiudi intervento</string>
     <string name="history_print_case">Stampa o salva PDF</string>
     <string name="history_print_error">Impossibile avviare la stampa su questo dispositivo.</string>
-    <string name="history_print_page">Pagina %1$d</string>
     <string name="history_print_page_of">Pagina %1$d/%2$d</string>
     <string name="history_print_report_title">Rapporto di intervento</string>
     <string name="history_print_issue_date">Data emissione</string>
@@ -139,7 +116,6 @@
     <string name="history_cancel_case">Annulla intervento</string>
     <string name="history_actions_menu_cd">Apri il menu azioni dell\'intervento</string>
     <string name="history_action_error">Impossibile salvare la modifica. Riprova.</string>
-    <string name="history_latest_event">Ultimo aggiornamento</string>
     <string name="history_view_case">Apri intervento</string>
 
     <string name="history_save_prompt_title">Monitoraggio manutenzione</string>
@@ -149,11 +125,11 @@
     <string name="history_saved_body">Questa diagnosi fa gi&#224; parte dello storico di manutenzione.</string>
     <string name="history_sheet_status">Stato iniziale</string>
     <string name="history_sheet_problem_label">Cosa &#232; successo</string>
-    <string name="history_sheet_problem_hint">Descrivi brevemente il problema rilevato...</string>
+    <string name="history_sheet_problem_hint">Descrivi brevemente il problema rilevato&#8230;</string>
     <string name="history_sheet_first_action_label">Primo intervento registrato</string>
     <string name="history_sheet_first_action_hint">Indica cosa &#232; stato fatto subito dopo il rilevamento. Se non &#232; ancora stato fatto nulla, scegli &quot;Nessun intervento ancora&quot;.</string>
     <string name="history_sheet_action_detail_label">Dettaglio azione</string>
-    <string name="history_sheet_action_detail_hint">Descrivi cosa &#232; stato fatto o chi &#232; stato contattato...</string>
+    <string name="history_sheet_action_detail_hint">Descrivi cosa &#232; stato fatto o chi &#232; stato contattato&#8230;</string>
     <string name="history_sheet_problem_required">Scrivi almeno una breve descrizione del problema.</string>
     <string name="history_sheet_cancel">Annulla</string>
     <string name="history_sheet_confirm">Salva monitoraggio</string>
@@ -161,28 +137,28 @@
     <string name="history_event_sheet_title">Aggiungi aggiornamento</string>
     <string name="history_event_sheet_type_label">Tipo di aggiornamento</string>
     <string name="history_event_sheet_note_label">Dettaglio</string>
-    <string name="history_event_sheet_note_hint">Descrivi cosa &#232; stato fatto, verificato o cosa resta in sospeso...</string>
+    <string name="history_event_sheet_note_hint">Descrivi cosa &#232; stato fatto, verificato o cosa resta in sospeso&#8230;</string>
     <string name="history_event_sheet_confirm">Salva aggiornamento</string>
     <string name="history_resolution_sheet_title">Chiudi intervento</string>
     <string name="history_resolution_sheet_note_label">Cosa &#232; stato fatto per risolvere</string>
-    <string name="history_resolution_sheet_note_hint">Descrivi la soluzione applicata o la chiusura dell\'intervento...</string>
+    <string name="history_resolution_sheet_note_hint">Descrivi la soluzione applicata o la chiusura dell\'intervento&#8230;</string>
     <string name="history_resolution_sheet_confirm">Chiudi</string>
     <string name="history_edit_sheet_title">Modifica intervento</string>
     <string name="history_edit_problem_label">Problema rilevato</string>
-    <string name="history_edit_problem_hint">Descrivi in modo diretto il problema riscontrato...</string>
+    <string name="history_edit_problem_hint">Descrivi in modo diretto il problema riscontrato&#8230;</string>
     <string name="history_edit_technical_label">Nota tecnica</string>
-    <string name="history_edit_technical_hint">Aggiungi un riepilogo tecnico o una precisazione utile...</string>
+    <string name="history_edit_technical_hint">Aggiungi un riepilogo tecnico o una precisazione utile&#8230;</string>
     <string name="history_edit_confirm">Salva modifica</string>
     <string name="history_reopen_sheet_title">Riapri intervento</string>
     <string name="history_reopen_sheet_note_label">Motivo della riapertura</string>
-    <string name="history_reopen_sheet_note_hint">Spiega perch&#233; l\'intervento deve tornare in lavorazione...</string>
+    <string name="history_reopen_sheet_note_hint">Spiega perch&#233; l\'intervento deve tornare in lavorazione&#8230;</string>
     <string name="history_reopen_confirm">Riapri</string>
     <string name="history_cancel_sheet_title">Annulla intervento</string>
     <string name="history_cancel_sheet_body">L\'intervento verr&#224; escluso dal normale storico operativo, ma rester&#224; registrato per tracciabilit&#224;.</string>
     <string name="history_cancel_irreversible_title">Questa azione &#232; irreversibile. Conferma per continuare.</string>
     <string name="history_cancel_access_hint">Potrai comunque visualizzarlo da Storico manutenzione &gt; macchina &gt; pulsante Annullati.</string>
     <string name="history_cancel_sheet_reason_label">Motivo</string>
-    <string name="history_cancel_sheet_reason_hint">Indica perch&#233; questo intervento deve essere annullato...</string>
+    <string name="history_cancel_sheet_reason_hint">Indica perch&#233; questo intervento deve essere annullato&#8230;</string>
     <string name="history_cancel_confirm">Conferma annullamento</string>
     <string name="history_show_canceled_cases_cd">Mostra gli interventi annullati</string>
     <string name="history_show_active_cases_cd">Torna agli interventi attivi</string>
@@ -201,17 +177,9 @@
     <string name="history_initial_action_none">Nessun intervento ancora</string>
 
     <!-- Storico macchina -->
-    <string name="machine_history_title">Interventi di %1$s</string>
     <string name="machine_history_fallback_title">Interventi macchina</string>
     <string name="machine_history_empty_title">Nessun intervento registrato per questa macchina</string>
     <string name="machine_history_empty_subtitle">Quando salverai una diagnosi, qui vedrai prima i casi ancora aperti.</string>
     <string name="machine_history_canceled_empty_title">Nessun intervento annullato per questa macchina</string>
     <string name="machine_history_canceled_empty_subtitle">Se annullerai un intervento, potrai ritrovarlo qui senza mescolarlo ai casi attivi.</string>
-    <string name="machine_history_open_banner_body">Rivedi i casi senza soluzione e dai priorità a quelli ancora in sospeso.</string>
-
-    <plurals name="machine_history_open_banner_title">
-        <item quantity="one">1 intervento ancora aperto</item>
-        <item quantity="other">%1$d interventi ancora aperti</item>
-    </plurals>
-
 </resources>

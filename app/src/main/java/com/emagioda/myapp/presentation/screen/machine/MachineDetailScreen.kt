@@ -50,6 +50,7 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.emagioda.myapp.R
 import com.emagioda.myapp.di.ServiceLocator
+import com.emagioda.myapp.presentation.common.resolveDrawableResId
 import com.emagioda.myapp.presentation.viewmodel.MachineDetailViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -135,13 +136,9 @@ fun MachineDetailScreen(
                             verticalArrangement = Arrangement.spacedBy(20.dp)
                         ) {
                             machine.imageName?.let { imageName ->
-                                val resId = context.resources.getIdentifier(
-                                    imageName,
-                                    "drawable",
-                                    context.packageName
-                                )
+                                val resId = resolveDrawableResId(imageName)
 
-                                if (resId != 0) {
+                                if (resId != null) {
                                     Box(
                                         modifier = Modifier
                                             .fillMaxWidth()

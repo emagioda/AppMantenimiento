@@ -52,6 +52,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -384,7 +385,7 @@ private fun CameraPreview(
         }
     }
 
-    var lastInvalidTime by rememberSaveable { mutableStateOf(0L) }
+    var lastInvalidTime by rememberSaveable { mutableLongStateOf(0L) }
     var lastInvalidValue by rememberSaveable { mutableStateOf<String?>(null) }
 
     val idRegex = remember { Pattern.compile("^[A-Za-z0-9._-]{3,}$") }

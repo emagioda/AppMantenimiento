@@ -1,6 +1,4 @@
 package com.emagioda.myapp.presentation.viewmodel
-
-import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -41,7 +39,6 @@ class DiagnosticViewModel(
     private val getTree: GetDiagnosticTreeForMachine,
     private val getMachineDetail: GetMachineDetail,
     private val createMaintenanceCase: CreateMaintenanceCase,
-    private val context: Context,
     private val machineId: String
 ) : ViewModel() {
 
@@ -105,7 +102,10 @@ class DiagnosticViewModel(
         status: MaintenanceStatus,
         problemNote: String,
         initialAction: InitialMaintenanceAction,
-        initialActionNote: String
+        initialActionNote: String,
+        problemTitle: String,
+        initialActionTitle: String?,
+        autoResolutionTitle: String?
     ) {
         val node = uiState.current ?: return
         if (node.type != NodeType.END || uiState.savedCaseId != null) return
@@ -126,16 +126,12 @@ class DiagnosticViewModel(
                         diagnosisDescription = node.description,
                         endResult = node.result ?: EndResult.NO_ISSUE,
                         status = status,
-                        problemTitle = context.getString(R.string.history_event_problem),
+                        problemTitle = problemTitle,
                         problemNote = problemNote.trim().takeIf { it.isNotBlank() },
                         initialAction = initialAction,
-                        initialActionTitle = initialAction.label(),
+                        initialActionTitle = initialActionTitle,
                         initialActionNote = initialActionNote.trim().takeIf { it.isNotBlank() },
-                        autoResolutionTitle = if (status == MaintenanceStatus.FINALIZED) {
-                            context.getString(R.string.history_event_resolution)
-                        } else {
-                            null
-                        }
+                        autoResolutionTitle = autoResolutionTitle
                     )
                 )
             }.onSuccess { caseId ->
@@ -218,24 +214,10 @@ class DiagnosticViewModel(
         )
     }
 
-    private fun InitialMaintenanceAction.label(): String? =
-        when (this) {
-            InitialMaintenanceAction.NONE -> null
-            InitialMaintenanceAction.TECHNICIAN_CONTACTED ->
-                context.getString(R.string.history_event_technician)
-            InitialMaintenanceAction.COMPONENT_REPLACED ->
-                context.getString(R.string.history_event_component)
-            InitialMaintenanceAction.TEST_PERFORMED ->
-                context.getString(R.string.history_event_test)
-            InitialMaintenanceAction.OTHER ->
-                context.getString(R.string.history_event_other)
-        }
-
     class Factory(
         private val getTree: GetDiagnosticTreeForMachine,
         private val getMachineDetail: GetMachineDetail,
         private val createMaintenanceCase: CreateMaintenanceCase,
-        private val context: Context,
         private val machineId: String
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
@@ -244,7 +226,6 @@ class DiagnosticViewModel(
                 getTree = getTree,
                 getMachineDetail = getMachineDetail,
                 createMaintenanceCase = createMaintenanceCase,
-                context = context.applicationContext,
                 machineId = machineId
             ) as T
         }

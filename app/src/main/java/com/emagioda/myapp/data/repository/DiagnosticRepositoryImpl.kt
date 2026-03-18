@@ -158,10 +158,6 @@ class DiagnosticRepositoryImpl(
         }
     }
 
-    private fun validateTree(rawTree: AssetsDiagnosticDataSource.RawTree) {
-        validateTree(rawTree, null)
-    }
-
     private fun validateTree(
         rawTree: AssetsDiagnosticDataSource.RawTree,
         schematicsCatalog: AssetsDiagnosticDataSource.SchematicsCatalog?

@@ -50,7 +50,7 @@
     { "id":"Q_AC_0000", "type":"END", "title":"Problemi nel pulsante d'emergenza oppure nei sensori degli sportelli d'ispezione.",
       "description": "• Verificare il corretto funzionamento sia del pulsante di arresto di emergenza, verificando la continuità del contatto, sia dei sensori dello sportello di ispezione, misurando la continuità dall'inizio alla fine del circuito.\n• Chiamare tecnici specializzati",
       "safetyWarning": true,
-      "parts": [{"id": "P_07"}, {"id": "P_21"}, {"id": "P_22"}],
+      "parts": [{"id": "P_07"}, {"id": "P_21"}, {"id": "P_23"}],
       "result":"COMPONENT_FAULT"
     },
 
@@ -191,7 +191,7 @@
     { "id":"Q_BC_0", "type":"END",
       "title":"Problemi software o hardware con il sistema di scarico.\n",
       "description":"• Verificare il corretto funzionamento del selettore di scarico.\n• Verificare che la bilancia invii il segnale di apertura all'elettrovalvola.\n• Verificare che la bobina dell'elettrovalvola non sia danneggiata.\n• Verificare che l'aria compressa raggiunga sia l'elettrovalvola che il pistone di apertura.\n• Verificare che il pistone non sia danneggiato (controllare le guarnizioni e le condizioni dell'albero).",
-      "parts": [ {"id":"P_09"}, {"id":"P_23"}, {"id":"P_24"}, {"id":"P_25"} ],
+      "parts": [ {"id":"P_09"}, {"id":"P_22"}, {"id":"P_24"}, {"id":"P_25"} ],
       "safetyWarning": true,
       "schematicIds": ["schema_elettrico_c2353"],
       "result":"COMPONENT_FAULT"
@@ -247,7 +247,7 @@
     { "id":"Q_CC_001", "type":"END",
       "title":"Disattivare il pulsante di Emergenza e/o chiudere gli sportelli. Verificare il funzionamento.",
       "safetyWarning": true,
-      "parts": [{"id": "P_21"}, {"id": "P_22"}],
+      "parts": [{"id": "P_21"}, {"id": "P_23"}],
       "schematicIds": ["schema_elettrico_c2353"],
       "result":"COMPONENT_FAULT"
     },

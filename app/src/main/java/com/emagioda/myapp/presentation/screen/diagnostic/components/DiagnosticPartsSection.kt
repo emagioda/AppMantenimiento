@@ -37,13 +37,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.emagioda.myapp.R
 import com.emagioda.myapp.domain.model.PartRefResolved
+import com.emagioda.myapp.presentation.common.resolveDrawableResId
 import com.emagioda.myapp.ui.theme.SupportButtonContainer
 import com.emagioda.myapp.ui.theme.SupportButtonContent
 
@@ -80,12 +80,9 @@ private fun TransformablePartCard(
     onContactClick: (List<String>, List<String>) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val context = LocalContext.current
 
     val resId = remember(part.detail.imageResName) {
-        part.detail.imageResName?.let { resName ->
-            context.resources.getIdentifier(resName, "drawable", context.packageName)
-        } ?: 0
+        resolveDrawableResId(part.detail.imageResName) ?: 0
     }
 
     ElevatedCard(

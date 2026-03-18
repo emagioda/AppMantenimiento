@@ -107,9 +107,7 @@ import kotlinx.coroutines.withContext
 fun DiagnosticScreen(
     machineId: String,
     onRestartToHome: () -> Unit,
-    onOpenContacts: () -> Unit,
-    onOpenTechnicians: () -> Unit = onOpenContacts,
-    onOpenProviders: () -> Unit = onOpenContacts,
+    onOpenTechnicians: () -> Unit,
     onOpenFilteredContacts: (String, String) -> Unit = { _, _ -> },
     onOpenHistoryCase: (Long) -> Unit
 ) {
@@ -119,7 +117,6 @@ fun DiagnosticScreen(
             getTree = ServiceLocator.provideGetTreeUseCase(context),
             getMachineDetail = ServiceLocator.provideGetMachineDetail(context),
             createMaintenanceCase = ServiceLocator.provideCreateMaintenanceCase(context),
-            context = context,
             machineId = machineId
         )
     )
@@ -781,6 +778,12 @@ private fun MaintenanceFollowUpSection(
     descriptionText: String?
 ) {
     val savedCaseId = uiState.savedCaseId
+    val problemDetectedTitle = stringResource(R.string.history_event_problem)
+    val resolutionTitle = stringResource(R.string.history_event_resolution)
+    val technicianTitle = stringResource(R.string.history_event_technician)
+    val componentTitle = stringResource(R.string.history_event_component)
+    val testTitle = stringResource(R.string.history_event_test)
+    val otherTitle = stringResource(R.string.history_event_other)
 
     if (savedCaseId == null) {
         ElevatedCard(
@@ -870,7 +873,20 @@ private fun MaintenanceFollowUpSection(
                     status = status,
                     problemNote = problemNote,
                     initialAction = action,
-                    initialActionNote = actionNote
+                    initialActionNote = actionNote,
+                    problemTitle = problemDetectedTitle,
+                    initialActionTitle = when (action) {
+                        InitialMaintenanceAction.NONE -> null
+                        InitialMaintenanceAction.TECHNICIAN_CONTACTED -> technicianTitle
+                        InitialMaintenanceAction.COMPONENT_REPLACED -> componentTitle
+                        InitialMaintenanceAction.TEST_PERFORMED -> testTitle
+                        InitialMaintenanceAction.OTHER -> otherTitle
+                    },
+                    autoResolutionTitle = if (status == MaintenanceStatus.FINALIZED) {
+                        resolutionTitle
+                    } else {
+                        null
+                    }
                 )
             }
         )

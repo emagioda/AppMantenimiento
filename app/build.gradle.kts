@@ -69,10 +69,7 @@ dependencies {
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.material)
 
-    // Tooling / Previews (usados en desarrollo)
-    implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.compose.foundation)
-    debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
 
@@ -99,8 +96,8 @@ dependencies {
 
     // Testing
     testImplementation(libs.junit)
-    testImplementation("androidx.test:core:1.6.1")
-    testImplementation("org.robolectric:robolectric:4.13")
+    testImplementation(libs.androidx.test.core)
+    testImplementation(libs.robolectric)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
