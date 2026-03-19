@@ -110,6 +110,8 @@
     <string name="history_print_page_of">Pagina %1$d/%2$d</string>
     <string name="history_print_report_title">Rapporto di intervento</string>
     <string name="history_print_issue_date">Data emissione</string>
+    <string name="history_print_status_label">Stato</string>
+    <string name="history_print_result_label">Esito</string>
     <string name="history_open_diagnostic_reference">Apri riferimento diagnostico</string>
     <string name="history_edit_case">Modifica intervento</string>
     <string name="history_reopen_case">Riapri intervento</string>
