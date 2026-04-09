@@ -31,6 +31,7 @@
       "description": "• Controllare che tutti gli sportelli siano chiusi.\n• Controllare che i sensori siano funzionanti.",
       "safetyWarning": true,
       "parts": [{"id": "P_07"}],
+      "schematicIds": ["schema_elettrico_c2353"],
       "result":"COMPONENT_FAULT"
     },
 
@@ -44,6 +45,7 @@
       "description":"• Procedere alla sostituzione.\nChiamare un tecnico specializzato",
       "safetyWarning": true,
       "parts": [{"id": "P_01"}],
+      "schematicIds": ["schema_elettrico_c2353"],
       "result":"COMPONENT_FAULT"
     },
 
@@ -51,6 +53,7 @@
       "description": "• Verificare il corretto funzionamento sia del pulsante di arresto di emergenza, verificando la continuità del contatto, sia dei sensori dello sportello di ispezione, misurando la continuità dall'inizio alla fine del circuito.\n• Chiamare tecnici specializzati",
       "safetyWarning": true,
       "parts": [{"id": "P_07"}, {"id": "P_21"}, {"id": "P_23"}],
+      "schematicIds": ["schema_elettrico_c2353"],
       "result":"COMPONENT_FAULT"
     },
 
@@ -73,6 +76,7 @@
       "description":"• Verificare che il sensore di livello non sia ostruito e funzioni correttamente.",
       "safetyWarning": true,
       "parts": [{"id": "P_02"}],
+      "schematicIds": ["schema_elettrico_c2353"],
       "result":"COMPONENT_FAULT"
     },
 
@@ -139,6 +143,7 @@
       "title":"• Il bullone che collega il riduttore alla vite senza fine potrebbe essersi rotto.\n• Il cuscinetto/boccola della vite senza fine è rotto o non è lubrificato correttamente.",
       "description":"• Verificare che il bullone tra il cambio e la vite senza fine non sia tranciato.\n• Verificare che il cuscinetto/boccola della vite senza fine sia in buone condizioni.\n• Ingrassare il cuscinetto/boccola della vite senza fine.",
       "safetyWarning": true,
+      "parts": [{"id": "P_26"}, {"id": "P_27"}, {"id": "P_28"}],
       "result":"COMPONENT_FAULT"
     },
 
@@ -148,6 +153,7 @@
       "title":"Motore bloccato.",
       "description":"• Verificare che il motore giri manualmente.\n• Verificare che tutte e tre le fasi raggiungano il motore.\n• Verificare che il riduttore non sia danneggiato.\n• Verificare che la vite senza fine non sia bloccata.\n• Verificare che la boccola della vite senza fine non sia usurata.",
       "safetyWarning": true,
+      "parts": [{"id": "P_04"}, {"id": "P_26"}],
       "schematicIds": ["schema_elettrico_c2353"],
       "result":"NO_ISSUE"
     },
@@ -156,7 +162,8 @@
       "title":"Possibile cortocircuito nel motore, nel cablaggio o nel dispositivo di accensione.",
       "description":"• Eseguire test di resistenza di isolamento sul motore.\n• Controllare il cablaggio del motore.\n• Verificare che il dispositivo di accensione non sia difettoso.",
       "safetyWarning": true,
-      "parts": [{"id": "P_03"}],
+      "parts": [{"id": "P_03"}, {"id": "P_15"}, {"id": "P_17"}, {"id": "P_19"}],
+      "schematicIds": ["schema_elettrico_c2353"],
       "result":"COMPONENT_FAULT"
     },
 
@@ -176,6 +183,7 @@
       "description":"• Reimpostare il controller.\n• Tarare nuovamente il controller.\n• Verificare che la bilancia pesi correttamente utilizzando un peso standard.\n• Sostituire il controller della bilancia.",
       "safetyWarning": true,
       "parts": [{"id": "P_08"},{"id": "P_09"}],
+      "schematicIds": ["schema_elettrico_c2353"],
       "result":"COMPONENT_FAULT"
     },
 
@@ -218,6 +226,7 @@
     { "id":"Q_CA_01", "type":"END",
       "title":"Guasto nell'alimentazione principale.",
       "description":"• Controllare che l'alimentazione principale non sia scattata\n• Contattare tecnici specializzati",
+      "safetyWarning": true,
       "schematicIds": ["schema_elettrico_c2353"],
       "result":"NO_ISSUE"
     },
@@ -259,6 +268,7 @@
       "description":"• Procedere alla sostituzione.\nChiamare un tecnico specializzato.",
       "safetyWarning": true,
       "parts": [{"id": "P_01"}],
+      "schematicIds": ["schema_elettrico_c2353"],
       "result":"COMPONENT_FAULT"
     },
 
@@ -307,6 +317,8 @@
     { "id":"Q_CF_1000", "type":"END",
       "title":"Problemi con l'accensione del motore o con il cablaggio.",
       "description":"• Controllare la tensione in uscita dall'accensione.\n• Controllare i terminali di uscita sul quadro elettrico.\n• Verificare che il cablaggio dal quadro elettrico al motore non sia interrotto.\nChiamare tecnico specializzato",
+      "safetyWarning": true,
+      "parts": [{"id": "P_16"}, {"id": "P_18"}, {"id": "P_19"}, {"id": "P_20"}],
       "schematicIds": ["schema_elettrico_c2353"],
       "result":"NO_ISSUE"
     },
@@ -361,7 +373,7 @@
       "title":"Possibile cortocircuito nel motore, nel cablaggio o nel dispositivo di accensione.",
       "description":"• Eseguire test di resistenza di isolamento sul motore.\n• Controllare il cablaggio del motore.\n• Verificare che il dispositivo di accensione non sia difettoso.",
       "safetyWarning": true,
-      "parts": [{"id": "P_05"}],
+      "parts": [{"id": "P_05"}, {"id": "P_16"}, {"id": "P_18"}, {"id": "P_19"}, {"id": "P_20"}],
       "schematicIds": ["schema_elettrico_c2353"],
       "result":"COMPONENT_FAULT"
     },
