@@ -35,12 +35,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Save
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -71,9 +68,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -1209,27 +1209,92 @@ private fun SchematicsSection(
 
 @Composable
 private fun EndResultIcon(result: EndResult) {
-    val (bg, icon) = when (result) {
-        EndResult.RESOLVED -> ResultResolvedGreen to Icons.Filled.Check
-        EndResult.NO_ISSUE -> ResultWarningAmber to Icons.Filled.Warning
-        EndResult.COMPONENT_FAULT -> ResultFaultRed to Icons.Filled.Build
+    val (accentColor, iconRes) = when (result) {
+        EndResult.RESOLVED -> ResultResolvedGreen to R.drawable.ic_result_resolved
+        EndResult.NO_ISSUE -> ResultWarningAmber to R.drawable.ic_result_no_issue
+        EndResult.COMPONENT_FAULT -> ResultFaultRed to R.drawable.ic_result_component_fault
+    }
+    val outerGlow = remember(accentColor) {
+        Brush.radialGradient(
+            colors = listOf(
+                accentColor.copy(alpha = 0.26f),
+                accentColor.copy(alpha = 0.14f),
+                Color.Transparent
+            )
+        )
     }
 
     Box(
-        modifier = Modifier.size(120.dp),
+        modifier = Modifier.size(132.dp),
         contentAlignment = Alignment.Center
     ) {
         Box(
             modifier = Modifier
-                .fillMaxSize()
-                .background(bg, CircleShape),
+                .size(132.dp)
+                .background(outerGlow, CircleShape)
+                .border(
+                    width = 1.dp,
+                    color = accentColor.copy(alpha = 0.20f),
+                    shape = CircleShape
+                ),
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier.size(64.dp)
+            Box(
+                modifier = Modifier
+                    .size(104.dp)
+                    .shadow(
+                        elevation = 14.dp,
+                        shape = CircleShape,
+                        ambientColor = accentColor.copy(alpha = 0.24f),
+                        spotColor = accentColor.copy(alpha = 0.18f)
+                    )
+                    .background(
+                        color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        shape = CircleShape
+                    )
+                    .border(
+                        width = 1.5.dp,
+                        color = accentColor.copy(alpha = 0.28f),
+                        shape = CircleShape
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(76.dp)
+                        .background(
+                            color = accentColor.copy(alpha = 0.14f),
+                            shape = CircleShape
+                        )
+                        .border(
+                            width = 1.dp,
+                            color = accentColor.copy(alpha = 0.18f),
+                            shape = CircleShape
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painter = painterResource(id = iconRes),
+                        contentDescription = null,
+                        tint = accentColor,
+                        modifier = Modifier.size(42.dp)
+                    )
+                }
+            }
+
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .size(22.dp)
+                    .background(
+                        color = accentColor,
+                        shape = CircleShape
+                    )
+                    .border(
+                        width = 3.dp,
+                        color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        shape = CircleShape
+                    )
             )
         }
     }
