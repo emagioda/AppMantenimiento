@@ -1,5 +1,6 @@
 package com.emagioda.myapp
 
+import com.emagioda.myapp.presentation.common.resolveDrawableResId
 import com.google.gson.Gson
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertEquals
@@ -131,6 +132,10 @@ class DiagnosticJsonTest {
                     "Machine image $imageName not found in ${drawableDir.path}",
                     drawableExists(drawableDir, imageName)
                 )
+                assertNotNull(
+                    "Machine image $imageName is not resolvable by ResourceTextResolver",
+                    resolveDrawableResId(imageName)
+                )
             }
         }
 
@@ -158,6 +163,10 @@ class DiagnosticJsonTest {
                 assertTrue(
                     "Part image $imageName referenced by ${part.id} not found in ${drawableDir.path}",
                     drawableExists(drawableDir, imageName)
+                )
+                assertNotNull(
+                    "Part image $imageName referenced by ${part.id} is not resolvable by ResourceTextResolver",
+                    resolveDrawableResId(imageName)
                 )
             }
         }
