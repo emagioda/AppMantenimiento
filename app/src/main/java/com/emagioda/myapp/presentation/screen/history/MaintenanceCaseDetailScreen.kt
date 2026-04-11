@@ -86,6 +86,8 @@ private enum class HistoryDetailSheetMode {
     CANCEL_CASE
 }
 
+private const val MinHistoryUpdateLength = 10
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MaintenanceCaseDetailScreen(
@@ -615,7 +617,10 @@ private fun AddHistoryEventSheet(
         mutableStateOf(MaintenanceEventType.OBSERVATION.name)
     }
     var note by rememberSaveable { mutableStateOf("") }
+    var showNoteError by rememberSaveable { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val trimmedNote = note.trim()
+    val isNoteValid = trimmedNote.length >= MinHistoryUpdateLength
 
     ModalBottomSheet(
         sheetState = sheetState,
@@ -648,18 +653,33 @@ private fun AddHistoryEventSheet(
 
             OutlinedTextField(
                 value = note,
-                onValueChange = { note = it },
+                onValueChange = {
+                    note = it
+                    if (showNoteError && it.trim().length >= MinHistoryUpdateLength) {
+                        showNoteError = false
+                    }
+                },
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text(stringResource(R.string.history_event_sheet_note_label)) },
                 placeholder = { Text(stringResource(R.string.history_event_sheet_note_hint)) },
+                supportingText = {
+                    if (showNoteError) {
+                        Text(stringResource(R.string.history_event_sheet_note_min_length))
+                    }
+                },
+                isError = showNoteError,
                 minLines = 3
             )
 
             Button(
                 onClick = {
+                    if (!isNoteValid) {
+                        showNoteError = true
+                        return@Button
+                    }
                     onSubmit(
                         MaintenanceEventType.valueOf(selectedType),
-                        note.ifBlank { null }
+                        trimmedNote
                     )
                 },
                 modifier = Modifier.fillMaxWidth()

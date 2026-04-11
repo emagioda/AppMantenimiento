@@ -10,6 +10,10 @@
     <string name="home_scan_button">Scansiona il QR</string>
     <string name="home_history_button">Storico manutenzione</string>
     <string name="home_history_menu_cd">Apri il menu dello storico manutenzione</string>
+    <string name="home_overline">Diagnostica guidata</string>
+    <string name="home_scan_support">Avvia una nuova scansione e apri subito il flusso corretto.</string>
+    <string name="home_history_support">Consulta gli interventi salvati e monitora lo stato delle macchine.</string>
+
     <!-- Scanner -->
     <string name="scanner_permission_rationale">Per scansionare il QR &#232; necessario consentire l\'accesso alla fotocamera.</string>
     <string name="scanner_permission_button">Apri impostazioni</string>
@@ -22,6 +26,15 @@
     <string name="scanner_bind_error">Errore durante l\'inizializzazione della fotocamera</string>
     <string name="scanner_invalid_machine">Macchina non riconosciuta</string>
     <string name="scanner_catalog_error">Impossibile caricare il catalogo delle macchine. Riprova.</string>
+    <string name="scanner_live_title">Scanner attivo</string>
+    <string name="scanner_live_subtitle">Inquadra il QR della macchina per aprire la diagnostica.</string>
+    <string name="scanner_ready">Pronto</string>
+    <string name="scanner_detecting">Rilevamento continuo</string>
+    <string name="scanner_permission_title">Accesso fotocamera richiesto</string>
+    <string name="scanner_settings_title">Abilita la fotocamera</string>
+    <string name="scanner_error_title">Scanner non disponibile</string>
+    <string name="scanner_torch_label">Torcia</string>
+    <string name="scanner_scan_confirmed">QR riconosciuto</string>
 
     <!-- Contatti -->
     <string name="contacts_title">Contatti</string>
@@ -36,6 +49,9 @@
     <string name="contacts_external_action_error">Impossibile aprire l\'app richiesta su questo dispositivo.</string>
     <string name="contacts_service_areas_label">Aree di servizio</string>
     <string name="contacts_tech_shortcut">Tecnici specializzati</string>
+    <string name="contacts_overline">Supporto operativo</string>
+    <string name="contacts_quick_actions">Azioni rapide</string>
+    <string name="contacts_default_name">Contatto</string>
 
     <!-- Comuni -->
     <string name="cd_back">Indietro</string>
@@ -57,6 +73,8 @@
     <string name="diagnostic_part_code">Codice: %1$s</string>
     <string name="diagnostic_part_contact_support">Contatta tecnici e fornitori</string>
     <string name="diagnostic_reference_title">Riferimento diagnostico</string>
+    <string name="diagnostic_flow_label">Percorso diagnostico</string>
+    <string name="diagnostic_step_label">Passo %1$d</string>
 
     <!-- Sicurezza -->
     <string name="safety_protocol_title">PROTOCOLLO DI SICUREZZA RICHIESTO</string>
@@ -71,6 +89,10 @@
     <string name="machine_detail_error_loading">Errore durante il caricamento del dettaglio macchina.</string>
     <string name="machine_detail_history_handle_cd">Apri lo storico della macchina</string>
     <string name="machine_detail_open_cases_alert_body">Controlla i casi ancora da risolvere prima di chiudere l\'intervento.</string>
+    <string name="machine_detail_overline">Scheda macchina</string>
+    <string name="machine_detail_ready">Pronta per la diagnosi</string>
+    <string name="machine_detail_no_image">Immagine non disponibile</string>
+    <string name="machine_detail_open_cases_cta">Apri lo storico</string>
 
     <plurals name="machine_detail_open_cases_alert_title">
         <item quantity="one">Attenzione: 1 intervento aperto</item>
@@ -83,6 +105,8 @@
     <string name="history_machine_selector_title">Seleziona una macchina</string>
     <string name="history_machines_empty_title">Nessuna macchina disponibile</string>
     <string name="history_machines_empty_subtitle">Quando il catalogo sar&#224; disponibile, qui vedrai tutte le macchine registrate.</string>
+    <string name="history_overline">Monitoraggio operativo</string>
+    <string name="history_machine_selector_subtitle">Seleziona una macchina per consultare interventi attivi, conclusi o annullati.</string>
     <string name="history_status_pending">In attesa</string>
     <string name="history_status_in_progress">In lavorazione</string>
     <string name="history_status_finalized">Finalizzato</string>
@@ -123,6 +147,8 @@
     <string name="history_save_prompt_title">Monitoraggio manutenzione</string>
     <string name="history_save_prompt_body">Se vuoi, salva questa diagnosi per seguirne l\'evoluzione.</string>
     <string name="history_save_button">Salva diagnosi</string>
+    <string name="history_save_button_resume">Continua bozza</string>
+    <string name="history_save_draft_available">La bozza resta disponibile anche se chiudi questa finestra.</string>
     <string name="history_saved_title">Diagnosi salvata</string>
     <string name="history_saved_body">Questa diagnosi fa gi&#224; parte dello storico di manutenzione.</string>
     <string name="history_sheet_status">Stato iniziale</string>
@@ -135,11 +161,16 @@
     <string name="history_sheet_problem_required">Scrivi almeno una breve descrizione del problema.</string>
     <string name="history_sheet_cancel">Annulla</string>
     <string name="history_sheet_confirm">Salva monitoraggio</string>
+    <string name="history_sheet_discard_draft_title">Scartare la bozza?</string>
+    <string name="history_sheet_discard_draft_body">Se continui perderai il testo inserito per questo monitoraggio.</string>
+    <string name="history_sheet_discard_draft_confirm">Scarta bozza</string>
+    <string name="history_sheet_discard_draft_keep">Continua a modificare</string>
 
     <string name="history_event_sheet_title">Aggiungi aggiornamento</string>
     <string name="history_event_sheet_type_label">Tipo di aggiornamento</string>
     <string name="history_event_sheet_note_label">Dettaglio</string>
     <string name="history_event_sheet_note_hint">Descrivi cosa &#232; stato fatto, verificato o cosa resta in sospeso&#8230;</string>
+    <string name="history_event_sheet_note_min_length">Inserisci almeno 10 caratteri per salvare l\'aggiornamento.</string>
     <string name="history_event_sheet_confirm">Salva aggiornamento</string>
     <string name="history_resolution_sheet_title">Chiudi intervento</string>
     <string name="history_resolution_sheet_note_label">Cosa &#232; stato fatto per risolvere</string>
@@ -177,6 +208,11 @@
     <string name="history_event_case_reopened">Intervento riaperto</string>
     <string name="history_event_case_canceled">Intervento annullato</string>
     <string name="history_initial_action_none">Nessun intervento ancora</string>
+    <string name="history_initial_action_none_description">Non &#232; stata ancora avviata alcuna azione operativa.</string>
+    <string name="history_initial_action_technician_description">Un tecnico o un referente &#232; gi&#224; stato contattato.</string>
+    <string name="history_initial_action_component_description">&#200; stato sostituito un componente o un ricambio.</string>
+    <string name="history_initial_action_test_description">&#200; stata eseguita una prova, una taratura o una regolazione.</string>
+    <string name="history_initial_action_other_description">Registra una prima azione diversa da quelle elencate sopra.</string>
 
     <!-- Storico macchina -->
     <string name="machine_history_fallback_title">Interventi macchina</string>

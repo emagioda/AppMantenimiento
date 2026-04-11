@@ -9,7 +9,7 @@
     { "id":"Q_AA", "type":"QUESTION", "title":"La spia \"Presenza di Tensione\" è accesa? (Quadro Elettrico)", "yes":"Q_AB", "no":"Q_AA_0" },
     { "id":"Q_AA_0", "type":"QUESTION", "title":"Sezionatore principale azionato?", "yes":"Q_AA_01", "no":"Q_AA_00" },
 
-    { "id":"Q_AA_00", "type":"END", "title":"Azionare il sezionatore.\n Verificare il funzionamento", "result":"NO_ISSUE" },
+    { "id":"Q_AA_00", "type":"END", "title":"Azionare il sezionatore.\nVerificare il funzionamento", "result":"NO_ISSUE" },
 
     { "id":"Q_AA_01", "type":"END",
       "title":"Guasto nell'alimentazione principale.",
@@ -197,7 +197,7 @@
     { "id":"Q_BC", "type":"QUESTION", "title":"La valvola di scarico è aperta?", "yes":"Q_BC_1", "no":"Q_BC_0" },
 
     { "id":"Q_BC_0", "type":"END",
-      "title":"Problemi software o hardware con il sistema di scarico.\n",
+      "title":"Problemi software o hardware con il sistema di scarico.",
       "description":"• Verificare il corretto funzionamento del selettore di scarico.\n• Verificare che la bilancia invii il segnale di apertura all'elettrovalvola.\n• Verificare che la bobina dell'elettrovalvola non sia danneggiata.\n• Verificare che l'aria compressa raggiunga sia l'elettrovalvola che il pistone di apertura.\n• Verificare che il pistone non sia danneggiato (controllare le guarnizioni e le condizioni dell'albero).",
       "parts": [ {"id":"P_09"}, {"id":"P_22"}, {"id":"P_24"}, {"id":"P_25"} ],
       "safetyWarning": true,
@@ -362,7 +362,7 @@
 
     { "id": "Q_CF_110",
       "type": "END",
-      "title": "Motore bloccato.\nCuscinetti usurati\n",
+      "title": "Motore bloccato.\nCuscinetti usurati",
       "description": "• Verificare che il motore giri manualmente.\n• Verificare che le tre fasi arrivino al motore.\n• Verificare eventuali rumori nei cuscinetti.\n• Verificare che la coclea non sia bloccata.",
       "safetyWarning": true,
       "parts": [{"id": "P_10"},{"id": "P_11"}],

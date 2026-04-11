@@ -479,49 +479,44 @@ private class MaintenanceCasePdfRenderer(
         if (cancellationSignal.isCanceled) return
 
         val panelInnerPadding = 12f
-        val horizontalGutter = 16f
+        val horizontalGutter = 10f
         val verticalSpacing = 10f
         val separatorSpacing = 8f
         val summaryWidth = pageWidth - panelInnerPadding * 2f
-        val topRowWidth = (summaryWidth - horizontalGutter) / 2f
-        val timingColumnCount = if (closureSummaryLabel != null && closureSummaryValue != null) 3 else 2
-        val timingRowWidth = (summaryWidth - (horizontalGutter * (timingColumnCount - 1))) / timingColumnCount
+        val primaryColumnWidth = (summaryWidth - (horizontalGutter * 3f)) / 4f
+        val trailingSummaryLabel = closureSummaryLabel ?: context.getString(R.string.history_updated_at)
+        val trailingSummaryValue = closureSummaryValue ?: formatPrintDateTimeLabel(detail.updatedAt)
 
-        val topRowCells = listOf(
+        val primaryRowCells = listOf(
             measureSummaryCell(
                 SummaryItem(
                     label = context.getString(R.string.history_print_status_label),
                     value = statusLabel(detail.status)
                 ),
-                topRowWidth
+                primaryColumnWidth
             ),
             measureSummaryCell(
                 SummaryItem(
                     label = context.getString(R.string.history_print_result_label),
                     value = resultLabel(detail.endResult)
                 ),
-                topRowWidth
-            )
-        )
-        val timingItems = mutableListOf(
-            SummaryItem(
-                label = context.getString(R.string.history_detected_at),
-                value = formatPrintDateTimeLabel(detail.openedAt)
+                primaryColumnWidth
             ),
-            SummaryItem(
-                label = context.getString(R.string.history_updated_at),
-                value = formatPrintDateTimeLabel(detail.updatedAt)
+            measureSummaryCell(
+                SummaryItem(
+                    label = context.getString(R.string.history_detected_at),
+                    value = formatPrintDateTimeLabel(detail.openedAt)
+                ),
+                primaryColumnWidth
+            ),
+            measureSummaryCell(
+                SummaryItem(
+                    label = trailingSummaryLabel,
+                    value = trailingSummaryValue
+                ),
+                primaryColumnWidth
             )
         )
-        if (closureSummaryLabel != null && closureSummaryValue != null) {
-            timingItems += SummaryItem(
-                label = closureSummaryLabel,
-                value = closureSummaryValue
-            )
-        }
-        val timingRowCells = timingItems.map { item ->
-            measureSummaryCell(item, timingRowWidth)
-        }
         val reasonCell = detail.cancellationReason
             ?.takeIf { it.isNotBlank() }
             ?.let { reasonText ->
@@ -534,16 +529,18 @@ private class MaintenanceCasePdfRenderer(
                 )
             }
 
-        val topRowHeight = topRowCells.maxOf { it.height }
-        val timingRowHeight = timingRowCells.maxOf { it.height }
-        val reasonRowHeight = reasonCell?.height ?: 0f
-        val separatorCount = if (reasonCell != null) 2 else 1
+        val primaryRowHeight = primaryRowCells.maxOf { it.height }
+        val extraRows = listOfNotNull(reasonCell)
+        val extraRowsHeight = extraRows.sumOf { it.height.toDouble() }.toFloat()
+        val separatorCount = extraRows.size
         val panelHeight = panelInnerPadding * 2f +
-            topRowHeight +
-            timingRowHeight +
-            reasonRowHeight +
-            verticalSpacing * separatorCount +
-            separatorSpacing * separatorCount
+            primaryRowHeight +
+            extraRowsHeight +
+            if (separatorCount > 0) {
+                (verticalSpacing * separatorCount) + (separatorSpacing * separatorCount)
+            } else {
+                0f
+            }
 
         ensureSpace(panelHeight)
 
@@ -553,32 +550,15 @@ private class MaintenanceCasePdfRenderer(
 
             var rowY = panelRect.top + panelInnerPadding
             drawSummaryColumnsRow(
-                cells = topRowCells,
+                cells = primaryRowCells,
                 startX = panelRect.left + panelInnerPadding,
                 startY = rowY,
                 gutter = horizontalGutter,
-                rowHeight = topRowHeight
+                rowHeight = primaryRowHeight
             )
-            rowY += topRowHeight + verticalSpacing * 0.5f
-            requireCanvas().drawLine(
-                panelRect.left + panelInnerPadding,
-                rowY,
-                panelRect.right - panelInnerPadding,
-                rowY,
-                linePaint
-            )
-            rowY += verticalSpacing * 0.5f + separatorSpacing
 
-            drawSummaryColumnsRow(
-                cells = timingRowCells,
-                startX = panelRect.left + panelInnerPadding,
-                startY = rowY,
-                gutter = horizontalGutter,
-                rowHeight = timingRowHeight
-            )
-            rowY += timingRowHeight
-
-            reasonCell?.let { measuredReasonCell ->
+            extraRows.forEach { extraCell ->
+                rowY += primaryRowHeight.takeIf { rowY == panelRect.top + panelInnerPadding } ?: 0f
                 rowY += verticalSpacing * 0.5f
                 requireCanvas().drawLine(
                     panelRect.left + panelInnerPadding,
@@ -589,10 +569,11 @@ private class MaintenanceCasePdfRenderer(
                 )
                 rowY += verticalSpacing * 0.5f + separatorSpacing
                 drawMeasuredSummaryCell(
-                    cell = measuredReasonCell,
+                    cell = extraCell,
                     startX = panelRect.left + panelInnerPadding,
                     startY = rowY
                 )
+                rowY += extraCell.height
             }
         }
 

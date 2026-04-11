@@ -22,6 +22,7 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,17 +31,15 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FlashOff
+import androidx.compose.material.icons.filled.FlashOn
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -51,6 +50,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -63,14 +63,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
@@ -79,13 +78,19 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.emagioda.myapp.R
 import com.emagioda.myapp.di.ServiceLocator
+import com.emagioda.myapp.presentation.common.PremiumHeroCard
+import com.emagioda.myapp.presentation.common.PremiumPrimaryButton
+import com.emagioda.myapp.presentation.common.PremiumScreenBackground
+import com.emagioda.myapp.presentation.common.PremiumSectionEyebrow
 import com.emagioda.myapp.presentation.viewmodel.ScannerViewModel
+import com.emagioda.myapp.ui.theme.ResultResolvedGreen
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import java.util.concurrent.Executors
 import java.util.regex.Pattern
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 private enum class CameraPermissionState {
@@ -160,7 +165,7 @@ fun ScannerScreen(
         }
     )
 
-    androidx.compose.runtime.LaunchedEffect(Unit) {
+    LaunchedEffect(Unit) {
         val granted = ContextCompat.checkSelfPermission(
             context,
             Manifest.permission.CAMERA
@@ -189,9 +194,7 @@ fun ScannerScreen(
 
     when (CameraPermissionState.valueOf(permissionState)) {
         CameraPermissionState.CHECKING -> {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
+            ScannerLoadingState()
         }
 
         CameraPermissionState.GRANTED -> {
@@ -202,18 +205,14 @@ fun ScannerScreen(
             ) { innerPadding ->
                 when {
                     vm.uiState.isLoading -> {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(innerPadding),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator()
-                        }
+                        ScannerLoadingState(
+                            modifier = Modifier.padding(innerPadding)
+                        )
                     }
 
                     errorResId != null -> {
-                        ErrorState(
+                        ScannerStateScreen(
+                            title = stringResource(R.string.scanner_error_title),
                             text = stringResource(errorResId),
                             buttonText = stringResource(R.string.common_retry),
                             onClick = vm::retry,
@@ -254,7 +253,8 @@ fun ScannerScreen(
         }
 
         CameraPermissionState.RATIONALE -> {
-            PermissionStateView(
+            ScannerStateScreen(
+                title = stringResource(R.string.scanner_permission_title),
                 text = stringResource(R.string.scanner_permission_rationale),
                 buttonText = stringResource(R.string.scanner_permission_retry),
                 onClick = { requestPermission.launch(Manifest.permission.CAMERA) }
@@ -262,7 +262,8 @@ fun ScannerScreen(
         }
 
         CameraPermissionState.SETTINGS -> {
-            PermissionStateView(
+            ScannerStateScreen(
+                title = stringResource(R.string.scanner_settings_title),
                 text = stringResource(R.string.scanner_permission_settings_message),
                 buttonText = stringResource(R.string.scanner_permission_button),
                 onClick = {
@@ -278,83 +279,93 @@ fun ScannerScreen(
 }
 
 @Composable
-private fun PermissionStateView(
-    text: String,
-    buttonText: String,
-    onClick: () -> Unit,
-    liftABit: Boolean = true
+private fun ScannerLoadingState(
+    modifier: Modifier = Modifier
 ) {
-    val safeInsets = WindowInsets.safeDrawing.asPaddingValues()
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(safeInsets)
+    PremiumScreenBackground(
+        modifier = modifier,
+        accentColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.18f)
     ) {
-        Column(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .offset(y = if (liftABit) (-32).dp else 0.dp)
-                .padding(horizontal = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = Icons.Default.Settings,
-                contentDescription = null,
-                modifier = Modifier.size(72.dp)
-            )
-            Spacer(Modifier.height(16.dp))
-            Text(
-                text = text,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-        }
-
-        Button(
-            onClick = onClick,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .padding(bottom = 40.dp)
-                .height(56.dp),
-            shape = MaterialTheme.shapes.medium
-        ) {
-            Icon(Icons.Default.Settings, contentDescription = null)
-            Spacer(Modifier.width(8.dp))
-            Text(
-                text = buttonText.uppercase(),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
-            )
+            PremiumHeroCard(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                accentColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.18f)
+            ) {
+                PremiumSectionEyebrow(text = stringResource(R.string.scanner_live_title))
+                CircularProgressIndicator()
+                Text(
+                    text = stringResource(R.string.scanner_detecting),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = stringResource(R.string.scanner_live_subtitle),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun ErrorState(
+private fun ScannerStateScreen(
+    title: String,
     text: String,
     buttonText: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Box(
-        modifier = modifier.padding(24.dp),
-        contentAlignment = Alignment.Center
+    PremiumScreenBackground(
+        modifier = modifier,
+        accentColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.18f)
     ) {
         Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(WindowInsets.safeDrawing.asPaddingValues())
+                .padding(horizontal = 24.dp, vertical = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(18.dp)
         ) {
-            Text(
-                text = text,
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Button(onClick = onClick) {
-                Text(buttonText.uppercase())
+            Spacer(Modifier.weight(1f))
+
+            PremiumHeroCard(
+                modifier = Modifier.fillMaxWidth(),
+                accentColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.16f)
+            ) {
+                PremiumSectionEyebrow(text = stringResource(R.string.app_name))
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = null,
+                    modifier = Modifier.size(56.dp),
+                    tint = MaterialTheme.colorScheme.secondary
+                )
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
+
+            Spacer(Modifier.weight(1f))
+
+            PremiumPrimaryButton(
+                text = buttonText.uppercase(),
+                onClick = onClick,
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = Icons.Default.Settings
+            )
         }
     }
 }
@@ -372,11 +383,14 @@ private fun CameraPreview(
     val analysisExecutor = remember { Executors.newSingleThreadExecutor() }
     val context = LocalContext.current
 
-    var handled by rememberSaveable { mutableStateOf(false) }
+    var handled by remember { mutableStateOf(false) }
+    var pendingMachineId by remember { mutableStateOf<String?>(null) }
+
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
                 handled = false
+                pendingMachineId = null
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -385,15 +399,23 @@ private fun CameraPreview(
         }
     }
 
-    var lastInvalidTime by rememberSaveable { mutableLongStateOf(0L) }
-    var lastInvalidValue by rememberSaveable { mutableStateOf<String?>(null) }
+    var lastInvalidTime by remember { mutableLongStateOf(0L) }
+    var lastInvalidValue by remember { mutableStateOf<String?>(null) }
 
     val idRegex = remember { Pattern.compile("^[A-Za-z0-9._-]{3,}$") }
     val mainExecutor = remember { ContextCompat.getMainExecutor(context) }
 
-    var torchEnabled by rememberSaveable { mutableStateOf(false) }
+    var torchEnabled by remember { mutableStateOf(false) }
     var cameraControl: CameraControl? by remember { mutableStateOf(null) }
     var cameraProvider: ProcessCameraProvider? by remember { mutableStateOf(null) }
+
+    LaunchedEffect(pendingMachineId) {
+        pendingMachineId?.let { machineId ->
+            delay(180)
+            onScanned(machineId)
+            pendingMachineId = null
+        }
+    }
 
     Box(modifier = modifier.fillMaxSize().systemBarsPadding()) {
         AndroidView(
@@ -440,8 +462,12 @@ private fun CameraPreview(
                                                 idRegex.matcher(value).matches()
                                             ) {
                                                 if (machineIds.contains(value)) {
-                                                    handled = true
-                                                    onScanned(value)
+                                                    mainExecutor.execute {
+                                                        if (!handled) {
+                                                            handled = true
+                                                            pendingMachineId = value
+                                                        }
+                                                    }
                                                 } else {
                                                     val now = System.currentTimeMillis()
                                                     val shouldNotify = value != lastInvalidValue ||
@@ -494,7 +520,11 @@ private fun CameraPreview(
             }
         )
 
-        QRScannerOverlay(showScanLine = false)
+        QRScannerOverlay(
+            showScanLine = pendingMachineId == null,
+            laserColor = MaterialTheme.colorScheme.tertiary,
+            cornerColor = MaterialTheme.colorScheme.secondary
+        )
 
         val torchCd = if (torchEnabled) {
             stringResource(R.string.scanner_torch_on_cd)
@@ -502,18 +532,52 @@ private fun CameraPreview(
             stringResource(R.string.scanner_torch_off_cd)
         }
 
-        FloatingActionButton(
-            onClick = {
-                torchEnabled = !torchEnabled
-                cameraControl?.enableTorch(torchEnabled)
-            },
+        Column(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(WindowInsets.navigationBars.asPaddingValues())
-                .padding(16.dp)
-                .semantics { contentDescription = torchCd }
+                .padding(16.dp),
+            horizontalAlignment = Alignment.End,
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Text(if (torchEnabled) "💡" else "🔦")
+            FloatingActionButton(
+                onClick = {
+                    torchEnabled = !torchEnabled
+                    cameraControl?.enableTorch(torchEnabled)
+                },
+                containerColor = if (torchEnabled) {
+                    MaterialTheme.colorScheme.tertiary
+                } else {
+                    MaterialTheme.colorScheme.surfaceContainerHigh
+                },
+                contentColor = if (torchEnabled) {
+                    MaterialTheme.colorScheme.onTertiary
+                } else {
+                    MaterialTheme.colorScheme.onSurface
+                },
+                modifier = Modifier.semantics { contentDescription = torchCd }
+            ) {
+                Icon(
+                    imageVector = if (torchEnabled) Icons.Default.FlashOn else Icons.Default.FlashOff,
+                    contentDescription = null
+                )
+            }
+        }
+
+        if (pendingMachineId != null) {
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .background(ResultResolvedGreen.copy(alpha = 0.16f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_result_resolved),
+                    contentDescription = null,
+                    tint = ResultResolvedGreen,
+                    modifier = Modifier.size(64.dp)
+                )
+            }
         }
 
         DisposableEffect(Unit) {

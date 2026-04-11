@@ -1,11 +1,22 @@
 package com.emagioda.myapp.presentation.screen.scanner
 
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,6 +30,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
@@ -30,35 +42,31 @@ import com.emagioda.myapp.R
 @Composable
 fun QRScannerOverlay(
     modifier: Modifier = Modifier,
-    frameSizeDp: Int = 260,
-    cornerLenDp: Int = 30,
-    scrimAlpha: Float = 0.6f,
+    frameSizeDp: Int = 264,
+    cornerLenDp: Int = 34,
+    scrimAlpha: Float = 0.62f,
     showScanLine: Boolean = true,
-    laserColor: Color = Color(0xFFFF3D00),
-    cornerColor: Color = Color(0xFF00E676)
+    laserColor: Color = Color(0xFFFF8B38),
+    cornerColor: Color = Color(0xFF78E3FF)
 ) {
-    val infiniteTransition = rememberInfiniteTransition(label = "scan")
-
-    // Animación de posición Y (ida y vuelta)
+    val infiniteTransition = rememberInfiniteTransition(label = "scanner-overlay")
     val yAnim by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 1f,
         animationSpec = infiniteRepeatable(
-            animation = tween(2500, easing = LinearEasing),
+            animation = tween(2400, easing = LinearEasing),
             repeatMode = RepeatMode.Reverse
         ),
-        label = "scanY"
+        label = "scanner-line-y"
     )
-
-    // Animación de opacidad del láser
     val alphaAnim by infiniteTransition.animateFloat(
-        initialValue = 0.4f,
+        initialValue = 0.42f,
         targetValue = 1f,
         animationSpec = infiniteRepeatable(
-            animation = tween(500, easing = FastOutSlowInEasing),
+            animation = tween(700, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
         ),
-        label = "scanAlpha"
+        label = "scanner-line-alpha"
     )
 
     Box(modifier = modifier.fillMaxSize()) {
@@ -68,11 +76,11 @@ fun QRScannerOverlay(
                 .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
         ) {
             val scrim = Color.Black.copy(alpha = scrimAlpha)
-            val cornerRadius = 16.dp.toPx()
+            val cornerRadius = 20.dp.toPx()
+            val innerRadius = 18.dp.toPx()
             val strokeWidth = 4.dp.toPx()
             val cornerLength = cornerLenDp.dp.toPx()
 
-            // 1. Dibujar fondo oscuro
             drawRect(color = scrim)
 
             val frameSize = frameSizeDp.dp.toPx()
@@ -81,7 +89,6 @@ fun QRScannerOverlay(
             val right = left + frameSize
             val bottom = top + frameSize
 
-            // 2. Recortar el agujero
             drawRoundRect(
                 color = Color.Transparent,
                 topLeft = Offset(left, top),
@@ -90,16 +97,26 @@ fun QRScannerOverlay(
                 blendMode = BlendMode.Clear
             )
 
-            // 3. Dibujar borde blanco sutil
             drawRoundRect(
-                color = Color.White.copy(alpha = 0.3f),
+                color = Color.White.copy(alpha = 0.18f),
                 topLeft = Offset(left, top),
                 size = Size(frameSize, frameSize),
                 cornerRadius = CornerRadius(cornerRadius),
                 style = Stroke(width = 1.dp.toPx())
             )
 
-            // 4. Dibujar Esquinas curvas
+            drawRoundRect(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        cornerColor.copy(alpha = 0.12f),
+                        Color.Transparent
+                    )
+                ),
+                topLeft = Offset(left + 10.dp.toPx(), top + 10.dp.toPx()),
+                size = Size(frameSize - 20.dp.toPx(), frameSize - 20.dp.toPx()),
+                cornerRadius = CornerRadius(innerRadius)
+            )
+
             val path = Path().apply {
                 moveTo(left, top + cornerLength)
                 lineTo(left, top + cornerRadius)
@@ -124,44 +141,60 @@ fun QRScannerOverlay(
 
             drawPath(
                 path = path,
+                color = cornerColor.copy(alpha = 0.34f),
+                style = Stroke(width = 8.dp.toPx(), cap = StrokeCap.Round)
+            )
+            drawPath(
+                path = path,
                 color = cornerColor,
-                style = Stroke(width = strokeWidth, cap = androidx.compose.ui.graphics.StrokeCap.Round)
+                style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
             )
 
-            // 5. Dibujar Línea de Escaneo
             if (showScanLine) {
                 val yPos = top + (frameSize * yAnim)
-
                 val brush = Brush.horizontalGradient(
-                    0.0f to Color.Transparent,
-                    0.1f to laserColor.copy(alpha = alphaAnim * 0.5f),
-                    0.5f to laserColor.copy(alpha = alphaAnim),
-                    0.9f to laserColor.copy(alpha = alphaAnim * 0.5f),
-                    1.0f to Color.Transparent,
+                    colors = listOf(
+                        Color.Transparent,
+                        laserColor.copy(alpha = alphaAnim * 0.55f),
+                        laserColor.copy(alpha = alphaAnim),
+                        laserColor.copy(alpha = alphaAnim * 0.55f),
+                        Color.Transparent
+                    ),
                     startX = left,
                     endX = right
                 )
 
                 drawLine(
                     brush = brush,
-                    start = Offset(left, yPos),
-                    end = Offset(right, yPos),
+                    start = Offset(left + 12.dp.toPx(), yPos),
+                    end = Offset(right - 12.dp.toPx(), yPos),
                     strokeWidth = 4.dp.toPx()
                 )
             }
         }
 
-        // TEXTO DE AYUDA - POSICIONADO RELATIVO AL MARCO
-        Text(
-            text = stringResource(R.string.scanner_hint),
-            color = Color.White.copy(alpha = 0.9f),
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Medium,
-            textAlign = TextAlign.Center,
+        Surface(
             modifier = Modifier
-                .align(Alignment.Center) // 1. Lo centramos en la pantalla (igual que el marco)
-                // 2. Lo bajamos: Mitad del tamaño del marco (130dp) + un margen extra (50dp)
-                .offset(y = (frameSizeDp.dp / 2) + 50.dp)
-        )
+                .align(Alignment.Center)
+                .offset(y = (frameSizeDp.dp / 2) + 74.dp)
+                .padding(horizontal = 24.dp),
+            color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.84f),
+            contentColor = MaterialTheme.colorScheme.onSurface,
+            shape = RoundedCornerShape(18.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.scanner_hint),
+                modifier = Modifier
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.outlineVariant,
+                        shape = RoundedCornerShape(18.dp)
+                    )
+                    .padding(horizontal = 18.dp, vertical = 12.dp),
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium,
+                textAlign = TextAlign.Center
+            )
+        }
     }
 }

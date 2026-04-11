@@ -19,9 +19,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.PrecisionManufacturing
 import androidx.compose.material.icons.filled.WarningAmber
-import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,8 +33,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -44,12 +41,14 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.emagioda.myapp.R
 import com.emagioda.myapp.di.ServiceLocator
+import com.emagioda.myapp.presentation.common.PremiumHeroCard
+import com.emagioda.myapp.presentation.common.PremiumPrimaryButton
+import com.emagioda.myapp.presentation.common.PremiumScreenBackground
 import com.emagioda.myapp.presentation.common.resolveDrawableResId
 import com.emagioda.myapp.presentation.viewmodel.MachineDetailViewModel
 
@@ -91,89 +90,109 @@ fun MachineDetailScreen(
             )
         }
     ) { innerPadding ->
-        when {
-            uiState.isLoading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
+        PremiumScreenBackground(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            accentColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.16f)
+        ) {
+            when {
+                uiState.isLoading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
-            }
 
-            machine == null -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = stringResource(
-                            uiState.errorResId ?: R.string.machine_detail_error_loading
+                machine == null -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = stringResource(
+                                uiState.errorResId ?: R.string.machine_detail_error_loading
+                            )
                         )
-                    )
+                    }
                 }
-            }
 
-            else -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 20.dp, vertical = 12.dp)
+                else -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize()
                     ) {
                         Column(
                             modifier = Modifier
-                                .weight(1f)
-                                .fillMaxWidth(),
-                            verticalArrangement = Arrangement.spacedBy(20.dp)
+                                .fillMaxSize()
+                                .padding(horizontal = 20.dp, vertical = 16.dp),
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            machine.imageName?.let { imageName ->
-                                val resId = resolveDrawableResId(imageName)
-
-                                if (resId != null) {
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .weight(1f),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Image(
-                                            painter = painterResource(id = resId),
-                                            contentDescription = machine.name,
-                                            modifier = Modifier
-                                                .fillMaxSize()
-                                                .clip(RoundedCornerShape(20.dp)),
-                                            contentScale = ContentScale.Fit
-                                        )
-                                    }
-                                } else {
-                                    Spacer(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .weight(1f)
-                                    )
-                                }
-                            } ?: Spacer(
+                            Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .weight(1f)
-                            )
+                                    .weight(1f),
+                                verticalArrangement = Arrangement.spacedBy(12.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Surface(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .weight(1f),
+                                    shape = RoundedCornerShape(28.dp),
+                                    color = MaterialTheme.colorScheme.surfaceContainer,
+                                    border = androidx.compose.foundation.BorderStroke(
+                                        width = 1.dp,
+                                        color = MaterialTheme.colorScheme.outlineVariant
+                                    )
+                                ) {
+                                    Box(
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        val resId = machine.imageName?.let(::resolveDrawableResId)
+                                        if (resId != null) {
+                                            Image(
+                                                painter = painterResource(id = resId),
+                                                contentDescription = machine.name,
+                                                modifier = Modifier
+                                                    .fillMaxSize()
+                                                    .padding(horizontal = 6.dp, vertical = 8.dp),
+                                                contentScale = ContentScale.Fit
+                                            )
+                                        } else {
+                                            Column(
+                                                horizontalAlignment = Alignment.CenterHorizontally,
+                                                verticalArrangement = Arrangement.spacedBy(10.dp)
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.PrecisionManufacturing,
+                                                    contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                    modifier = Modifier.size(40.dp)
+                                                )
+                                                Text(
+                                                    text = stringResource(R.string.machine_detail_no_image),
+                                                    style = MaterialTheme.typography.bodyMedium,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
 
-                            machine.description?.takeIf { it.isNotBlank() }?.let {
-                                Text(
-                                    text = it,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    modifier = Modifier.fillMaxWidth(),
-                                    textAlign = TextAlign.Center
-                                )
+                                machine.description?.takeIf { it.isNotBlank() }?.let {
+                                    Text(
+                                        text = it,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                }
                             }
 
                             if (uiState.historyOverview.hasOpenCases) {
@@ -182,44 +201,31 @@ fun MachineDetailScreen(
                                     onClick = { onOpenHistory(machineId) }
                                 )
                             }
-                        }
 
-                        Spacer(Modifier.height(16.dp))
-
-                        Button(
-                            onClick = { onStartDiagnostic(machineId) },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(56.dp),
-                            shape = MaterialTheme.shapes.medium
-                        ) {
-                            Icon(Icons.Default.PlayArrow, contentDescription = null)
-                            Text(
+                            PremiumPrimaryButton(
                                 text = stringResource(R.string.machine_detail_start).uppercase(),
-                                modifier = Modifier.padding(start = 8.dp),
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold
+                                onClick = { onStartDiagnostic(machineId) },
+                                modifier = Modifier.fillMaxWidth(),
+                                leadingIcon = Icons.Default.PrecisionManufacturing
                             )
                         }
+
+                        HistorySwipeZone(
+                            modifier = Modifier
+                                .align(Alignment.CenterEnd)
+                                .fillMaxHeight()
+                                .width(32.dp),
+                            onOpenHistory = { onOpenHistory(machineId) }
+                        )
+
+                        HistoryEdgeHandle(
+                            modifier = Modifier
+                                .align(Alignment.CenterEnd)
+                                .padding(vertical = 32.dp),
+                            hasOpenCases = uiState.historyOverview.hasOpenCases,
+                            onClick = { onOpenHistory(machineId) }
+                        )
                     }
-
-                    HistorySwipeZone(
-                        modifier = Modifier
-                            .align(Alignment.CenterEnd)
-                            .fillMaxHeight()
-                            .width(28.dp)
-                            .zIndex(2f),
-                        onOpenHistory = { onOpenHistory(machineId) }
-                    )
-
-                    HistoryEdgeHandle(
-                        modifier = Modifier
-                            .align(Alignment.CenterEnd)
-                            .padding(vertical = 32.dp)
-                            .zIndex(3f),
-                        hasOpenCases = uiState.historyOverview.hasOpenCases,
-                        onClick = { onOpenHistory(machineId) }
-                    )
                 }
             }
         }
@@ -231,30 +237,34 @@ private fun OpenCasesAlert(
     openCasesCount: Int,
     onClick: () -> Unit
 ) {
-    Surface(
+    PremiumHeroCard(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(18.dp),
-        color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.72f),
-        tonalElevation = 2.dp
+        accentColor = MaterialTheme.colorScheme.error.copy(alpha = 0.16f),
+        contentPadding = androidx.compose.foundation.layout.PaddingValues(18.dp)
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 14.dp),
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            Icon(
-                imageVector = Icons.Default.WarningAmber,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onErrorContainer
-            )
+            Surface(
+                modifier = Modifier.size(44.dp),
+                shape = RoundedCornerShape(16.dp),
+                color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.76f),
+                contentColor = MaterialTheme.colorScheme.onErrorContainer
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = Icons.Default.WarningAmber,
+                        contentDescription = null
+                    )
+                }
+            }
 
             Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(start = 12.dp),
+                modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
@@ -263,14 +273,19 @@ private fun OpenCasesAlert(
                         openCasesCount,
                         openCasesCount
                     ),
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onErrorContainer
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = stringResource(R.string.machine_detail_open_cases_alert_body),
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onErrorContainer
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = stringResource(R.string.machine_detail_open_cases_cta),
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.error
                 )
             }
         }
@@ -284,32 +299,36 @@ private fun HistoryEdgeHandle(
     onClick: () -> Unit
 ) {
     val containerColor = if (hasOpenCases) {
-        MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.72f)
+        MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.80f)
     } else {
         MaterialTheme.colorScheme.surfaceContainerHigh
     }
 
     Surface(
         modifier = modifier,
-        shape = RoundedCornerShape(topStart = 20.dp, bottomStart = 20.dp),
+        shape = RoundedCornerShape(topStart = 22.dp, bottomStart = 22.dp),
         color = containerColor,
-        shadowElevation = 6.dp,
+        shadowElevation = 8.dp,
         tonalElevation = 6.dp
     ) {
         Column(
             modifier = Modifier
-                .width(34.dp)
-                .height(92.dp)
+                .width(38.dp)
+                .height(106.dp)
                 .clickable(onClick = onClick)
-                .padding(horizontal = 3.dp, vertical = 10.dp),
+                .padding(horizontal = 4.dp, vertical = 10.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                 contentDescription = stringResource(R.string.machine_detail_history_handle_cd),
-                modifier = Modifier.size(30.dp),
-                tint = Color.White
+                modifier = Modifier.size(32.dp),
+                tint = if (hasOpenCases) {
+                    MaterialTheme.colorScheme.onErrorContainer
+                } else {
+                    MaterialTheme.colorScheme.onSurface
+                }
             )
         }
     }

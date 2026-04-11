@@ -39,6 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.emagioda.myapp.R
 import com.emagioda.myapp.di.ServiceLocator
+import com.emagioda.myapp.presentation.common.PremiumHeroCard
+import com.emagioda.myapp.presentation.common.PremiumScreenBackground
 import com.emagioda.myapp.presentation.viewmodel.HistoryViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -129,46 +131,62 @@ fun MachineHistoryScreen(
                 )
             }
         ) { innerPadding ->
-            when {
-                uiState.isLoading -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
+            PremiumScreenBackground(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+                accentColor = if (uiState.showCanceledOnly) {
+                    MaterialTheme.colorScheme.error.copy(alpha = 0.12f)
+                } else {
+                    MaterialTheme.colorScheme.secondary.copy(alpha = 0.14f)
                 }
+            ) {
+                when {
+                    uiState.isLoading -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
 
-                else -> {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding)
-                    ) {
-                        Text(
-                            text = machineName,
-                            style = MaterialTheme.typography.headlineSmall,
-                            fontWeight = FontWeight.SemiBold,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 12.dp)
-                        )
+                    else -> {
+                        Column(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            PremiumHeroCard(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                                accentColor = if (uiState.showCanceledOnly) {
+                                    MaterialTheme.colorScheme.error.copy(alpha = 0.14f)
+                                } else {
+                                    MaterialTheme.colorScheme.secondary.copy(alpha = 0.16f)
+                                }
+                            ) {
+                                Text(
+                                    text = machineName,
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    fontWeight = FontWeight.SemiBold,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
 
-                        HistoryContent(
-                            uiState = uiState,
-                            emptyTitle = stringResource(emptyTitleRes),
-                            emptySubtitle = stringResource(emptySubtitleRes),
-                            searchPlaceholder = stringResource(R.string.history_search_placeholder),
-                            onSearchQueryChange = vm::onSearchQueryChange,
-                            onStatusToggle = vm::onStatusToggle,
-                            onOpenCase = onOpenCase,
-                            modifier = Modifier.weight(1f)
-                        )
+                            HistoryContent(
+                                uiState = uiState,
+                                emptyTitle = stringResource(emptyTitleRes),
+                                emptySubtitle = stringResource(emptySubtitleRes),
+                                searchPlaceholder = stringResource(R.string.history_search_placeholder),
+                                onSearchQueryChange = vm::onSearchQueryChange,
+                                onStatusToggle = vm::onStatusToggle,
+                                onOpenCase = onOpenCase,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
                     }
                 }
             }

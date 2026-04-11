@@ -1,5 +1,6 @@
 package com.emagioda.myapp.presentation.screen.diagnostic
 
+import androidx.compose.foundation.BorderStroke
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
@@ -11,10 +12,11 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -27,6 +29,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
@@ -35,16 +38,24 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.HeadsetMic
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -56,7 +67,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -64,15 +78,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -89,6 +110,11 @@ import com.emagioda.myapp.domain.model.MaintenanceStatus
 import com.emagioda.myapp.domain.model.NodeType
 import com.emagioda.myapp.domain.model.QuestionMode
 import com.emagioda.myapp.domain.model.SchematicDocument
+import com.emagioda.myapp.presentation.common.PremiumHeroCard
+import com.emagioda.myapp.presentation.common.PremiumPrimaryButton
+import com.emagioda.myapp.presentation.common.PremiumScreenBackground
+import com.emagioda.myapp.presentation.common.PremiumSecondaryButton
+import com.emagioda.myapp.presentation.common.PremiumSectionEyebrow
 import com.emagioda.myapp.presentation.common.SafetyWarningDialog
 import com.emagioda.myapp.presentation.common.SchematicPdfOpener
 import com.emagioda.myapp.presentation.common.resolveDisplayText
@@ -145,6 +171,15 @@ fun DiagnosticScreen(
         }
     }
 
+    LaunchedEffect(uiState.savedCaseId) {
+        if (uiState.savedCaseId != null) {
+            snackbarHostState.showSnackbar(
+                message = context.getString(R.string.history_saved_title),
+                duration = SnackbarDuration.Short
+            )
+        }
+    }
+
     BackHandler(enabled = vm.canGoBack()) { vm.goBack() }
 
     Scaffold(
@@ -163,10 +198,17 @@ fun DiagnosticScreen(
                 }
             )
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) },
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    .padding(bottom = 12.dp)
+            )
+        },
         contentWindowInsets = WindowInsets(0)
     ) { innerPadding ->
-        Box(
+        PremiumScreenBackground(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
@@ -204,6 +246,7 @@ fun DiagnosticScreen(
                         NodeType.QUESTION -> QuestionContent(
                             node = node,
                             isBack = uiState.isBackNavigation,
+                            pathSize = uiState.path.size,
                             vm = vm
                         )
 
@@ -318,7 +361,7 @@ fun DiagnosticEndReferenceScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         contentWindowInsets = WindowInsets(0)
     ) { innerPadding ->
-        Box(
+        PremiumScreenBackground(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
@@ -361,9 +404,57 @@ fun DiagnosticEndReferenceScreen(
 }
 
 @Composable
+private fun DiagnosticProgressHeader(
+    stepCount: Int,
+    showLabels: Boolean = true,
+    modifier: Modifier = Modifier
+) {
+    val safeStepCount = stepCount.coerceAtLeast(1)
+    val dotsScrollState = rememberScrollState()
+
+    LaunchedEffect(safeStepCount) {
+        dotsScrollState.animateScrollTo(dotsScrollState.maxValue)
+    }
+
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        if (showLabels) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                PremiumSectionEyebrow(text = stringResource(R.string.diagnostic_flow_label))
+                PremiumSectionEyebrow(
+                    text = stringResource(R.string.diagnostic_step_label, stepCount)
+                )
+            }
+        }
+        Row(
+            modifier = Modifier.horizontalScroll(dotsScrollState),
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            repeat(safeStepCount) { index ->
+                Box(
+                    modifier = Modifier
+                        .size(if (index == safeStepCount - 1) 10.dp else 8.dp)
+                        .background(
+                            color = if (index == safeStepCount - 1) {
+                                MaterialTheme.colorScheme.secondary
+                            } else {
+                                MaterialTheme.colorScheme.secondary.copy(alpha = 0.35f)
+                            },
+                            shape = CircleShape
+                        )
+                )
+            }
+        }
+    }
+}
+
+@Composable
 private fun QuestionContent(
     node: DiagnosticNode,
     isBack: Boolean,
+    pathSize: Int,
     vm: DiagnosticViewModel
 ) {
     AnimatedContent(
@@ -396,28 +487,26 @@ private fun QuestionContent(
                 .padding(bottom = 40.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            DiagnosticProgressHeader(
+                stepCount = pathSize,
+                showLabels = false,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 8.dp)
+            )
+
             Box(
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 20.dp),
                 contentAlignment = Alignment.Center
             ) {
-                ElevatedCard(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .border(
-                            width = 2.dp,
-                            color = MaterialTheme.colorScheme.outline,
-                            shape = CardDefaults.elevatedShape
-                        ),
-                    colors = CardDefaults.elevatedCardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
-                    ),
-                    elevation = CardDefaults.elevatedCardElevation(defaultElevation = 12.dp)
+                PremiumHeroCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    accentColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.16f)
                 ) {
                     Column(
                         modifier = Modifier
-                            .padding(24.dp)
                             .fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -448,24 +537,13 @@ private fun QuestionContent(
                     .padding(horizontal = 20.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                val buttonHeight = 56.dp
-                val buttonShape = MaterialTheme.shapes.medium
-
                 when (targetNode.mode) {
                     QuestionMode.CONTINUE_ONLY -> {
-                        Button(
+                        PremiumPrimaryButton(
+                            text = stringResource(R.string.diagnostic_continue).uppercase(),
                             onClick = vm::answerYes,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(buttonHeight),
-                            shape = buttonShape
-                        ) {
-                            Text(
-                                stringResource(R.string.diagnostic_continue).uppercase(),
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
+                            modifier = Modifier.fillMaxWidth()
+                        )
                     }
 
                     QuestionMode.YES_NO -> {
@@ -474,33 +552,17 @@ private fun QuestionContent(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            FilledTonalButton(
+                            PremiumSecondaryButton(
+                                text = stringResource(R.string.diagnostic_no).uppercase(),
                                 onClick = vm::answerNo,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .height(buttonHeight),
-                                shape = buttonShape
-                            ) {
-                                Text(
-                                    stringResource(R.string.diagnostic_no).uppercase(),
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
+                                modifier = Modifier.weight(1f)
+                            )
 
-                            Button(
+                            PremiumPrimaryButton(
+                                text = stringResource(R.string.diagnostic_yes).uppercase(),
                                 onClick = vm::answerYes,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .height(buttonHeight),
-                                shape = buttonShape
-                            ) {
-                                Text(
-                                    stringResource(R.string.diagnostic_yes).uppercase(),
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
+                                modifier = Modifier.weight(1f)
+                            )
                         }
                     }
                 }
@@ -548,15 +610,23 @@ private fun DiagnosticEndReferenceContent(
                 .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            EndResultIcon(node.result ?: EndResult.NO_ISSUE)
-
-            Spacer(Modifier.height(24.dp))
-
-            Text(
-                text = titleText,
-                style = MaterialTheme.typography.headlineSmall,
-                textAlign = TextAlign.Center
-            )
+            PremiumHeroCard(
+                modifier = Modifier.fillMaxWidth(),
+                accentColor = endResultAccent(node.result)
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    EndResultIcon(node.result ?: EndResult.NO_ISSUE)
+                    Text(
+                        text = titleText,
+                        style = MaterialTheme.typography.headlineSmall,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
 
             descriptionText?.let {
                 Spacer(Modifier.height(24.dp))
@@ -587,19 +657,11 @@ private fun DiagnosticEndReferenceContent(
             Spacer(Modifier.height(24.dp))
 
             if (showTechniciansButton) {
-                FilledTonalButton(
+                PremiumSecondaryButton(
+                    text = stringResource(R.string.contacts_tech_shortcut).uppercase(),
                     onClick = onOpenTechnicians,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp),
-                    shape = MaterialTheme.shapes.medium
-                ) {
-                    Text(
-                        text = stringResource(R.string.contacts_tech_shortcut).uppercase(),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
 
             Spacer(Modifier.height(24.dp))
@@ -632,7 +694,15 @@ private fun EndContent(
                 part.detail.technicalContacts.orEmpty().isNotEmpty()
         }
     }
+    val defaultDraftStatus = suggestedStatusFor(node.result).name
+    fun emptySaveDraft() = SaveDiagnosticDraft(status = defaultDraftStatus)
     var showSaveSheet by remember(node.id) { mutableStateOf(false) }
+    var saveDraft by rememberSaveable(
+        node.id,
+        stateSaver = SaveDiagnosticDraft.Saver
+    ) {
+        mutableStateOf(emptySaveDraft())
+    }
 
     LaunchedEffect(node.id) {
         scrollState.scrollTo(0)
@@ -641,6 +711,7 @@ private fun EndContent(
     LaunchedEffect(uiState.savedCaseId) {
         if (uiState.savedCaseId != null) {
             showSaveSheet = false
+            saveDraft = emptySaveDraft()
         }
     }
 
@@ -657,15 +728,31 @@ private fun EndContent(
                 .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            EndResultIcon(node.result ?: EndResult.NO_ISSUE)
-
-            Spacer(Modifier.height(24.dp))
-
-            Text(
-                text = titleText,
-                style = MaterialTheme.typography.headlineSmall,
-                textAlign = TextAlign.Center
+            DiagnosticProgressHeader(
+                stepCount = uiState.path.size,
+                showLabels = false,
+                modifier = Modifier.fillMaxWidth()
             )
+
+            Spacer(Modifier.height(12.dp))
+
+            PremiumHeroCard(
+                modifier = Modifier.fillMaxWidth(),
+                accentColor = endResultAccent(node.result)
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    EndResultIcon(node.result ?: EndResult.NO_ISSUE)
+                    Text(
+                        text = titleText,
+                        style = MaterialTheme.typography.headlineSmall,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
 
             descriptionText?.let {
                 Spacer(Modifier.height(24.dp))
@@ -700,8 +787,15 @@ private fun EndContent(
                 uiState = uiState,
                 vm = vm,
                 showSaveSheet = showSaveSheet,
+                draft = saveDraft,
+                hasDraft = saveDraft.hasContent(defaultStatus = defaultDraftStatus),
                 onShowSheet = { showSaveSheet = true },
-                onDismissSheet = { showSaveSheet = false },
+                onHideSheet = { showSaveSheet = false },
+                onDraftChange = { saveDraft = it },
+                onDiscardDraft = {
+                    saveDraft = emptySaveDraft()
+                    showSaveSheet = false
+                },
                 onOpenHistoryCase = onOpenHistoryCase,
                 titleText = titleText,
                 descriptionText = descriptionText
@@ -710,55 +804,24 @@ private fun EndContent(
             Spacer(Modifier.height(24.dp))
 
             if (showTechniciansButton) {
-                FilledTonalButton(
+                PremiumSecondaryButton(
+                    text = stringResource(R.string.contacts_tech_shortcut).uppercase(),
                     onClick = onOpenTechnicians,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp),
-                    shape = MaterialTheme.shapes.medium
-                ) {
-                    Text(
-                        text = stringResource(R.string.contacts_tech_shortcut).uppercase(),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
+                    modifier = Modifier.fillMaxWidth()
+                )
 
                 Spacer(Modifier.height(16.dp))
             }
 
-            Column(
+            PremiumSecondaryButton(
+                text = stringResource(R.string.diagnostic_home).uppercase(),
+                onClick = {
+                    vm.restart()
+                    onRestartToHome()
+                },
                 modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                FilledIconButton(
-                    onClick = {
-                        vm.restart()
-                        onRestartToHome()
-                    },
-                    modifier = Modifier.size(72.dp),
-                    shape = CircleShape,
-                    colors = IconButtonDefaults.filledIconButtonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    )
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Home,
-                        contentDescription = stringResource(R.string.diagnostic_home),
-                        modifier = Modifier.size(32.dp)
-                    )
-                }
-
-                Spacer(Modifier.height(10.dp))
-
-                Text(
-                    text = stringResource(R.string.diagnostic_home),
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
+                leadingIcon = Icons.Filled.Home
+            )
 
             Spacer(Modifier.height(24.dp))
         }
@@ -771,8 +834,12 @@ private fun MaintenanceFollowUpSection(
     uiState: DiagnosticUiState,
     vm: DiagnosticViewModel,
     showSaveSheet: Boolean,
+    draft: SaveDiagnosticDraft,
+    hasDraft: Boolean,
     onShowSheet: () -> Unit,
-    onDismissSheet: () -> Unit,
+    onHideSheet: () -> Unit,
+    onDraftChange: (SaveDiagnosticDraft) -> Unit,
+    onDiscardDraft: () -> Unit,
     onOpenHistoryCase: (Long) -> Unit,
     titleText: String,
     descriptionText: String?
@@ -786,17 +853,12 @@ private fun MaintenanceFollowUpSection(
     val otherTitle = stringResource(R.string.history_event_other)
 
     if (savedCaseId == null) {
-        ElevatedCard(
+        PremiumHeroCard(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.elevatedCardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
-            ),
-            elevation = CardDefaults.elevatedCardElevation(defaultElevation = 6.dp)
+            accentColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.14f)
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(18.dp),
+                modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(
@@ -809,35 +871,57 @@ private fun MaintenanceFollowUpSection(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                Button(
+                if (hasDraft) {
+                    Surface(
+                        shape = RoundedCornerShape(16.dp),
+                        color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.55f),
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        border = BorderStroke(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.85f)
+                        )
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 14.dp, vertical = 10.dp),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Save,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Text(
+                                text = stringResource(R.string.history_save_draft_available),
+                                style = MaterialTheme.typography.bodySmall,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
+                }
+                PremiumPrimaryButton(
+                    text = stringResource(
+                        if (hasDraft) {
+                            R.string.history_save_button_resume
+                        } else {
+                            R.string.history_save_button
+                        }
+                    ),
                     onClick = onShowSheet,
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Save,
-                        contentDescription = null
-                    )
-                    Text(
-                        text = stringResource(R.string.history_save_button),
-                        modifier = Modifier.padding(start = 8.dp),
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
+                    leadingIcon = Icons.Default.Save
+                )
             }
         }
     } else {
-        ElevatedCard(
+        PremiumHeroCard(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.elevatedCardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
-            ),
-            elevation = CardDefaults.elevatedCardElevation(defaultElevation = 6.dp)
+            accentColor = ResultResolvedGreen.copy(alpha = 0.18f)
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(18.dp),
+                modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(
@@ -850,24 +934,26 @@ private fun MaintenanceFollowUpSection(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                FilledTonalButton(
+                PremiumSecondaryButton(
+                    text = stringResource(R.string.history_view_case),
                     onClick = { onOpenHistoryCase(savedCaseId) },
                     modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(stringResource(R.string.history_view_case))
-                }
+                )
             }
         }
     }
 
     if (showSaveSheet) {
         SaveDiagnosticBottomSheet(
+            draft = draft,
+            hasDraft = hasDraft,
             machineName = uiState.machineName ?: uiState.machineId,
             diagnosisTitle = titleText,
             diagnosisDescription = descriptionText,
-            suggestedStatus = suggestedStatusFor(node.result),
             isSaving = uiState.isSavingCase,
-            onDismiss = onDismissSheet,
+            onHide = onHideSheet,
+            onDraftChange = onDraftChange,
+            onDiscard = onDiscardDraft,
             onSave = { status, problemNote, action, actionNote ->
                 vm.saveCurrentDiagnosis(
                     status = status,
@@ -896,43 +982,67 @@ private fun MaintenanceFollowUpSection(
 @OptIn(ExperimentalMaterial3Api::class, androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
 @Composable
 private fun SaveDiagnosticBottomSheet(
+    draft: SaveDiagnosticDraft,
+    hasDraft: Boolean,
     machineName: String,
     diagnosisTitle: String,
     diagnosisDescription: String?,
-    suggestedStatus: MaintenanceStatus,
     isSaving: Boolean,
-    onDismiss: () -> Unit,
+    onHide: () -> Unit,
+    onDraftChange: (SaveDiagnosticDraft) -> Unit,
+    onDiscard: () -> Unit,
     onSave: (MaintenanceStatus, String, InitialMaintenanceAction, String) -> Unit
 ) {
-    var selectedStatus by rememberSaveable { mutableStateOf(suggestedStatus.name) }
-    var problemNote by rememberSaveable { mutableStateOf("") }
-    var initialAction by rememberSaveable { mutableStateOf(InitialMaintenanceAction.NONE.name) }
-    var actionNote by rememberSaveable { mutableStateOf("") }
     var showProblemNoteError by rememberSaveable { mutableStateOf(false) }
+    var showDiscardDraftDialog by rememberSaveable { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
     val problemNoteBringIntoViewRequester = remember { BringIntoViewRequester() }
     val actionNoteBringIntoViewRequester = remember { BringIntoViewRequester() }
-    val selectedInitialAction = InitialMaintenanceAction.valueOf(initialAction)
+    val actionNoteFocusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val selectedInitialAction = InitialMaintenanceAction.valueOf(draft.initialAction)
+    var isInitialActionMenuExpanded by rememberSaveable { mutableStateOf(false) }
+    var shouldFocusActionDetail by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(selectedInitialAction, shouldFocusActionDetail) {
+        if (shouldFocusActionDetail && selectedInitialAction != InitialMaintenanceAction.NONE) {
+            actionNoteFocusRequester.requestFocus()
+            actionNoteBringIntoViewRequester.bringIntoView()
+            keyboardController?.show()
+            shouldFocusActionDetail = false
+        }
+    }
 
     ModalBottomSheet(
         sheetState = sheetState,
         onDismissRequest = {
             if (!isSaving) {
-                onDismiss()
+                onHide()
             }
         }
     ) {
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.94f)
                 .navigationBarsPadding()
                 .imePadding()
-                .padding(top = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(top = 8.dp)
         ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .then(
+                        if (isInitialActionMenuExpanded) {
+                            Modifier.blur(10.dp)
+                        } else {
+                            Modifier
+                        }
+                    ),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
                 Column(
                     modifier = Modifier
                         .weight(1f)
@@ -976,28 +1086,17 @@ private fun SaveDiagnosticBottomSheet(
                         style = MaterialTheme.typography.labelLarge
                     )
 
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        StatusFilterChip(
-                            selected = selectedStatus == MaintenanceStatus.PENDING.name,
-                            label = stringResource(R.string.history_status_pending),
-                            onClick = { selectedStatus = MaintenanceStatus.PENDING.name }
-                        )
-                        StatusFilterChip(
-                            selected = selectedStatus == MaintenanceStatus.IN_PROGRESS.name,
-                            label = stringResource(R.string.history_status_in_progress),
-                            onClick = { selectedStatus = MaintenanceStatus.IN_PROGRESS.name }
-                        )
-                        StatusFilterChip(
-                            selected = selectedStatus == MaintenanceStatus.FINALIZED.name,
-                            label = stringResource(R.string.history_status_finalized),
-                            onClick = { selectedStatus = MaintenanceStatus.FINALIZED.name }
-                        )
-                    }
+                    StatusSegmentedSelector(
+                        selectedStatus = MaintenanceStatus.valueOf(draft.status),
+                        onSelect = { status ->
+                            onDraftChange(draft.copy(status = status.name))
+                        }
+                    )
 
                     OutlinedTextField(
-                        value = problemNote,
+                        value = draft.problemNote,
                         onValueChange = {
-                            problemNote = it
+                            onDraftChange(draft.copy(problemNote = it))
                             if (it.trim().isNotBlank()) {
                                 showProblemNoteError = false
                             }
@@ -1035,15 +1134,20 @@ private fun SaveDiagnosticBottomSheet(
 
                     InitialActionSelector(
                         selectedAction = selectedInitialAction,
-                        onSelect = { initialAction = it.name }
+                        expanded = isInitialActionMenuExpanded,
+                        onExpandedChange = { isInitialActionMenuExpanded = it },
+                        onSelect = {}
                     )
 
                     if (selectedInitialAction != InitialMaintenanceAction.NONE) {
                         OutlinedTextField(
-                            value = actionNote,
-                            onValueChange = { actionNote = it },
+                            value = draft.actionNote,
+                            onValueChange = {
+                                onDraftChange(draft.copy(actionNote = it))
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .focusRequester(actionNoteFocusRequester)
                                 .bringIntoViewRequester(actionNoteBringIntoViewRequester)
                                 .onFocusChanged { focusState ->
                                     if (focusState.isFocused) {
@@ -1061,51 +1165,113 @@ private fun SaveDiagnosticBottomSheet(
                     Spacer(Modifier.height(12.dp))
                 }
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                FilledTonalButton(
-                    onClick = onDismiss,
-                    modifier = Modifier.weight(1f),
-                    enabled = !isSaving
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Text(stringResource(R.string.history_sheet_cancel))
-                }
+                    FilledTonalButton(
+                        onClick = {
+                            if (hasDraft) {
+                                showDiscardDraftDialog = true
+                            } else {
+                                onDiscard()
+                            }
+                        },
+                        modifier = Modifier.weight(1f),
+                        enabled = !isSaving
+                    ) {
+                        Text(stringResource(R.string.history_sheet_cancel))
+                    }
 
-                Button(
-                    onClick = {
-                        val trimmedProblemNote = problemNote.trim()
-                        if (trimmedProblemNote.isBlank()) {
-                            showProblemNoteError = true
-                            return@Button
+                    Button(
+                        onClick = {
+                            val trimmedProblemNote = draft.problemNote.trim()
+                            if (trimmedProblemNote.isBlank()) {
+                                showProblemNoteError = true
+                                return@Button
+                            }
+                            onSave(
+                                MaintenanceStatus.valueOf(draft.status),
+                                trimmedProblemNote,
+                                selectedInitialAction,
+                                draft.actionNote
+                            )
+                        },
+                        modifier = Modifier.weight(1f),
+                        enabled = !isSaving
+                    ) {
+                        if (isSaving) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(18.dp),
+                                strokeWidth = 2.dp,
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        } else {
+                            Text(stringResource(R.string.history_sheet_confirm))
                         }
-                        onSave(
-                            MaintenanceStatus.valueOf(selectedStatus),
-                            trimmedProblemNote,
-                            selectedInitialAction,
-                            actionNote
-                        )
-                    },
-                    modifier = Modifier.weight(1f),
-                    enabled = !isSaving
-                ) {
-                    if (isSaving) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(18.dp),
-                            strokeWidth = 2.dp,
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
-                    } else {
-                        Text(stringResource(R.string.history_sheet_confirm))
                     }
                 }
+
+                Spacer(Modifier.height(12.dp))
             }
 
-            Spacer(Modifier.height(12.dp))
+            if (isInitialActionMenuExpanded) {
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.12f))
+                )
+                CenteredInitialActionPickerOverlay(
+                    selectedAction = selectedInitialAction,
+                    onDismiss = { isInitialActionMenuExpanded = false },
+                    onSelect = { action ->
+                        isInitialActionMenuExpanded = false
+                        shouldFocusActionDetail = action != InitialMaintenanceAction.NONE
+                        onDraftChange(
+                            draft.copy(
+                                initialAction = action.name,
+                                actionNote = if (action == InitialMaintenanceAction.NONE) {
+                                    ""
+                                } else {
+                                    draft.actionNote
+                                }
+                            )
+                        )
+                    }
+                )
+            }
         }
+    }
+
+    if (showDiscardDraftDialog) {
+        AlertDialog(
+            onDismissRequest = { showDiscardDraftDialog = false },
+            title = {
+                Text(
+                    text = stringResource(R.string.history_sheet_discard_draft_title),
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+            },
+            text = { Text(stringResource(R.string.history_sheet_discard_draft_body)) },
+            confirmButton = {
+                FilledTonalButton(onClick = { showDiscardDraftDialog = false }) {
+                    Text(stringResource(R.string.diagnostic_no))
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = {
+                        showDiscardDraftDialog = false
+                        onDiscard()
+                    }
+                ) {
+                    Text(stringResource(R.string.diagnostic_yes))
+                }
+            }
+        )
     }
 }
 
@@ -1113,6 +1279,43 @@ private fun SaveDiagnosticBottomSheet(
 @Composable
 private fun InitialActionSelector(
     selectedAction: InitialMaintenanceAction,
+    expanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
+    onSelect: (InitialMaintenanceAction) -> Unit
+) {
+    Box(modifier = Modifier.fillMaxWidth()) {
+        OutlinedTextField(
+            value = stringResource(initialActionLabelRes(selectedAction)),
+            onValueChange = {},
+            readOnly = true,
+            modifier = Modifier.fillMaxWidth(),
+            trailingIcon = {
+                Icon(
+                    imageVector = Icons.Filled.ArrowDropDown,
+                    contentDescription = null
+                )
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = initialActionIcon(selectedAction),
+                    contentDescription = null
+                )
+            },
+            maxLines = 1,
+            textStyle = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold)
+        )
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .clickable { onExpandedChange(true) }
+        )
+    }
+}
+
+@Composable
+private fun CenteredInitialActionPickerOverlay(
+    selectedAction: InitialMaintenanceAction,
+    onDismiss: () -> Unit,
     onSelect: (InitialMaintenanceAction) -> Unit
 ) {
     val options = listOf(
@@ -1122,44 +1325,190 @@ private fun InitialActionSelector(
         InitialMaintenanceAction.TEST_PERFORMED,
         InitialMaintenanceAction.OTHER
     )
+    val dismissInteractionSource = remember { MutableInteractionSource() }
+    val contentInteractionSource = remember { MutableInteractionSource() }
 
-    FlowRow(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable(
+                interactionSource = dismissInteractionSource,
+                indication = null,
+                onClick = onDismiss
+            ),
+        contentAlignment = Alignment.Center
     ) {
-        options.forEach { action ->
-            FilterChip(
-                selected = selectedAction == action,
-                onClick = { onSelect(action) },
-                label = {
-                    Text(
-                        text = when (action) {
-                            InitialMaintenanceAction.NONE -> stringResource(R.string.history_initial_action_none)
-                            InitialMaintenanceAction.TECHNICIAN_CONTACTED -> stringResource(R.string.history_event_technician)
-                            InitialMaintenanceAction.COMPONENT_REPLACED -> stringResource(R.string.history_event_component)
-                            InitialMaintenanceAction.TEST_PERFORMED -> stringResource(R.string.history_event_test)
-                            InitialMaintenanceAction.OTHER -> stringResource(R.string.history_event_other)
-                        },
-                        maxLines = 2,
-                        overflow = TextOverflow.Clip
-                    )
-                }
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .clickable(
+                    interactionSource = contentInteractionSource,
+                    indication = null,
+                    onClick = {}
+                ),
+            shape = RoundedCornerShape(26.dp),
+            color = MaterialTheme.colorScheme.secondaryContainer,
+            tonalElevation = 10.dp,
+            shadowElevation = 22.dp,
+            border = BorderStroke(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.28f)
             )
+        ) {
+            Column(
+                modifier = Modifier.padding(vertical = 14.dp),
+                verticalArrangement = Arrangement.spacedBy(0.dp)
+            ) {
+                options.forEachIndexed { index, action ->
+                    val isSelected = selectedAction == action
+                    Surface(
+                        onClick = { onSelect(action) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                start = 14.dp,
+                                end = 14.dp,
+                                top = if (index == 0) 10.dp else 6.dp,
+                                bottom = if (index == options.lastIndex) 10.dp else 6.dp
+                            ),
+                        shape = RoundedCornerShape(20.dp),
+                        color = if (isSelected) {
+                            MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.42f)
+                        } else {
+                            Color.Transparent
+                        },
+                        border = if (isSelected) {
+                            BorderStroke(
+                                width = 1.dp,
+                                color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
+                            )
+                        } else {
+                            null
+                        }
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 22.dp, vertical = 18.dp),
+                            horizontalArrangement = Arrangement.spacedBy(14.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = initialActionIcon(action),
+                                contentDescription = null,
+                                tint = if (isSelected) {
+                                    MaterialTheme.colorScheme.secondary
+                                } else {
+                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                }
+                            )
+                            Column(
+                                modifier = Modifier.weight(1f),
+                                verticalArrangement = Arrangement.spacedBy(2.dp)
+                            ) {
+                                Text(
+                                    text = stringResource(initialActionLabelRes(action)),
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
+                                    color = if (isSelected) {
+                                        MaterialTheme.colorScheme.onSecondaryContainer
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurface
+                                    }
+                                )
+                                Text(
+                                    text = stringResource(initialActionDescriptionRes(action)),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = if (isSelected) {
+                                        MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f)
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                    }
+                                )
+                            }
+                            if (isSelected) {
+                                Icon(
+                                    imageVector = Icons.Filled.CheckCircle,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.secondary
+                                )
+                            }
+                        }
+                    }
+                    if (index < options.lastIndex) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 30.dp, vertical = 2.dp)
+                                .height(1.dp)
+                                .background(MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.7f))
+                        )
+                    }
+                }
+            }
         }
     }
 }
 
 @Composable
-private fun StatusFilterChip(
-    selected: Boolean,
-    label: String,
-    onClick: () -> Unit
+private fun StatusSegmentedSelector(
+    selectedStatus: MaintenanceStatus,
+    onSelect: (MaintenanceStatus) -> Unit
 ) {
-    FilterChip(
-        selected = selected,
-        onClick = onClick,
-        label = { Text(label) }
+    val options = listOf(
+        MaintenanceStatus.PENDING,
+        MaintenanceStatus.IN_PROGRESS,
+        MaintenanceStatus.FINALIZED
     )
+    val containerShape = RoundedCornerShape(20.dp)
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                shape = containerShape
+            )
+            .background(
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                shape = containerShape
+            )
+            .padding(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        options.forEach { status ->
+            val selected = selectedStatus == status
+            Surface(
+                onClick = { onSelect(status) },
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(16.dp),
+                color = if (selected) {
+                    MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.9f)
+                } else {
+                    Color.Transparent
+                },
+                contentColor = if (selected) {
+                    MaterialTheme.colorScheme.onSecondaryContainer
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                }
+            ) {
+                Box(
+                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 14.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = stringResource(statusLabelRes(status)),
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = if (selected) FontWeight.Bold else FontWeight.SemiBold,
+                        textAlign = TextAlign.Center,
+                        maxLines = 1,
+                        softWrap = false
+                    )
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -1167,38 +1516,24 @@ private fun SchematicsSection(
     schematics: List<SchematicDocument>,
     onOpenSchematic: (SchematicDocument) -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = stringResource(R.string.diagnostic_schematics_title),
-            style = MaterialTheme.typography.titleMedium
-        )
-        Spacer(Modifier.height(8.dp))
+    PremiumHeroCard(
+        modifier = Modifier.fillMaxWidth(),
+        accentColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.10f)
+    ) {
+        PremiumSectionEyebrow(text = stringResource(R.string.diagnostic_schematics_title))
         Text(
             text = stringResource(R.string.diagnostic_schematics_subtitle),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        Spacer(Modifier.height(16.dp))
 
         schematics.forEachIndexed { index, schematic ->
-            FilledTonalButton(
+            PremiumSecondaryButton(
+                text = schematic.title,
                 onClick = { onOpenSchematic(schematic) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = MaterialTheme.shapes.medium
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Description,
-                    contentDescription = null
-                )
-                Spacer(Modifier.width(8.dp))
-                Text(
-                    text = schematic.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = Icons.Filled.Description
+            )
 
             if (index < schematics.lastIndex) {
                 Spacer(Modifier.height(12.dp))
@@ -1206,6 +1541,15 @@ private fun SchematicsSection(
         }
     }
 }
+
+@Composable
+private fun endResultAccent(result: EndResult?): Color =
+    when (result) {
+        EndResult.RESOLVED -> ResultResolvedGreen.copy(alpha = 0.20f)
+        EndResult.NO_ISSUE -> ResultWarningAmber.copy(alpha = 0.18f)
+        EndResult.COMPONENT_FAULT -> ResultFaultRed.copy(alpha = 0.20f)
+        null -> MaterialTheme.colorScheme.secondary.copy(alpha = 0.16f)
+    }
 
 @Composable
 private fun EndResultIcon(result: EndResult) {
@@ -1302,34 +1646,18 @@ private fun EndResultIcon(result: EndResult) {
 
 @Composable
 private fun SuggestCard(text: String) {
-    ElevatedCard(
+    PremiumHeroCard(
         modifier = Modifier
             .fillMaxWidth()
-            .border(
-                width = 2.dp,
-                color = MaterialTheme.colorScheme.outline,
-                shape = CardDefaults.elevatedShape
-            )
             .animateContentSize(),
-        colors = CardDefaults.elevatedCardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
-        ),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 8.dp)
+        accentColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.12f)
     ) {
-        Column(Modifier.padding(20.dp)) {
-            Text(
-                text = stringResource(R.string.diagnostic_suggestions_title),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(Modifier.height(12.dp))
-            Text(
-                text = text,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
+        PremiumSectionEyebrow(text = stringResource(R.string.diagnostic_suggestions_title))
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 
@@ -1339,3 +1667,72 @@ private fun suggestedStatusFor(result: EndResult?): MaintenanceStatus =
     } else {
         MaintenanceStatus.PENDING
     }
+
+private fun statusLabelRes(status: MaintenanceStatus): Int =
+    when (status) {
+        MaintenanceStatus.PENDING -> R.string.history_status_pending
+        MaintenanceStatus.IN_PROGRESS -> R.string.history_status_in_progress
+        MaintenanceStatus.FINALIZED -> R.string.history_status_finalized
+        MaintenanceStatus.CANCELED -> R.string.history_status_canceled
+    }
+
+private fun initialActionLabelRes(action: InitialMaintenanceAction): Int =
+    when (action) {
+        InitialMaintenanceAction.NONE -> R.string.history_initial_action_none
+        InitialMaintenanceAction.TECHNICIAN_CONTACTED -> R.string.history_event_technician
+        InitialMaintenanceAction.COMPONENT_REPLACED -> R.string.history_event_component
+        InitialMaintenanceAction.TEST_PERFORMED -> R.string.history_event_test
+        InitialMaintenanceAction.OTHER -> R.string.history_event_other
+    }
+
+private fun initialActionDescriptionRes(action: InitialMaintenanceAction): Int =
+    when (action) {
+        InitialMaintenanceAction.NONE -> R.string.history_initial_action_none_description
+        InitialMaintenanceAction.TECHNICIAN_CONTACTED -> R.string.history_initial_action_technician_description
+        InitialMaintenanceAction.COMPONENT_REPLACED -> R.string.history_initial_action_component_description
+        InitialMaintenanceAction.TEST_PERFORMED -> R.string.history_initial_action_test_description
+        InitialMaintenanceAction.OTHER -> R.string.history_initial_action_other_description
+    }
+
+private fun initialActionIcon(action: InitialMaintenanceAction): ImageVector =
+    when (action) {
+        InitialMaintenanceAction.NONE -> Icons.Filled.AccessTime
+        InitialMaintenanceAction.TECHNICIAN_CONTACTED -> Icons.Filled.HeadsetMic
+        InitialMaintenanceAction.COMPONENT_REPLACED -> Icons.Filled.Build
+        InitialMaintenanceAction.TEST_PERFORMED -> Icons.Filled.Tune
+        InitialMaintenanceAction.OTHER -> Icons.Filled.MoreHoriz
+    }
+
+private data class SaveDiagnosticDraft(
+    val status: String,
+    val problemNote: String = "",
+    val initialAction: String = InitialMaintenanceAction.NONE.name,
+    val actionNote: String = ""
+) {
+    fun hasContent(defaultStatus: String): Boolean =
+        status != defaultStatus ||
+            problemNote.isNotBlank() ||
+            initialAction != InitialMaintenanceAction.NONE.name ||
+            actionNote.isNotBlank()
+
+    companion object {
+        val Saver: Saver<SaveDiagnosticDraft, Any> = listSaver(
+            save = { draft ->
+                listOf(
+                    draft.status,
+                    draft.problemNote,
+                    draft.initialAction,
+                    draft.actionNote
+                )
+            },
+            restore = { values ->
+                SaveDiagnosticDraft(
+                    status = values[0],
+                    problemNote = values[1],
+                    initialAction = values[2],
+                    actionNote = values[3]
+                )
+            }
+        )
+    }
+}

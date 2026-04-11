@@ -1,7 +1,11 @@
 package com.emagioda.myapp.presentation.common
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -26,7 +30,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.emagioda.myapp.R
 import com.emagioda.myapp.domain.model.EndResult
@@ -44,24 +50,19 @@ fun MaintenanceStatusChip(
     status: MaintenanceStatus,
     modifier: Modifier = Modifier
 ) {
-    val (backgroundColor, contentColor) = when (status) {
-        MaintenanceStatus.PENDING -> HistoryPendingAmber.copy(alpha = 0.18f) to HistoryPendingAmber
-        MaintenanceStatus.IN_PROGRESS -> HistoryInProgressBlue.copy(alpha = 0.18f) to HistoryInProgressBlue
-        MaintenanceStatus.FINALIZED -> HistoryFinalizedGreen.copy(alpha = 0.18f) to HistoryFinalizedGreen
-        MaintenanceStatus.CANCELED -> MaterialTheme.colorScheme.error.copy(alpha = 0.18f) to
-            MaterialTheme.colorScheme.error
-    }
-
+    val tone = statusTone(status)
     Surface(
         modifier = modifier,
-        color = backgroundColor,
-        contentColor = contentColor,
-        shape = RoundedCornerShape(999.dp)
+        color = tone.container,
+        contentColor = tone.content,
+        shape = RoundedCornerShape(999.dp),
+        border = BorderStroke(1.dp, tone.content.copy(alpha = 0.22f))
     ) {
         Text(
             text = stringResource(status.labelRes()),
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-            style = MaterialTheme.typography.labelLarge
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = FontWeight.SemiBold
         )
     }
 }
@@ -71,24 +72,31 @@ fun MaintenanceResultChip(
     result: EndResult,
     modifier: Modifier = Modifier
 ) {
-    val (backgroundColor, contentColor) = when (result) {
-        EndResult.RESOLVED -> HistoryFinalizedGreen.copy(alpha = 0.18f) to HistoryFinalizedGreen
-        EndResult.NO_ISSUE -> HistoryPendingAmber.copy(alpha = 0.18f) to HistoryPendingAmber
-        EndResult.COMPONENT_FAULT -> MaterialTheme.colorScheme.error.copy(alpha = 0.18f) to
-            MaterialTheme.colorScheme.error
-    }
-
+    val tone = resultTone(result)
     Surface(
         modifier = modifier,
-        color = backgroundColor,
-        contentColor = contentColor,
-        shape = RoundedCornerShape(999.dp)
+        color = tone.container,
+        contentColor = tone.content,
+        shape = RoundedCornerShape(999.dp),
+        border = BorderStroke(1.dp, tone.content.copy(alpha = 0.22f))
     ) {
-        Text(
-            text = stringResource(result.labelRes()),
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-            style = MaterialTheme.typography.labelLarge
-        )
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Icon(
+                painter = painterResource(id = tone.iconRes),
+                contentDescription = null,
+                tint = tone.content,
+                modifier = Modifier.size(16.dp)
+            )
+            Text(
+                text = stringResource(result.labelRes()),
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
     }
 }
 
@@ -98,25 +106,77 @@ fun MaintenanceEventIcon(
     modifier: Modifier = Modifier
 ) {
     val (icon, color) = type.iconAndColor()
-    Box(
-        modifier = modifier
-            .size(38.dp)
-            .background(color.copy(alpha = 0.18f), CircleShape),
-        contentAlignment = Alignment.Center
+    Surface(
+        modifier = modifier.size(42.dp),
+        shape = CircleShape,
+        color = color.copy(alpha = 0.16f),
+        border = BorderStroke(1.dp, color.copy(alpha = 0.22f))
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = color,
-            modifier = Modifier.size(18.dp)
-        )
+        Box(contentAlignment = Alignment.Center) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = color,
+                modifier = Modifier.size(18.dp)
+            )
+        }
     }
 }
 
 fun formatHistoryDateTime(timestamp: Long): String {
-    val formatter = SimpleDateFormat("dd MMM yyyy - HH:mm", Locale.getDefault())
+    val formatter = SimpleDateFormat("dd MMM yyyy - HH:mm", Locale.ITALIAN)
     return formatter.format(Date(timestamp))
 }
+
+private data class HistoryTone(
+    val container: Color,
+    val content: Color
+)
+
+private data class HistoryResultTone(
+    val container: Color,
+    val content: Color,
+    val iconRes: Int
+)
+
+private fun statusTone(status: MaintenanceStatus): HistoryTone =
+    when (status) {
+        MaintenanceStatus.PENDING -> HistoryTone(
+            container = HistoryPendingAmber.copy(alpha = 0.18f),
+            content = HistoryPendingAmber
+        )
+        MaintenanceStatus.IN_PROGRESS -> HistoryTone(
+            container = HistoryInProgressBlue.copy(alpha = 0.18f),
+            content = HistoryInProgressBlue
+        )
+        MaintenanceStatus.FINALIZED -> HistoryTone(
+            container = HistoryFinalizedGreen.copy(alpha = 0.18f),
+            content = HistoryFinalizedGreen
+        )
+        MaintenanceStatus.CANCELED -> HistoryTone(
+            container = Color(0x33E57373),
+            content = Color(0xFFE57373)
+        )
+    }
+
+private fun resultTone(result: EndResult): HistoryResultTone =
+    when (result) {
+        EndResult.RESOLVED -> HistoryResultTone(
+            container = HistoryFinalizedGreen.copy(alpha = 0.18f),
+            content = HistoryFinalizedGreen,
+            iconRes = R.drawable.ic_result_resolved
+        )
+        EndResult.NO_ISSUE -> HistoryResultTone(
+            container = HistoryPendingAmber.copy(alpha = 0.18f),
+            content = HistoryPendingAmber,
+            iconRes = R.drawable.ic_result_no_issue
+        )
+        EndResult.COMPONENT_FAULT -> HistoryResultTone(
+            container = Color(0x33E57373),
+            content = Color(0xFFE57373),
+            iconRes = R.drawable.ic_result_component_fault
+        )
+    }
 
 private fun MaintenanceStatus.labelRes(): Int =
     when (this) {
@@ -140,7 +200,7 @@ private fun MaintenanceEventType.iconAndColor(): Pair<ImageVector, Color> =
         MaintenanceEventType.COMPONENT_REPLACED -> Icons.Default.Build to HistoryInProgressBlue
         MaintenanceEventType.TEST_PERFORMED -> Icons.Default.Construction to HistoryInProgressBlue
         MaintenanceEventType.OBSERVATION -> Icons.Default.Info to Color(0xFF9FB3C8)
-        MaintenanceEventType.OTHER -> Icons.Default.Flag to Color(0xFFB7A1E5)
+        MaintenanceEventType.OTHER -> Icons.Default.Flag to Color(0xFF96A9FF)
         MaintenanceEventType.RESOLUTION -> Icons.Default.Check to HistoryFinalizedGreen
         MaintenanceEventType.CASE_UPDATED -> Icons.Default.EditNote to HistoryInProgressBlue
         MaintenanceEventType.CASE_REOPENED -> Icons.Default.RestartAlt to HistoryPendingAmber
