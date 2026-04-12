@@ -354,8 +354,8 @@ fun InitialsBadge(
     Surface(
         modifier = modifier.size(52.dp),
         shape = CircleShape,
-        color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.82f),
-        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+        color = MaterialTheme.colorScheme.surfaceDim,
+        contentColor = MaterialTheme.colorScheme.onSurface,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Box(contentAlignment = Alignment.Center) {

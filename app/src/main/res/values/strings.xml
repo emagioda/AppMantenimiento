@@ -9,9 +9,7 @@
     <string name="home_header">Scansiona il codice QR e ti guideremo passo dopo passo nella risoluzione del problema.</string>
     <string name="home_scan_button">Scansiona il QR</string>
     <string name="home_history_button">Storico manutenzione</string>
-    <string name="home_history_menu_cd">Apri il menu dello storico manutenzione</string>
     <string name="home_overline">Diagnostica guidata</string>
-    <string name="home_scan_support">Avvia una nuova scansione e apri subito il flusso corretto.</string>
     <string name="home_history_support">Consulta gli interventi salvati e monitora lo stato delle macchine.</string>
 
     <!-- Scanner -->
@@ -28,13 +26,10 @@
     <string name="scanner_catalog_error">Impossibile caricare il catalogo delle macchine. Riprova.</string>
     <string name="scanner_live_title">Scanner attivo</string>
     <string name="scanner_live_subtitle">Inquadra il QR della macchina per aprire la diagnostica.</string>
-    <string name="scanner_ready">Pronto</string>
     <string name="scanner_detecting">Rilevamento continuo</string>
     <string name="scanner_permission_title">Accesso fotocamera richiesto</string>
     <string name="scanner_settings_title">Abilita la fotocamera</string>
     <string name="scanner_error_title">Scanner non disponibile</string>
-    <string name="scanner_torch_label">Torcia</string>
-    <string name="scanner_scan_confirmed">QR riconosciuto</string>
 
     <!-- Contatti -->
     <string name="contacts_title">Contatti</string>
@@ -49,8 +44,6 @@
     <string name="contacts_external_action_error">Impossibile aprire l\'app richiesta su questo dispositivo.</string>
     <string name="contacts_service_areas_label">Aree di servizio</string>
     <string name="contacts_tech_shortcut">Tecnici specializzati</string>
-    <string name="contacts_overline">Supporto operativo</string>
-    <string name="contacts_quick_actions">Azioni rapide</string>
     <string name="contacts_default_name">Contatto</string>
 
     <!-- Comuni -->
@@ -89,8 +82,6 @@
     <string name="machine_detail_error_loading">Errore durante il caricamento del dettaglio macchina.</string>
     <string name="machine_detail_history_handle_cd">Apri lo storico della macchina</string>
     <string name="machine_detail_open_cases_alert_body">Controlla i casi ancora da risolvere prima di chiudere l\'intervento.</string>
-    <string name="machine_detail_overline">Scheda macchina</string>
-    <string name="machine_detail_ready">Pronta per la diagnosi</string>
     <string name="machine_detail_no_image">Immagine non disponibile</string>
     <string name="machine_detail_open_cases_cta">Apri lo storico</string>
 
@@ -163,15 +154,14 @@
     <string name="history_sheet_confirm">Salva monitoraggio</string>
     <string name="history_sheet_discard_draft_title">Scartare la bozza?</string>
     <string name="history_sheet_discard_draft_body">Se continui perderai il testo inserito per questo monitoraggio.</string>
-    <string name="history_sheet_discard_draft_confirm">Scarta bozza</string>
-    <string name="history_sheet_discard_draft_keep">Continua a modificare</string>
 
-    <string name="history_event_sheet_title">Aggiungi aggiornamento</string>
-    <string name="history_event_sheet_type_label">Tipo di aggiornamento</string>
+    <string name="history_event_sheet_title">Nuova nota</string>
+    <string name="history_event_sheet_type_label">Categoria</string>
+    <string name="history_event_sheet_type_placeholder">Seleziona una voce</string>
     <string name="history_event_sheet_note_label">Dettaglio</string>
     <string name="history_event_sheet_note_hint">Descrivi cosa &#232; stato fatto, verificato o cosa resta in sospeso&#8230;</string>
     <string name="history_event_sheet_note_min_length">Inserisci almeno 10 caratteri per salvare l\'aggiornamento.</string>
-    <string name="history_event_sheet_confirm">Salva aggiornamento</string>
+    <string name="history_event_sheet_confirm">Salva</string>
     <string name="history_resolution_sheet_title">Chiudi intervento</string>
     <string name="history_resolution_sheet_note_label">Cosa &#232; stato fatto per risolvere</string>
     <string name="history_resolution_sheet_note_hint">Descrivi la soluzione applicata o la chiusura dell\'intervento&#8230;</string>

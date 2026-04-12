@@ -1,7 +1,10 @@
 package com.emagioda.myapp.presentation.screen.history
 
 import android.content.Context
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +12,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
@@ -18,9 +22,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Construction
+import androidx.compose.material.icons.filled.Engineering
+import androidx.compose.material.icons.filled.Flag
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Print
 import androidx.compose.material3.Button
@@ -42,6 +54,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -54,7 +67,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -613,81 +630,125 @@ private fun AddHistoryEventSheet(
     onDismiss: () -> Unit,
     onSubmit: (MaintenanceEventType, String?) -> Unit
 ) {
-    var selectedType by rememberSaveable {
-        mutableStateOf(MaintenanceEventType.OBSERVATION.name)
-    }
+    var selectedTypeName by rememberSaveable { mutableStateOf<String?>(null) }
     var note by rememberSaveable { mutableStateOf("") }
     var showNoteError by rememberSaveable { mutableStateOf(false) }
+    var isTypeMenuExpanded by rememberSaveable { mutableStateOf(false) }
+    var shouldFocusNoteField by rememberSaveable { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val noteFocusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val selectedType = selectedTypeName?.let(MaintenanceEventType::valueOf)
     val trimmedNote = note.trim()
     val isNoteValid = trimmedNote.length >= MinHistoryUpdateLength
+
+    LaunchedEffect(selectedTypeName, shouldFocusNoteField) {
+        if (shouldFocusNoteField && selectedType != null) {
+            noteFocusRequester.requestFocus()
+            keyboardController?.show()
+            shouldFocusNoteField = false
+        }
+    }
 
     ModalBottomSheet(
         sheetState = sheetState,
         onDismissRequest = onDismiss
     ) {
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
+                .fillMaxHeight(0.92f)
                 .navigationBarsPadding()
                 .imePadding()
-                .padding(horizontal = 20.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(top = 8.dp)
         ) {
-            Text(
-                text = stringResource(R.string.history_event_sheet_title),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.SemiBold
-            )
-
-            Text(
-                text = stringResource(R.string.history_event_sheet_type_label),
-                style = MaterialTheme.typography.labelLarge
-            )
-
-            EventTypeSelector(
-                selectedType = MaintenanceEventType.valueOf(selectedType),
-                onSelect = { selectedType = it.name }
-            )
-
-            OutlinedTextField(
-                value = note,
-                onValueChange = {
-                    note = it
-                    if (showNoteError && it.trim().length >= MinHistoryUpdateLength) {
-                        showNoteError = false
-                    }
-                },
-                modifier = Modifier.fillMaxWidth(),
-                label = { Text(stringResource(R.string.history_event_sheet_note_label)) },
-                placeholder = { Text(stringResource(R.string.history_event_sheet_note_hint)) },
-                supportingText = {
-                    if (showNoteError) {
-                        Text(stringResource(R.string.history_event_sheet_note_min_length))
-                    }
-                },
-                isError = showNoteError,
-                minLines = 3
-            )
-
-            Button(
-                onClick = {
-                    if (!isNoteValid) {
-                        showNoteError = true
-                        return@Button
-                    }
-                    onSubmit(
-                        MaintenanceEventType.valueOf(selectedType),
-                        trimmedNote
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .then(
+                        if (isTypeMenuExpanded) {
+                            Modifier.blur(10.dp)
+                        } else {
+                            Modifier
+                        }
                     )
-                },
-                modifier = Modifier.fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 20.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text(stringResource(R.string.history_event_sheet_confirm))
+                Text(
+                    text = stringResource(R.string.history_event_sheet_title),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.SemiBold
+                )
+
+                Text(
+                    text = stringResource(R.string.history_event_sheet_type_label),
+                    style = MaterialTheme.typography.labelLarge
+                )
+
+                EventTypeSelector(
+                    selectedType = selectedType,
+                    expanded = isTypeMenuExpanded,
+                    onExpandedChange = { isTypeMenuExpanded = it }
+                )
+
+                OutlinedTextField(
+                    value = note,
+                    onValueChange = {
+                        note = it
+                        if (showNoteError && it.trim().length >= MinHistoryUpdateLength) {
+                            showNoteError = false
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(noteFocusRequester),
+                    label = { Text(stringResource(R.string.history_event_sheet_note_label)) },
+                    placeholder = { Text(stringResource(R.string.history_event_sheet_note_hint)) },
+                    supportingText = {
+                        if (showNoteError) {
+                            Text(stringResource(R.string.history_event_sheet_note_min_length))
+                        }
+                    },
+                    isError = showNoteError,
+                    minLines = 3
+                )
+
+                Button(
+                    onClick = {
+                        if (selectedType == null) {
+                            isTypeMenuExpanded = true
+                            return@Button
+                        }
+                        if (!isNoteValid) {
+                            showNoteError = true
+                            return@Button
+                        }
+                        onSubmit(
+                            selectedType,
+                            trimmedNote
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(stringResource(R.string.history_event_sheet_confirm))
+                }
+
+                Spacer(Modifier.height(12.dp))
             }
 
-            Spacer(Modifier.height(12.dp))
+            if (isTypeMenuExpanded) {
+                CenteredEventTypePickerOverlay(
+                    selectedType = selectedType,
+                    onDismiss = { isTypeMenuExpanded = false },
+                    onSelect = { type ->
+                        selectedTypeName = type.name
+                        isTypeMenuExpanded = false
+                        shouldFocusNoteField = true
+                    }
+                )
+            }
         }
     }
 }
@@ -948,7 +1009,48 @@ private fun CancelHistoryCaseSheet(
 
 @Composable
 private fun EventTypeSelector(
-    selectedType: MaintenanceEventType,
+    selectedType: MaintenanceEventType?,
+    expanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit
+) {
+    Box(modifier = Modifier.fillMaxWidth()) {
+        OutlinedTextField(
+            value = selectedType?.let { stringResource(eventTypeRes(it)) }.orEmpty(),
+            onValueChange = {},
+            readOnly = true,
+            modifier = Modifier.fillMaxWidth(),
+            placeholder = {
+                Text(stringResource(R.string.history_event_sheet_type_placeholder))
+            },
+            trailingIcon = {
+                Icon(
+                    imageVector = Icons.Filled.ArrowDropDown,
+                    contentDescription = null
+                )
+            },
+            leadingIcon = selectedType?.let { type ->
+                {
+                    Icon(
+                        imageVector = eventTypeIcon(type),
+                        contentDescription = null
+                    )
+                }
+            },
+            maxLines = 1,
+            textStyle = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold)
+        )
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .clickable { onExpandedChange(!expanded) }
+        )
+    }
+}
+
+@Composable
+private fun CenteredEventTypePickerOverlay(
+    selectedType: MaintenanceEventType?,
+    onDismiss: () -> Unit,
     onSelect: (MaintenanceEventType) -> Unit
 ) {
     val options = listOf(
@@ -958,26 +1060,103 @@ private fun EventTypeSelector(
         MaintenanceEventType.OBSERVATION,
         MaintenanceEventType.OTHER
     )
+    val dismissInteractionSource = remember { MutableInteractionSource() }
+    val contentInteractionSource = remember { MutableInteractionSource() }
 
-    Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable(
+                interactionSource = dismissInteractionSource,
+                indication = null,
+                onClick = onDismiss
+            ),
+        contentAlignment = Alignment.Center
     ) {
-        options.chunked(2).forEach { rowOptions ->
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .clickable(
+                    interactionSource = contentInteractionSource,
+                    indication = null,
+                    onClick = {}
+                ),
+            shape = RoundedCornerShape(26.dp),
+            color = MaterialTheme.colorScheme.secondaryContainer,
+            tonalElevation = 10.dp,
+            shadowElevation = 22.dp,
+            border = BorderStroke(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.28f)
+            )
+        ) {
+            Column(
+                modifier = Modifier.padding(vertical = 14.dp),
+                verticalArrangement = Arrangement.spacedBy(0.dp)
             ) {
-                rowOptions.forEach { type ->
-                    FilterChip(
-                        selected = selectedType == type,
+                options.forEachIndexed { index, type ->
+                    val isSelected = selectedType == type
+                    Surface(
                         onClick = { onSelect(type) },
-                        label = {
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                start = 14.dp,
+                                end = 14.dp,
+                                top = if (index == 0) 10.dp else 6.dp,
+                                bottom = if (index == options.lastIndex) 10.dp else 6.dp
+                            ),
+                        shape = RoundedCornerShape(20.dp),
+                        color = if (isSelected) {
+                            MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.42f)
+                        } else {
+                            androidx.compose.ui.graphics.Color.Transparent
+                        },
+                        border = if (isSelected) {
+                            BorderStroke(
+                                width = 1.dp,
+                                color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
+                            )
+                        } else {
+                            null
+                        }
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 22.dp, vertical = 18.dp),
+                            horizontalArrangement = Arrangement.spacedBy(14.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = eventTypeIcon(type),
+                                contentDescription = null,
+                                tint = if (isSelected) {
+                                    MaterialTheme.colorScheme.secondary
+                                } else {
+                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                }
+                            )
                             Text(
                                 text = stringResource(eventTypeRes(type)),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
+                                modifier = Modifier.weight(1f),
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
+                                color = if (isSelected) {
+                                    MaterialTheme.colorScheme.onSecondaryContainer
+                                } else {
+                                    MaterialTheme.colorScheme.onSurface
+                                }
                             )
+                            if (isSelected) {
+                                Icon(
+                                    imageVector = Icons.Filled.CheckCircle,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.secondary
+                                )
+                            }
                         }
-                    )
+                    }
                 }
             }
         }
@@ -988,6 +1167,20 @@ private fun eventTypeLabel(
     type: MaintenanceEventType,
     context: Context
 ): String = context.getString(eventTypeRes(type))
+
+private fun eventTypeIcon(type: MaintenanceEventType) =
+    when (type) {
+        MaintenanceEventType.PROBLEM_DETECTED -> Icons.Filled.Info
+        MaintenanceEventType.TECHNICIAN_CONTACTED -> Icons.Filled.Engineering
+        MaintenanceEventType.COMPONENT_REPLACED -> Icons.Filled.Build
+        MaintenanceEventType.TEST_PERFORMED -> Icons.Filled.Construction
+        MaintenanceEventType.OBSERVATION -> Icons.Filled.Info
+        MaintenanceEventType.OTHER -> Icons.Filled.Flag
+        MaintenanceEventType.RESOLUTION -> Icons.Filled.CheckCircle
+        MaintenanceEventType.CASE_UPDATED -> Icons.Filled.Info
+        MaintenanceEventType.CASE_REOPENED -> Icons.Filled.Info
+        MaintenanceEventType.CASE_CANCELED -> Icons.Filled.Info
+    }
 
 private fun eventTypeRes(type: MaintenanceEventType): Int =
     when (type) {

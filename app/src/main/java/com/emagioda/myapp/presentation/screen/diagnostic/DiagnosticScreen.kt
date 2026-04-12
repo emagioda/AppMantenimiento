@@ -406,8 +406,8 @@ fun DiagnosticEndReferenceScreen(
 @Composable
 private fun DiagnosticProgressHeader(
     stepCount: Int,
-    showLabels: Boolean = true,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showLabels: Boolean = true
 ) {
     val safeStepCount = stepCount.coerceAtLeast(1)
     val dotsScrollState = rememberScrollState()

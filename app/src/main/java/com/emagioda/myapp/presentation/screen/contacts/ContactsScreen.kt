@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -59,12 +58,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.emagioda.myapp.R
 import com.emagioda.myapp.di.ServiceLocator
 import com.emagioda.myapp.domain.model.Contact
-import com.emagioda.myapp.domain.model.ContactType
 import com.emagioda.myapp.presentation.common.InitialsBadge
 import com.emagioda.myapp.presentation.common.PremiumEmptyState
 import com.emagioda.myapp.presentation.common.PremiumHeroCard
 import com.emagioda.myapp.presentation.common.PremiumScreenBackground
-import com.emagioda.myapp.presentation.common.PremiumSectionEyebrow
 import com.emagioda.myapp.presentation.viewmodel.ContactsViewModel
 import kotlinx.coroutines.launch
 
@@ -142,7 +139,6 @@ fun ContactsScreen(
                     accentColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.18f),
                     contentPadding = PaddingValues(18.dp)
                 ) {
-                    PremiumSectionEyebrow(text = stringResource(R.string.contacts_overline))
                     SegmentedTabControl(
                         tabs = tabs,
                         selectedIndex = pagerState.currentPage,
@@ -167,8 +163,7 @@ fun ContactsScreen(
                     uiState.errorResId != null -> {
                         PremiumEmptyState(
                             title = stringResource(R.string.contacts_title),
-                            subtitle = stringResource(uiState.errorResId),
-                            overline = stringResource(R.string.contacts_overline)
+                            subtitle = stringResource(uiState.errorResId)
                         )
                     }
 
@@ -288,8 +283,7 @@ private fun SegmentedTabControl(
 private fun EmptyContactsState() {
     PremiumEmptyState(
         title = stringResource(R.string.contacts_empty_title),
-        subtitle = stringResource(R.string.contacts_empty_subtitle),
-        overline = stringResource(R.string.contacts_overline)
+        subtitle = stringResource(R.string.contacts_empty_subtitle)
     )
 }
 
@@ -311,11 +305,7 @@ fun ContactCard(
 
     PremiumHeroCard(
         modifier = Modifier.fillMaxWidth(),
-        accentColor = if (contact.type == ContactType.TECHNICIAN) {
-            MaterialTheme.colorScheme.secondary.copy(alpha = 0.18f)
-        } else {
-            MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
-        },
+        accentColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.18f),
         contentPadding = PaddingValues(18.dp)
     ) {
         Row(
@@ -328,13 +318,6 @@ fun ContactCard(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                PremiumSectionEyebrow(
-                    text = if (contact.type == ContactType.TECHNICIAN) {
-                        stringResource(R.string.contacts_tab_technicians)
-                    } else {
-                        stringResource(R.string.contacts_tab_providers)
-                    }
-                )
                 Text(
                     text = displayName,
                     style = MaterialTheme.typography.titleLarge,
@@ -351,61 +334,24 @@ fun ContactCard(
         }
 
         contact.serviceArea?.takeIf { it.isNotEmpty() }?.let { areas ->
-            Column(
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.contacts_service_areas_label),
+                    text = "${stringResource(R.string.contacts_service_areas_label)}:",
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.padding(top = 7.dp)
                 )
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    areas.forEach { area ->
-                        Surface(
-                            shape = RoundedCornerShape(999.dp),
-                            color = MaterialTheme.colorScheme.surfaceContainer,
-                            border = androidx.compose.foundation.BorderStroke(
-                                width = 1.dp,
-                                color = MaterialTheme.colorScheme.outlineVariant
-                            )
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 7.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(6.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.LocationOn,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.secondary,
-                                    modifier = Modifier.size(15.dp)
-                                )
-                                Text(
-                                    text = area,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        }
-                    }
-                }
+                ServiceAreaChip(area = areas.joinToString(", "))
             }
         }
 
-        Text(
-            text = stringResource(R.string.contacts_quick_actions),
-            style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             val phone = contact.phones?.firstOrNull()
             val wa = contact.whatsapp
@@ -439,34 +385,63 @@ fun ContactCard(
 }
 
 @Composable
-private fun RowScope.ActionButton(
+private fun ActionButton(
     text: String,
     icon: androidx.compose.ui.graphics.vector.ImageVector,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
     FilledTonalButton(
         onClick = onClick,
-        modifier = Modifier
-            .weight(1f)
-            .height(50.dp),
+        modifier = modifier.height(50.dp),
         shape = RoundedCornerShape(16.dp),
         contentPadding = PaddingValues(horizontal = 8.dp),
         colors = ButtonDefaults.filledTonalButtonColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
             contentColor = MaterialTheme.colorScheme.onSurface
         )
     ) {
         Icon(
             imageVector = icon,
             contentDescription = null,
-            modifier = Modifier.size(18.dp)
+            modifier = Modifier.size(16.dp)
         )
-        Spacer(Modifier.width(8.dp))
+        Spacer(Modifier.width(6.dp))
         Text(
             text = text,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            style = MaterialTheme.typography.labelLarge
+            overflow = TextOverflow.Clip,
+            style = MaterialTheme.typography.labelSmall
         )
+    }
+}
+
+@Composable
+private fun ServiceAreaChip(area: String) {
+    Surface(
+        shape = RoundedCornerShape(999.dp),
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        border = androidx.compose.foundation.BorderStroke(
+            width = 1.dp,
+            color = MaterialTheme.colorScheme.outlineVariant
+        )
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 7.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.LocationOn,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier.size(15.dp)
+            )
+            Text(
+                text = area,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     }
 }
